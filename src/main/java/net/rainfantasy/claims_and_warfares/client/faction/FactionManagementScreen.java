@@ -147,6 +147,7 @@ public class FactionManagementScreen extends Screen {
 		transferButton.active = clientPlayerHasFaction && clientPlayerIsFactionOwner;
 		memberPageButton.active = clientPlayerHasFaction;
 		diplomacyPageButton.active = clientPlayerIsFactionAdmin;
+		settingsPageButton.active = clientPlayerIsFactionAdmin;
 		disbandPageButton.active = clientPlayerHasFaction && clientPlayerIsFactionOwner;
 		leavePageButton.active = clientPlayerHasFaction;
 	}
