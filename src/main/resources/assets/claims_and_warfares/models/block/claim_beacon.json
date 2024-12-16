@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "claims_and_warfares:block/beacon_top",
+    "side": "claims_and_warfares:block/beacon_side"
+  }
+}

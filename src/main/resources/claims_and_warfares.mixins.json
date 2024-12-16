@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.rainfantasy.claims_and_warfares.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "claims_and_warfares.refmap.json",
+  "mixins": [
+    "accessors.WorldGenRegionAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

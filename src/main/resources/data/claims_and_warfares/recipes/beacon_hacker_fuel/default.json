@@ -1,0 +1,7 @@
+{
+  "type": "claims_and_warfares:beacon_hacker_fuel",
+  "ingredient": {
+    "item": "minecraft:ender_pearl"
+  },
+  "fuelValue": 20
+}
