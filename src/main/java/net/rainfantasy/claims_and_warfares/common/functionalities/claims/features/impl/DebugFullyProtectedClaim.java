@@ -22,11 +22,11 @@ public class DebugFullyProtectedClaim extends AbstractClaimFeature {
 	
 	UUID claimUUID;
 	
-	public DebugFullyProtectedClaim(){
+	public DebugFullyProtectedClaim() {
 		this(UUID.randomUUID());
 	}
 	
-	public DebugFullyProtectedClaim(UUID claimUUID){
+	public DebugFullyProtectedClaim(UUID claimUUID) {
 		this.claimUUID = claimUUID;
 	}
 	
@@ -54,7 +54,7 @@ public class DebugFullyProtectedClaim extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onPlaceBlock(EntityPlaceEvent event) {
-		if(event.getEntity() instanceof ServerPlayer player){
+		if (event.getEntity() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.debug.place", event.getPlacedBlock().getBlock().getName()));
 			return false;
 		}
@@ -63,9 +63,9 @@ public class DebugFullyProtectedClaim extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onBreakBlock(BreakEvent event) {
-		if(event.getPlayer() instanceof ServerPlayer player){
+		if (event.getPlayer() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.debug.break",
-				player.level().getBlockState(event.getPos()).getBlock().getName()));
+			player.level().getBlockState(event.getPos()).getBlock().getName()));
 			return false;
 		}
 		return super.onBreakBlock(event);
@@ -73,7 +73,7 @@ public class DebugFullyProtectedClaim extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onInteractBlock(RightClickBlock event) {
-		if(event.getEntity() instanceof ServerPlayer player){
+		if (event.getEntity() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.debug.interact",
 			player.level().getBlockState(event.getPos()).getBlock().getName()));
 			return false;
@@ -83,7 +83,7 @@ public class DebugFullyProtectedClaim extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onFarmlandTrample(FarmlandTrampleEvent event) {
-		if(event.getEntity() instanceof ServerPlayer player){
+		if (event.getEntity() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.debug.trample",
 			player.level().getBlockState(event.getPos()).getBlock().getName()));
 			return false;
@@ -93,7 +93,7 @@ public class DebugFullyProtectedClaim extends AbstractClaimFeature {
 	
 	@Override
 	public void onExplosion(Detonate event) {
-		if(event.getExplosion().getIndirectSourceEntity() instanceof ServerPlayer player){
+		if (event.getExplosion().getIndirectSourceEntity() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.debug.explosion"));
 		}
 		ClaimData claimData = ClaimDataManager.get().getClaim(claimUUID).orElseThrow(() -> new IllegalStateException("Claim not found"));
@@ -105,7 +105,7 @@ public class DebugFullyProtectedClaim extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onEntityAttacked(LivingAttackEvent event) {
-		if(Optional.ofNullable(event.getSource().getEntity()).map(e -> e instanceof ServerPlayer).orElse(false)){
+		if (Optional.ofNullable(event.getSource().getEntity()).map(e -> e instanceof ServerPlayer).orElse(false)) {
 			event.getSource().getEntity().sendSystemMessage(Component.translatable("caw.message.claim.protected.debug.attack",
 			event.getEntity().getDisplayName()));
 			return false;

@@ -11,6 +11,7 @@ import net.rainfantasy.claims_and_warfares.common.game_objs.screens.BeaconHacker
 import net.rainfantasy.claims_and_warfares.common.game_objs.screens.ClaimBeaconMenu;
 
 public class MenuRegistry {
+	
 	public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, CAWConstants.MODID);
 	
 	public static final RegistryObject<MenuType<ClaimBeaconMenu>> CLAIM_BEACON_MENU =

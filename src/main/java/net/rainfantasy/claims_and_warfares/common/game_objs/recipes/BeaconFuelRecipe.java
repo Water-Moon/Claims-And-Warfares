@@ -30,7 +30,7 @@ public class BeaconFuelRecipe implements Recipe<SimpleContainer> {
 	
 	@Override
 	public boolean matches(@NotNull SimpleContainer pContainer, @NotNull Level pLevel) {
-		if(pLevel.isClientSide()) {
+		if (pLevel.isClientSide()) {
 			return false;
 		}
 		
@@ -77,6 +77,7 @@ public class BeaconFuelRecipe implements Recipe<SimpleContainer> {
 	}
 	
 	public static class Type implements RecipeType<BeaconFuelRecipe> {
+		
 		public static final Type INSTANCE = new Type();
 		
 		private Type() {
@@ -84,6 +85,7 @@ public class BeaconFuelRecipe implements Recipe<SimpleContainer> {
 	}
 	
 	public static class Serializer implements RecipeSerializer<BeaconFuelRecipe> {
+		
 		public static final Serializer INSTANCE = new Serializer();
 		
 		private Serializer() {

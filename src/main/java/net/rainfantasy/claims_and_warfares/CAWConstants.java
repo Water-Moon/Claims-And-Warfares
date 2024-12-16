@@ -21,6 +21,7 @@ public class CAWConstants {
 	public static final UUID NIL_UUID = new UUID(0, 0);
 	
 	private static final boolean isProduction = FMLLoader.isProduction();
+	public static final boolean USE_TEST_TIMES = false;
 	
 	private static MinecraftServer server;
 	
@@ -29,14 +30,14 @@ public class CAWConstants {
 		return new ResourceLocation(CAWConstants.MODID, id);
 	}
 	
-	public static void debugLog(String content){
-		if(!isProduction){
+	public static void debugLog(String content) {
+		if (!isProduction) {
 			DEBUG_LOGGER.info(content);
 		}
 	}
 	
-	public static void debugLog(String content, Object ... objects){
-		if(!isProduction){
+	public static void debugLog(String content, Object... objects) {
+		if (!isProduction) {
 			DEBUG_LOGGER.info(content, objects);
 		}
 	}
@@ -46,7 +47,8 @@ public class CAWConstants {
 	}
 	
 	private static int errorCount = 0;
-	public static boolean execute(@NotNull Runnable r){
+	
+	public static boolean execute(@NotNull Runnable r) {
 		try {
 			if (server != null) {
 				server.executeIfPossible(r);
@@ -54,13 +56,13 @@ public class CAWConstants {
 				Minecraft.getInstance().executeIfPossible(r);
 			}
 			return true;
-		}catch (RejectedExecutionException e){
-			LOGGER.info("Failed to execute task (rejected): {}", r.toString());
+		} catch (RejectedExecutionException e) {
+			LOGGER.info("Failed to execute task (rejected): {}", r);
 			LOGGER.info("Error (rejected): ", e);
 			LOGGER.info("This can be safely ignored - these are probably just long-running tasks.");
 			return false;
-		}catch (Exception e){
-			LOGGER.error("Failed to execute task (error #{}): {}", ++errorCount, r.toString());
+		} catch (Exception e) {
+			LOGGER.error("Failed to execute task (error #{}): {}", ++errorCount, r);
 			LOGGER.error("Error #{}: ", errorCount, e);
 			return false;
 		}

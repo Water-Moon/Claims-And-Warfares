@@ -30,7 +30,7 @@ public class PTSKickMemberPacket {
 		return new PTSKickMemberPacket(byteBuf.readUUID(), byteBuf.readUUID());
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			ServerPlayer player = context.getSender();

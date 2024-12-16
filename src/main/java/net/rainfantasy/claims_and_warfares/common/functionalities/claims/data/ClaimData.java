@@ -1,6 +1,5 @@
 package net.rainfantasy.claims_and_warfares.common.functionalities.claims.data;
 
-import com.google.errorprone.annotations.DoNotCall;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -44,7 +43,7 @@ public class ClaimData implements ISerializableNBTData<ClaimData, CompoundTag> {
 	}
 	
 	//use this one
-	public ClaimData(Level level){
+	public ClaimData(Level level) {
 		this();
 		this.dimension = level.dimension().location().toString();
 	}
@@ -61,12 +60,12 @@ public class ClaimData implements ISerializableNBTData<ClaimData, CompoundTag> {
 		return claimUUID;
 	}
 	
-	public void claimChunk(Vector2i chunk){
+	public void claimChunk(Vector2i chunk) {
 		this.claimedChunks.add(chunk);
 	}
 	
 	public boolean isChunkClaimed(String dimension, Vector2i chunk) {
-		if(!this.dimension.equals(dimension)) return false;
+		if (!this.dimension.equals(dimension)) return false;
 		return this.claimedChunks.contains(chunk);
 	}
 	
@@ -75,7 +74,7 @@ public class ClaimData implements ISerializableNBTData<ClaimData, CompoundTag> {
 		return this.isChunkClaimed(dimensionId, new Vector2i(pos.getX() >> 4, pos.getZ() >> 4));
 	}
 	
-	public Optional<AbstractClaimFeature> getFeature(Class<? extends AbstractClaimFeature> clazz){
+	public Optional<AbstractClaimFeature> getFeature(Class<? extends AbstractClaimFeature> clazz) {
 		return this.getFeatures(clazz).stream().findFirst();
 	}
 	
@@ -87,12 +86,12 @@ public class ClaimData implements ISerializableNBTData<ClaimData, CompoundTag> {
 		return this.claimFeatures.stream().filter(clazz::isInstance).toList();
 	}
 	
-	public boolean isInvalid(){
+	public boolean isInvalid() {
 		return this.claimFeatures.stream().anyMatch(feature -> {
-			if(feature == null){
+			if (feature == null) {
 				throw new RuntimeException("Null feature in claim data " + this);
 			}
-			if(feature.isInvalid()) {
+			if (feature.isInvalid()) {
 				CAWConstants.debugLog("Claim {} invalidated by feature {}", claimUUID, feature.toString());
 			}
 			return feature.isInvalid();
@@ -110,17 +109,17 @@ public class ClaimData implements ISerializableNBTData<ClaimData, CompoundTag> {
 	////////
 	
 	public int getClaimColor() {
-		if(this.getFeature(ColoredClaimFeature.class).isPresent()){
-			return ((ColoredClaimFeature)this.getFeature(ColoredClaimFeature.class).get()).getColor();
+		if (this.getFeature(ColoredClaimFeature.class).isPresent()) {
+			return ((ColoredClaimFeature) this.getFeature(ColoredClaimFeature.class).get()).getColor();
 		}
-		if(this.getFeature(FactionOwnedClaimFeature.class).isPresent()){
-			UUID factionUUID = ((FactionOwnedClaimFeature)this.getFeature(FactionOwnedClaimFeature.class).get()).getFactionUUID();
+		if (this.getFeature(FactionOwnedClaimFeature.class).isPresent()) {
+			UUID factionUUID = ((FactionOwnedClaimFeature) this.getFeature(FactionOwnedClaimFeature.class).get()).getFactionUUID();
 			return FactionDataManager.get().getFaction(factionUUID).map(FactionData::getFactionColor).orElse(ColorUtil.combine(255, 127, 0, 0));
 		}
 		return ColorUtil.combine(255, 127, 0, 0);
 	}
 	
-	public String getDimensionID(){
+	public String getDimensionID() {
 		return this.dimension;
 	}
 	
@@ -176,7 +175,7 @@ public class ClaimData implements ISerializableNBTData<ClaimData, CompoundTag> {
 		
 		ListTag claimFeaturesTag = new ListTag();
 		for (AbstractClaimFeature feature : this.claimFeatures) {
-			if(feature == null) continue;
+			if (feature == null) continue;
 			claimFeaturesTag.add(ClaimFeatureLoader.write(feature, new CompoundTag()));
 		}
 		nbt.put(NBT_CLAIM_FEATURES, claimFeaturesTag);

@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
@@ -17,7 +16,6 @@ import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.AbstractClaimFeature;
-import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionClaimDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.ClaimBeaconBlockEntity;
 
@@ -25,6 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
+	
 	BlockPos beaconPos;
 	UUID claimUUID;
 	UUID linkedFactionClaimFeatureUUID;
@@ -42,20 +41,20 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		this.size = size;
 	}
 	
-	public Optional<ClaimBeaconBlockEntity> getBeacon(){
+	public Optional<ClaimBeaconBlockEntity> getBeacon() {
 		Optional<ClaimData> data = ClaimDataManager.get().getClaim(this.claimUUID);
-		if(data.isEmpty()) return Optional.empty();
+		if (data.isEmpty()) return Optional.empty();
 		String dimension = data.get().getDimensionID();
 		return ClaimDataManager.getLevelById(dimension)
-		.map(lvl -> lvl.getBlockEntity(this.beaconPos))
-		.map(be -> be instanceof ClaimBeaconBlockEntity ? (ClaimBeaconBlockEntity) be : null);
+		       .map(lvl -> lvl.getBlockEntity(this.beaconPos))
+		       .map(be -> be instanceof ClaimBeaconBlockEntity ? (ClaimBeaconBlockEntity) be : null);
 	}
 	
 	@Override
 	public boolean isInvalid() {
-		if(this.getBeacon().isEmpty()) return true;
+		if (this.getBeacon().isEmpty()) return true;
 		ClaimBeaconBlockEntity beacon = this.getBeacon().get();
-		if(!beacon.shouldMaintainClaim()) return true;
+		if (!beacon.shouldMaintainClaim()) return true;
 		return super.isInvalid();
 	}
 	
@@ -114,40 +113,40 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		return "BeaconLinkedClaimFeature{" +
 		       "beaconPos=" + beaconPos +
 		       ", claimUUID=" + claimUUID +
-			   ", size=" + size +
+		       ", size=" + size +
 		       '}';
 	}
 	
-	private Optional<FactionOwnedClaimFeature> getLinkedClaimFeature(){
+	private Optional<FactionOwnedClaimFeature> getLinkedClaimFeature() {
 		Optional<ClaimData> linkedClaimData = ClaimDataManager.get().getClaim(this.claimUUID);
-		if(linkedClaimData.isEmpty()) return Optional.empty();
+		if (linkedClaimData.isEmpty()) return Optional.empty();
 		return linkedClaimData.map(data -> {
 			AbstractClaimFeature feature = data.getFeature(FactionOwnedClaimFeature.class).orElse(null);
-			if(feature instanceof FactionOwnedClaimFeature factionOwnedClaimFeature){
+			if (feature instanceof FactionOwnedClaimFeature factionOwnedClaimFeature) {
 				return factionOwnedClaimFeature;
 			}
 			return null;
 		});
 	}
 	
-	private String getLinkedFactionName(){
+	private String getLinkedFactionName() {
 		return this.getLinkedClaimFeature().map(factionOwnedClaimFeature -> {
 			return FactionDataManager.get().getFactionName(factionOwnedClaimFeature.getFactionUUID());
 		}).orElse("Unknown");
 	}
 	
-	private boolean checkAllowed(Entity entity){
+	private boolean checkAllowed(Entity entity) {
 		//only protect against players
-		if(entity == null) return true;
-		if(!enabled) return true;
-		if(!(entity instanceof ServerPlayer player)) return (!this.protectMobGriefing);
-		return(this.getLinkedClaimFeature().map(factionOwnedClaimFeature -> factionOwnedClaimFeature.checkAllowed(player)).orElse(true));
+		if (entity == null) return true;
+		if (!enabled) return true;
+		if (!(entity instanceof ServerPlayer player)) return (!this.protectMobGriefing);
+		return (this.getLinkedClaimFeature().map(factionOwnedClaimFeature -> factionOwnedClaimFeature.checkAllowed(player)).orElse(true));
 	}
 	
 	
 	@Override
 	public boolean onPlaceBlock(EntityPlaceEvent event) {
-		if(checkAllowed(event.getEntity())) return super.onPlaceBlock(event);
+		if (checkAllowed(event.getEntity())) return super.onPlaceBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.place", factionName, event.getPlacedBlock().getBlock().getName()));
@@ -156,7 +155,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onBreakBlock(BreakEvent event) {
-		if(checkAllowed(event.getPlayer())) return super.onBreakBlock(event);
+		if (checkAllowed(event.getPlayer())) return super.onBreakBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getPlayer().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.break",
@@ -166,7 +165,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onInteractBlock(RightClickBlock event) {
-		if(checkAllowed(event.getEntity())) return super.onInteractBlock(event);
+		if (checkAllowed(event.getEntity())) return super.onInteractBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.interact",
@@ -176,7 +175,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onFarmlandTrample(FarmlandTrampleEvent event) {
-		if(checkAllowed(event.getEntity())) return super.onFarmlandTrample(event);
+		if (checkAllowed(event.getEntity())) return super.onFarmlandTrample(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.trample",
@@ -215,8 +214,8 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public void onExplosion(Detonate event) {
-		if(!protectExplosions) return;
-		if(event.getExplosion().getIndirectSourceEntity() instanceof ServerPlayer player){
+		if (!protectExplosions) return;
+		if (event.getExplosion().getIndirectSourceEntity() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.faction.explosion", getLinkedFactionName()));
 		}
 		ClaimData claimData = ClaimDataManager.get().getClaim(claimUUID).orElseThrow(() -> new IllegalStateException("Claim not found"));

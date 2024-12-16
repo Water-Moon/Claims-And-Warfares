@@ -8,10 +8,8 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.client.CAWClientDataManager;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
-import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionData;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSRenamePacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSSetColorPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSSetFakePlayerPolicyPacket;
@@ -114,22 +112,22 @@ public class FactionSettingsScreen extends Screen {
 		super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 	}
 	
-	private void refreshFactionName(){
+	private void refreshFactionName() {
 		String factionName = CAWClientDataManager.getCurrentSelectedFactionName().getString();
-		if(this.currentFactionName.equals(factionName)) return;
+		if (this.currentFactionName.equals(factionName)) return;
 		this.factionNameInput.setValue(factionName);
 		this.currentFactionName = factionName;
 	}
 	
-	private void refreshCurrentFactionColor(){
+	private void refreshCurrentFactionColor() {
 		int color = CAWClientDataManager.getCurrentSelectedFactionColor();
 		this.colorPreview.setMessage(Component.translatable("caw.gui.common.current")
 		                             .withStyle(
-									    Style.EMPTY.withColor(color)
+		                             Style.EMPTY.withColor(color)
 		                             ));
 	}
 	
-	private void refreshFakePlayerPolicy(){
+	private void refreshFakePlayerPolicy() {
 		int policy = CAWClientDataManager.getCurrentSelectedFactionFakePlayerPolicy();
 		Component policyName = switch (policy) {
 			case FAKE_PLAYER_POLICY_CHECK_UUID -> Component.translatable("caw.string.faction.fake_player.uuid");
@@ -138,11 +136,11 @@ public class FactionSettingsScreen extends Screen {
 			default -> Component.translatable("caw.gui.common.unknown");
 		};
 		this.FakePlayerPolicyButton.setMessage(
-			Component.translatable("caw.string.faction.fake_player_policy", policyName)
+		Component.translatable("caw.string.faction.fake_player_policy", policyName)
 		);
 	}
 	
-	private void refreshMessage(){
+	private void refreshMessage() {
 		CAWClientGUIManager.getLastMessage().ifPresentOrElse(
 		msg -> this.message.setMessage(msg),
 		() -> this.message.setMessage(Component.empty())

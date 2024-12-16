@@ -24,6 +24,7 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	}
 	
 	public abstract String getName();
+	
 	public abstract ResourceLocation getRegistryName();
 	
 	@Override
@@ -56,6 +57,7 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	/**
 	 * Called when a player tries to interact using an item in a claimed chunk
 	 * (Specifically, right-click)
+	 *
 	 * @param event The event
 	 * @return False if the player should not be able to interact with the block
 	 */
@@ -75,6 +77,7 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	
 	/**
 	 * Called when an entity is attacked in a claimed chunk
+	 *
 	 * @param event The event
 	 * @return False if the source entity should not be able to attack the target entity
 	 */
@@ -106,9 +109,10 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	 * Called once when a player enters (or teleports into/log in at/respawns in) a claim<br>
 	 * i.e. all cases where the player was not in the claim before <br>
 	 * Only for players due to costly operations
+	 *
 	 * @param player The player
 	 */
-	public void onPlayerEnterClaim(ServerPlayer player){
+	public void onPlayerEnterClaim(ServerPlayer player) {
 	
 	}
 	
@@ -116,9 +120,10 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	 * Called once when a player leaves (or teleports out of/died in) a claim<br>
 	 * i.e. all cases where the player was in the claim before <br>
 	 * Only for players due to costly operations
+	 *
 	 * @param player The player
 	 */
-	public void onPlayerLeaveClaim(ServerPlayer player){
+	public void onPlayerLeaveClaim(ServerPlayer player) {
 	
 	}
 	
@@ -133,6 +138,7 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	}
 	
 	protected abstract AbstractClaimFeature readNBT(CompoundTag nbt);
+	
 	protected abstract CompoundTag writeNBT(CompoundTag nbt);
 	
 	
@@ -151,7 +157,5 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 		nbt.put("data", innerTag);
 		return nbt;
 	}
-	
-	//TODO add more?
 	
 }

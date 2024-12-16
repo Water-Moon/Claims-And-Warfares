@@ -96,6 +96,7 @@
   "caw.errors.faction.name_same": "The name you entered is the same as before",
   "caw.errors.faction.not_found": "Faction not found",
   "caw.errors.faction.not_in_faction": "You are not in that faction",
+  "caw.errors.faction.no_primary_faction": "You must be in a faction to do so",
   "caw.errors.faction.not_in_faction.other": "That player is not in that faction",
   "caw.errors.faction.already_in_faction.other": "This player is already in that faction",
   "caw.errors.faction.already_primary": "That is already your primary faction",

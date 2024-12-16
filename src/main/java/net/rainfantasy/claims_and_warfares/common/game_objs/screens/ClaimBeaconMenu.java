@@ -5,7 +5,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
@@ -32,7 +32,7 @@ public class ClaimBeaconMenu extends AbstractMachineMenu<ClaimBeaconBlockEntity>
 		ClientLevel l = Minecraft.getInstance().level;
 		assert l != null;
 		BlockEntity be = l.getBlockEntity(extraData.readBlockPos());
-		if (be instanceof ClaimBeaconBlockEntity b){
+		if (be instanceof ClaimBeaconBlockEntity b) {
 			b.load(Objects.requireNonNull(extraData.readNbt()));
 			return b;
 		}
@@ -74,15 +74,15 @@ public class ClaimBeaconMenu extends AbstractMachineMenu<ClaimBeaconBlockEntity>
 		return stillValid(ContainerLevelAccess.create(level, block.getBlockPos()), player, BlockRegistry.CLAIM_BEACON.get());
 	}
 	
-	public String getOwnerName(){
+	public String getOwnerName() {
 		return block.getOwnerName();
 	}
 	
-	public String getFactionName(){
+	public String getFactionName() {
 		return block.getOwningFactionName();
 	}
 	
-	public int getClaimSize(){
+	public int getClaimSize() {
 		return block.getClaimSize();
 	}
 }

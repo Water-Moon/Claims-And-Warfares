@@ -13,7 +13,6 @@ import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegis
 import net.rainfantasy.claims_and_warfares.common.utils.ColorUtil;
 import org.joml.Vector2i;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,18 +45,18 @@ public class CAWClientGUIManager {
 		});
 	}
 	
-	public static void setClaimInfoSize(int radiusX, int radiusZ){
+	public static void setClaimInfoSize(int radiusX, int radiusZ) {
 		int sizeX = 16 * (radiusX * 2 + 1);
 		int sizeZ = 16 * (radiusZ * 2 + 1);
 		mapInfo = new int[sizeX][sizeZ];
 		claimedChunkInfo = new ClaimedChunkInfo[sizeX >> 4][sizeZ >> 4];
-		for(int i = 0; i < mapInfo.length; i++){
-			for(int j = 0; j < mapInfo[i].length; j++){
+		for (int i = 0; i < mapInfo.length; i++) {
+			for (int j = 0; j < mapInfo[i].length; j++) {
 				boolean flag = (i / 16) % 2 == 0;
 				boolean flag1 = (j / 16) % 2 == 0;
-				if(flag == flag1){
+				if (flag == flag1) {
 					mapInfo[i][j] = ColorUtil.combine(255, 0, 0, 0);
-				}else{
+				} else {
 					mapInfo[i][j] = ColorUtil.combine(255, 255, 0, 255);
 				}
 			}
@@ -82,7 +81,7 @@ public class CAWClientGUIManager {
 		});
 	}
 	
-	public static void openFactionInvitePage(){
+	public static void openFactionInvitePage() {
 		Minecraft.getInstance().execute(() -> {
 			clearLastMessage();
 			if (Minecraft.getInstance().level != null) {
@@ -91,7 +90,7 @@ public class CAWClientGUIManager {
 		});
 	}
 	
-	public static void openFactionSelectPage(){
+	public static void openFactionSelectPage() {
 		Minecraft.getInstance().execute(() -> {
 			clearLastMessage();
 			if (Minecraft.getInstance().level != null) {
@@ -100,7 +99,7 @@ public class CAWClientGUIManager {
 		});
 	}
 	
-	public static void openViewInvitationPage(){
+	public static void openViewInvitationPage() {
 		Minecraft.getInstance().execute(() -> {
 			clearLastMessage();
 			if (Minecraft.getInstance().level != null) {

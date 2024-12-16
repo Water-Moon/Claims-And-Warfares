@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BeaconFuelJEICategory implements IRecipeCategory<BeaconFuelRecipe> {
+	
 	public static final ResourceLocation UID = CAWConstants.rl("beacon_fuel");
 	public static final ResourceLocation TEXTURE = CAWConstants.rl("textures/gui/beacon_jei.png");
 	

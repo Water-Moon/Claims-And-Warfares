@@ -5,13 +5,13 @@ import net.rainfantasy.claims_and_warfares.client.CAWClientDataManager;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSLeaveFactionPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegistry;
 
-public class LeaveFactionConfirmScreen extends AbstractYesNoScreen{
+public class LeaveFactionConfirmScreen extends AbstractYesNoScreen {
 	
 	
 	public LeaveFactionConfirmScreen() {
 		super(Component.translatable(
-			"caw.gui.string.question.really_leave",
-			CAWClientDataManager.getCurrentSelectedFactionName()
+		"caw.gui.string.question.really_leave",
+		CAWClientDataManager.getCurrentSelectedFactionName()
 		), true);
 	}
 	

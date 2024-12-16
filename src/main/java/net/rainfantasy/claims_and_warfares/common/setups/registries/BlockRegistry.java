@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings({"SameParameterValue", "UnusedReturnValue"})
 public class BlockRegistry {
+	
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CAWConstants.MODID);
 	
 	public static RegistryObject<Block> CLAIM_BEACON = registerBlock("claim_beacon", ClaimBeaconBlock::new);
@@ -28,13 +29,13 @@ public class BlockRegistry {
 	public static RegistryObject<Block> BEACON_UPGRADE_MOB_GRIEFING = registerBlock("beacon_upgrade_mob_grief", BeaconMobGriefingProtectionUpgrade::new);
 	public static RegistryObject<Block> BEACON_UPGRADE_EXPLOSION_PROTECTION = registerBlock("beacon_upgrade_explosion_protection", BeaconExplosionProtectionUpgrade::new);
 	
-	private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block){
+	private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
 		RegistryObject<T> result = BLOCKS.register(name, block);
 		registerBlockItem(name, result);
 		return result;
 	}
 	
-	private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block){
+	private static <T extends Block> RegistryObject<Item> registerBlockItem(String name, RegistryObject<T> block) {
 		return ItemRegistry.ITEMS.register(name, () -> new BlockItem(block.get(), new Properties()));
 	}
 	

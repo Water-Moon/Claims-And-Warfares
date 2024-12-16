@@ -28,7 +28,7 @@ public class MemberManagementScreen extends Screen {
 	private static final int NAME_WIDTH = 150;
 	private static final int BUTTON_WIDTH = 50;
 	private static final int BUTTON_GAP = 10;
-	private static final int TOTAL_WIDTH = NAME_WIDTH + BUTTON_WIDTH*3 + BUTTON_GAP*2;
+	private static final int TOTAL_WIDTH = NAME_WIDTH + BUTTON_WIDTH * 3 + BUTTON_GAP * 2;
 	
 	private static final int PAGE_BUTTON_WIDTH = 100;
 	
@@ -78,7 +78,7 @@ public class MemberManagementScreen extends Screen {
 			
 			kickButtons[i] = Button.builder(Component.translatable("caw.gui.button.kick"), btn -> {
 				onKickButtonPressed(finalI);
-			}).pos(entryLineXStart + NAME_WIDTH + BUTTON_WIDTH*2 + BUTTON_GAP*2, yStart + LINE_HEIGHT * i).size(BUTTON_WIDTH, LINE_HEIGHT).build();
+			}).pos(entryLineXStart + NAME_WIDTH + BUTTON_WIDTH * 2 + BUTTON_GAP * 2, yStart + LINE_HEIGHT * i).size(BUTTON_WIDTH, LINE_HEIGHT).build();
 			addRenderableWidget(kickButtons[i]);
 		}
 		
@@ -107,7 +107,7 @@ public class MemberManagementScreen extends Screen {
 		CAWConstants.debugLog("Promote button {} pressed", index);
 		UUID playerUUID = currentPagePlayers[index];
 		UUID currentFactionUUID = CAWClientDataManager.getCurrentSelectedFaction().map(ClientFactionData::getFactionUUID).orElse(null);
-		if(playerUUID != null && currentFactionUUID != null){
+		if (playerUUID != null && currentFactionUUID != null) {
 			ChannelRegistry.sendToServer(new PTSMakeAdminPacket(playerUUID, currentFactionUUID));
 		}
 	}
@@ -116,7 +116,7 @@ public class MemberManagementScreen extends Screen {
 		CAWConstants.debugLog("Demote button {} pressed", index);
 		UUID playerUUID = currentPagePlayers[index];
 		UUID currentFactionUUID = CAWClientDataManager.getCurrentSelectedFaction().map(ClientFactionData::getFactionUUID).orElse(null);
-		if(playerUUID != null && currentFactionUUID != null){
+		if (playerUUID != null && currentFactionUUID != null) {
 			ChannelRegistry.sendToServer(new PTSDemoteAdminPacket(playerUUID, currentFactionUUID));
 		}
 	}
@@ -125,7 +125,7 @@ public class MemberManagementScreen extends Screen {
 		CAWConstants.debugLog("Kick button {} pressed", index);
 		UUID playerUUID = currentPagePlayers[index];
 		UUID currentFactionUUID = CAWClientDataManager.getCurrentSelectedFaction().map(ClientFactionData::getFactionUUID).orElse(null);
-		if(playerUUID != null && currentFactionUUID != null){
+		if (playerUUID != null && currentFactionUUID != null) {
 			ChannelRegistry.sendToServer(new PTSKickMemberPacket(playerUUID, currentFactionUUID));
 		}
 	}
@@ -135,14 +135,14 @@ public class MemberManagementScreen extends Screen {
 		CAWClientDataManager.getPlayersInCurrentSelectedFaction().ifPresent(players::addAll);
 	}
 	
-	private void updateMessage(){
+	private void updateMessage() {
 		CAWClientGUIManager.getLastMessage().ifPresentOrElse(
 		message::setMessage,
 		() -> message.setMessage(Component.empty())
 		);
 	}
 	
-	private void setupPlayerEntry(int index, int listIndex){
+	private void setupPlayerEntry(int index, int listIndex) {
 		currentPagePlayers[index] = players.get(listIndex);
 		boolean isSelfAdmin = CAWClientDataManager.isSelfAdminInCurrentFaction();
 		boolean isSelfOwner = CAWClientDataManager.isSelfOwnerOfCurrentFaction();
@@ -151,25 +151,25 @@ public class MemberManagementScreen extends Screen {
 		boolean isThisPlayerOwner = CAWClientDataManager.isPlayerOwnerInCurrentFaction(currentPagePlayers[listIndex]);
 		
 		MutableComponent playerName = CAWClientDataManager.getPlayerNameIfKnown(currentPagePlayers[listIndex])
-		                       .map(Component::literal)
-		                       .orElse(Component.translatable("caw.gui.label.empty"));
+		                              .map(Component::literal)
+		                              .orElse(Component.translatable("caw.gui.label.empty"));
 		
-		if(isSelf){
+		if (isSelf) {
 			playerName.append(Component.translatable("caw.gui.format.bracket",
-				Component.translatable("caw.gui.common.self")));
+			Component.translatable("caw.gui.common.self")));
 		}
 		
-		if(isThisPlayerOwner){
+		if (isThisPlayerOwner) {
 			playerName.append(Component.translatable("caw.gui.format.bracket",
-				Component.translatable("caw.string.faction.owner")));
-		}else if(isThisPlayerAdmin){
+			Component.translatable("caw.string.faction.owner")));
+		} else if (isThisPlayerAdmin) {
 			playerName.append(Component.translatable("caw.gui.format.bracket",
 			Component.translatable("caw.string.faction.admin")));
 		}
 		
-		if(CAWClientDataManager.isLikelyOffline(currentPagePlayers[listIndex])){
+		if (CAWClientDataManager.isLikelyOffline(currentPagePlayers[listIndex])) {
 			playerName.append(Component.translatable("caw.gui.format.bracket",
-				Component.translatable("caw.gui.common.offline")));
+			Component.translatable("caw.gui.common.offline")));
 		}
 		
 		playerNames[index].setMessage(playerName);
@@ -179,41 +179,41 @@ public class MemberManagementScreen extends Screen {
 		kickButtons[index].active = isSelfAdmin && !isSelf && !isThisPlayerAdmin;
 	}
 	
-	private void setupEmptyEntry(int index){
+	private void setupEmptyEntry(int index) {
 		playerNames[index].setMessage(Component.translatable("caw.gui.label.empty"));
 		promoteButtons[index].active = false;
 		demoteButtons[index].active = false;
 		kickButtons[index].active = false;
 	}
 	
-	private void changePage(int delta){
+	private void changePage(int delta) {
 		currentPage += delta;
 		ensurePageNumberValid();
 		populateCurrentPage();
 	}
 	
-	private void ensurePageNumberValid(){
-		if(currentPage < 1){
+	private void ensurePageNumberValid() {
+		if (currentPage < 1) {
 			currentPage = 1;
 		}
 		int maxPage = Math.max(1, (int) Math.ceil((double) players.size() / PLAYERS_PER_PAGE));
-		if(currentPage > maxPage){
+		if (currentPage > maxPage) {
 			currentPage = maxPage;
 		}
 	}
 	
-	private void populateCurrentPage(){
-		for(int i = 0; i < PLAYERS_PER_PAGE; i++){
+	private void populateCurrentPage() {
+		for (int i = 0; i < PLAYERS_PER_PAGE; i++) {
 			int listIndex = (currentPage - 1) * PLAYERS_PER_PAGE + i;
-			if(listIndex < players.size()){
+			if (listIndex < players.size()) {
 				setupPlayerEntry(i, listIndex);
-			}else{
+			} else {
 				setupEmptyEntry(i);
 			}
 		}
 	}
 	
-	private void refresh(){
+	private void refresh() {
 		copyPlayerData();
 		ensurePageNumberValid();
 		populateCurrentPage();

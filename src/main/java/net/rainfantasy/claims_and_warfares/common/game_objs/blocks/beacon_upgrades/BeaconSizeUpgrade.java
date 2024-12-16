@@ -1,6 +1,6 @@
 package net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades;
 
-public class BeaconSizeUpgrade extends AbstractBeaconUpgradeBlock{
+public class BeaconSizeUpgrade extends AbstractBeaconUpgradeBlock {
 	
 	@Override
 	public void apply(BeaconUpgradeLoader loader) {

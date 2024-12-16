@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class SelectCurrentActiveFactionScreen extends Screen {
+	
 	private static final int BUTTONS_PER_PAGE = 5;
 	private static final int BUTTON_WIDTH = 150;
 	private static final int BUTTON_HEIGHT = 20;
@@ -70,53 +71,54 @@ public class SelectCurrentActiveFactionScreen extends Screen {
 		nextPageButton = Button.builder(Component.translatable("caw.gui.common.next_page"), btn -> {
 			CAWConstants.debugLog("Next Page pressed");
 			this.changePage(1);
-		}).pos(xCenter + 25, yStart + BUTTON_HEIGHT * (BUTTONS_PER_PAGE+1)).size(100, BUTTON_HEIGHT).build();
+		}).pos(xCenter + 25, yStart + BUTTON_HEIGHT * (BUTTONS_PER_PAGE + 1)).size(100, BUTTON_HEIGHT).build();
 		addRenderableWidget(nextPageButton);
 		
 		previousPageButton = Button.builder(Component.translatable("caw.gui.common.prev_page"), btn -> {
 			CAWConstants.debugLog("Previous Page pressed");
 			this.changePage(-1);
-		}).pos(xCenter - 125, yStart + BUTTON_HEIGHT * (BUTTONS_PER_PAGE+1)).size(100, BUTTON_HEIGHT).build();
+		}).pos(xCenter - 125, yStart + BUTTON_HEIGHT * (BUTTONS_PER_PAGE + 1)).size(100, BUTTON_HEIGHT).build();
 		addRenderableWidget(previousPageButton);
 		
 		cancelButton = Button.builder(Component.translatable("caw.gui.common.back"), btn -> {
 			FactionManagementScreen.onSubPageCancel();
-		}).pos(xCenter-50, yStart + BUTTON_HEIGHT * (BUTTONS_PER_PAGE+2)).size(100, BUTTON_HEIGHT).build();
+		}).pos(xCenter - 50, yStart + BUTTON_HEIGHT * (BUTTONS_PER_PAGE + 2)).size(100, BUTTON_HEIGHT).build();
 		addRenderableWidget(cancelButton);
 	}
 	
 	/// button handler
 	
-	private void onButtonPressed(int index){
+	private void onButtonPressed(int index) {
 		CAWConstants.debugLog("Button {} pressed", index);
-		if(index < 0 || index >= BUTTONS_PER_PAGE) return;
+		if (index < 0 || index >= BUTTONS_PER_PAGE) return;
 		UUID factionUUID = currentPageFactions[index];
-		if(factionUUID == null) return;
+		if (factionUUID == null) return;
 		ChannelRegistry.sendToServer(
-			new PTSSetPrimaryFactionPacket(factionUUID)
+		new PTSSetPrimaryFactionPacket(factionUUID)
 		);
 	}
 	
 	/// refresh
 	
 	int refreshCounter = 0;
-	private void copyFactionData(){
-		if(--refreshCounter > 0) return;
+	
+	private void copyFactionData() {
+		if (--refreshCounter > 0) return;
 		refreshCounter = 20;
 		Optional<UUID> clientPlayerUUID = CAWClientDataManager.getClientPlayerUUID();
-		if(clientPlayerUUID.isEmpty()) return;
+		if (clientPlayerUUID.isEmpty()) return;
 		allFactions.clear();
 		CAWClientDataManager.getFactionUUIDs().forEach(e -> {
 			Optional<ClientFactionData> factionData = CAWClientDataManager.getFactionData(e);
-			if(factionData.isEmpty()) return;
-			if(factionData.get().isPlayerInFaction(clientPlayerUUID.get())){
+			if (factionData.isEmpty()) return;
+			if (factionData.get().isPlayerInFaction(clientPlayerUUID.get())) {
 				allFactions.add(e);
 			}
 		});
 	}
 	
 	
-	private void setupEmptyEntry(int index){
+	private void setupEmptyEntry(int index) {
 		selectionButtons[index].active = false;
 		currentPageFactions[index] = null;
 		
@@ -124,38 +126,38 @@ public class SelectCurrentActiveFactionScreen extends Screen {
 		permissionInfo[index].setMessage(Component.empty());
 	}
 	
-	private void setupValidEntry(int index, int indexInList){
+	private void setupValidEntry(int index, int indexInList) {
 		UUID factionUUID = allFactions.get(indexInList);
 		boolean isCurrentSelected = CAWClientDataManager.getCurrentSelectedFaction().map(e -> e.getFactionUUID().equals(factionUUID)).orElse(false);
 		Optional<ClientFactionData> factionData = CAWClientDataManager.getFactionData(factionUUID);
-		if(factionData.isEmpty()) return;
+		if (factionData.isEmpty()) return;
 		
 		currentPageFactions[index] = factionUUID;
 		permissionInfo[index].setMessage(CAWClientDataManager.getClientPlayerPermissionInFaction(factionUUID));
-		if(isCurrentSelected){
+		if (isCurrentSelected) {
 			selectionButtons[index].active = false;
 			selectionButtons[index].setMessage(
-				Component.literal(factionData.get().getFactionName())
-				.append(Component.translatable("caw.gui.format.bracket",
-					Component.translatable("caw.gui.common.selected")
-				))
+			Component.literal(factionData.get().getFactionName())
+			.append(Component.translatable("caw.gui.format.bracket",
+			Component.translatable("caw.gui.common.selected")
+			))
 			);
-		}else{
+		} else {
 			selectionButtons[index].active = true;
 			selectionButtons[index].setMessage(Component.literal(factionData.get().getFactionName()));
 		}
 	}
 	
-	private void setupEntry(int index, int indexInList){
-		if(indexInList >= allFactions.size()){
+	private void setupEntry(int index, int indexInList) {
+		if (indexInList >= allFactions.size()) {
 			this.setupEmptyEntry(index);
-		}else{
+		} else {
 			this.setupValidEntry(index, indexInList);
 		}
 	}
 	
 	
-	private void populatePage(){
+	private void populatePage() {
 		int start = (currentPage - 1) * BUTTONS_PER_PAGE;
 		for (int i = 0; i < BUTTONS_PER_PAGE; i++) {
 			this.setupEntry(i, start + i);
@@ -163,23 +165,23 @@ public class SelectCurrentActiveFactionScreen extends Screen {
 	}
 	
 	
-	private void changePage(int delta){
+	private void changePage(int delta) {
 		currentPage += delta;
 		ensurePageNumberValid();
 		populatePage();
 	}
 	
-	private void ensurePageNumberValid(){
-		if(currentPage < 1){
+	private void ensurePageNumberValid() {
+		if (currentPage < 1) {
 			currentPage = 1;
 		}
 		int maxPage = Math.max(1, (int) Math.ceil((double) allFactions.size() / BUTTONS_PER_PAGE));
-		if(currentPage > maxPage){
+		if (currentPage > maxPage) {
 			currentPage = maxPage;
 		}
 	}
 	
-	private void updateMessage(){
+	private void updateMessage() {
 		CAWClientGUIManager.getLastMessage().ifPresentOrElse(message::setMessage, () -> message.setMessage(Component.empty()));
 	}
 	
@@ -189,7 +191,7 @@ public class SelectCurrentActiveFactionScreen extends Screen {
 		super.render(graphics, mouseX, mouseY, delta);
 	}
 	
-	private void refresh(){
+	private void refresh() {
 		this.copyFactionData();
 		this.ensurePageNumberValid();
 		this.populatePage();

@@ -16,9 +16,10 @@ public class PTCFactionInfoPacket {
 	public PTCFactionInfoPacket(FactionInfo factionInfo) {
 		this(factionInfo, false);
 	}
+	
 	public PTCFactionInfoPacket(FactionInfo factionInfo, boolean trimmed) {
 		this.factionInfo = factionInfo;
-		if(trimmed){
+		if (trimmed) {
 			this.factionInfo.trim();
 		}
 	}
@@ -35,7 +36,7 @@ public class PTCFactionInfoPacket {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			CAWClientDataManager.addFactionData(
-				new ClientFactionData(this.factionInfo)
+			new ClientFactionData(this.factionInfo)
 			);
 		});
 		context.setPacketHandled(true);

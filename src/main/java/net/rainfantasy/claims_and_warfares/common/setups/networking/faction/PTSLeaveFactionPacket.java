@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTSLeaveFactionPacket {
+	
 	UUID factionUUID;
 	
 	public PTSLeaveFactionPacket(UUID factionUUID) {

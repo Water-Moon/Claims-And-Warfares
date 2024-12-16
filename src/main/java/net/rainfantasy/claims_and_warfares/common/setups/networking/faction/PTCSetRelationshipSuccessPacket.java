@@ -4,7 +4,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
-import net.rainfantasy.claims_and_warfares.client.CAWClientDataManager;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 
 import java.util.function.Supplier;
@@ -30,7 +29,7 @@ public class PTCSetRelationshipSuccessPacket {
 		buf.writeVarInt(packet.newRelationship);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context ctx = supplier.get();
 		CAWConstants.execute(() -> {
 			Component relationship = Component.translatable("caw.gui.common.unknown");
@@ -46,7 +45,7 @@ public class PTCSetRelationshipSuccessPacket {
 					break;
 			}
 			CAWClientGUIManager.setLastMessage(
-				Component.translatable("caw.message.faction.relationship_set", otherFactionName, relationship)
+			Component.translatable("caw.message.faction.relationship_set", otherFactionName, relationship)
 			);
 		});
 		ctx.setPacketHandled(true);

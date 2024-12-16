@@ -22,11 +22,11 @@ public abstract class AbstractBeaconUpgradeBlock extends Block {
 		super(Properties.copy(Blocks.SMITHING_TABLE).explosionResistance(3600000.0F));
 	}
 	
-	private static Optional<ClaimBeaconBlockEntity> findBeacon(Level level, BlockPos selfPos){
-		while (level.getBlockState(selfPos).getBlock() instanceof AbstractBeaconUpgradeBlock){
+	private static Optional<ClaimBeaconBlockEntity> findBeacon(Level level, BlockPos selfPos) {
+		while (level.getBlockState(selfPos).getBlock() instanceof AbstractBeaconUpgradeBlock) {
 			selfPos = selfPos.above();
 		}
-		if(level.getBlockEntity(selfPos) instanceof ClaimBeaconBlockEntity){
+		if (level.getBlockEntity(selfPos) instanceof ClaimBeaconBlockEntity) {
 			return Optional.of((ClaimBeaconBlockEntity) level.getBlockEntity(selfPos));
 		}
 		return Optional.empty();
@@ -34,18 +34,21 @@ public abstract class AbstractBeaconUpgradeBlock extends Block {
 	
 	@Override
 	public float getDestroyProgress(@NotNull BlockState pState, @NotNull Player pPlayer, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
-		if(!(pPlayer instanceof ServerPlayer player)) return -1f;
+		if (pPlayer.level().isClientSide) return super.getDestroyProgress(pState, pPlayer, pLevel, pPos);
+		if (!(pPlayer instanceof ServerPlayer player)) return -1f;
 		Optional<ClaimBeaconBlockEntity> beacon = findBeacon((Level) pLevel, pPos);
-		return beacon.map(block -> BeaconHelper.canBreak(player, block) ? super.getDestroyProgress(pState, player, pLevel, pPos) : -1f).orElseGet(() -> super.getDestroyProgress(pState, player, pLevel, pPos));
+		return beacon.filter(block -> !BeaconHelper.canBreak(player, block)).map(block -> -1f).orElseGet(() -> super.getDestroyProgress(pState, player, pLevel, pPos));
 	}
 	
 	@Override
 	public boolean canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
-		if(!(entity instanceof ServerPlayer player)) return false;
+		if (entity.getCommandSenderWorld().isClientSide) return super.canEntityDestroy(state, level, pos, entity);
+		if (!(entity instanceof ServerPlayer player)) return false;
 		Optional<ClaimBeaconBlockEntity> beacon = findBeacon((Level) level, pos);
 		return beacon.map(block -> BeaconHelper.canBreak(player, block)).orElseGet(() -> super.canEntityDestroy(state, level, pos, entity));
 	}
 	
 	public abstract void apply(BeaconUpgradeLoader loader);
+	
 	public abstract String getId();
 }

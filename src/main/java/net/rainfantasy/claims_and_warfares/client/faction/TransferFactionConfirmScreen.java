@@ -8,7 +8,8 @@ import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegis
 
 import java.util.UUID;
 
-public class TransferFactionConfirmScreen extends AbstractYesNoScreen{
+public class TransferFactionConfirmScreen extends AbstractYesNoScreen {
+	
 	public static TransferFactionConfirmScreen MakeTransferFactionScreen(UUID factionUUID, UUID newOwnerUUID) {
 		Component factionName = CAWClientDataManager.getFactionData(factionUUID)
 		                        .map(ClientFactionData::getFactionName)

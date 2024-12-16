@@ -10,10 +10,6 @@ import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.client.CAWClientDataManager;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import net.rainfantasy.claims_and_warfares.client.data_types.ClientFactionData;
-import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSDemoteAdminPacket;
-import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSKickMemberPacket;
-import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSMakeAdminPacket;
-import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSTransferFactionPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.menu.PTSOpenTransferFactionConfirmPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +86,7 @@ public class TransferFactionScreen extends Screen {
 		addRenderableWidget(cancelButton);
 	}
 	
-	private void onTransferButtonPressed(int index){
+	private void onTransferButtonPressed(int index) {
 		CAWConstants.debugLog("Transfer button {} pressed", index);
 		UUID playerUUID = currentPagePlayers[index];
 		UUID currentFactionUUID = CAWClientDataManager.getCurrentSelectedFaction().map(ClientFactionData::getFactionUUID).orElse(null);
@@ -102,28 +98,28 @@ public class TransferFactionScreen extends Screen {
 		CAWClientDataManager.getPlayersInCurrentSelectedFaction().ifPresent(players::addAll);
 	}
 	
-	private void updateMessage(){
+	private void updateMessage() {
 		CAWClientGUIManager.getLastMessage().ifPresentOrElse(
 		message::setMessage,
 		() -> message.setMessage(Component.empty())
 		);
 	}
 	
-	private void setupPlayerEntry(int index, int listIndex){
+	private void setupPlayerEntry(int index, int listIndex) {
 		currentPagePlayers[index] = players.get(listIndex);
 		boolean isSelfOwner = CAWClientDataManager.isSelfOwnerOfCurrentFaction();
 		boolean isSelf = currentPagePlayers[index].equals(CAWClientDataManager.getClientPlayerUUID().orElse(null));
 		
 		MutableComponent playerName = CAWClientDataManager.getPlayerNameIfKnown(currentPagePlayers[listIndex])
-		                       .map(Component::literal)
-		                       .orElse(Component.translatable("caw.gui.label.empty"));
-		if(isSelf){
+		                              .map(Component::literal)
+		                              .orElse(Component.translatable("caw.gui.label.empty"));
+		if (isSelf) {
 			playerName.append(Component.translatable("caw.gui.format.bracket",
-				Component.translatable("caw.gui.common.self")));
+			Component.translatable("caw.gui.common.self")));
 		}
-		if(CAWClientDataManager.isLikelyOffline(currentPagePlayers[listIndex])){
+		if (CAWClientDataManager.isLikelyOffline(currentPagePlayers[listIndex])) {
 			playerName.append(Component.translatable("caw.gui.format.bracket",
-				Component.translatable("caw.gui.common.offline")));
+			Component.translatable("caw.gui.common.offline")));
 		}
 		
 		playerNames[index].setMessage(playerName);
@@ -131,39 +127,39 @@ public class TransferFactionScreen extends Screen {
 		transferButtons[index].active = isSelfOwner && !isSelf;
 	}
 	
-	private void setupEmptyEntry(int index){
+	private void setupEmptyEntry(int index) {
 		playerNames[index].setMessage(Component.translatable("caw.gui.label.empty"));
 		transferButtons[index].active = false;
 	}
 	
-	private void changePage(int delta){
+	private void changePage(int delta) {
 		currentPage += delta;
 		ensurePageNumberValid();
 		populateCurrentPage();
 	}
 	
-	private void ensurePageNumberValid(){
-		if(currentPage < 1){
+	private void ensurePageNumberValid() {
+		if (currentPage < 1) {
 			currentPage = 1;
 		}
 		int maxPage = Math.max(1, (int) Math.ceil((double) players.size() / PLAYERS_PER_PAGE));
-		if(currentPage > maxPage){
+		if (currentPage > maxPage) {
 			currentPage = maxPage;
 		}
 	}
 	
-	private void populateCurrentPage(){
-		for(int i = 0; i < PLAYERS_PER_PAGE; i++){
+	private void populateCurrentPage() {
+		for (int i = 0; i < PLAYERS_PER_PAGE; i++) {
 			int listIndex = (currentPage - 1) * PLAYERS_PER_PAGE + i;
-			if(listIndex < players.size()){
+			if (listIndex < players.size()) {
 				setupPlayerEntry(i, listIndex);
-			}else{
+			} else {
 				setupEmptyEntry(i);
 			}
 		}
 	}
 	
-	private void refresh(){
+	private void refresh() {
 		copyPlayerData();
 		ensurePageNumberValid();
 		populateCurrentPage();

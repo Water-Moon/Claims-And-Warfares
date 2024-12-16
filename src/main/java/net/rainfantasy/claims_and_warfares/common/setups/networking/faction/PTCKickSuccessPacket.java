@@ -9,6 +9,7 @@ import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import java.util.function.Supplier;
 
 public class PTCKickSuccessPacket {
+	
 	String playerName;
 	
 	public PTCKickSuccessPacket(String playerName) {

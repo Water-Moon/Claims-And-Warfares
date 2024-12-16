@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionData;
-import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionPacketHandler;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.networking.FactionPacketGenerator;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.PTCGenericErrorPacket;

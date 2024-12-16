@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class PTCInvitationInfoPacket {
+	
 	private final InvitationInfo info;
 	
 	public PTCInvitationInfoPacket(InvitationInfo info) {
@@ -36,8 +37,5 @@ public class PTCInvitationInfoPacket {
 		});
 		context.setPacketHandled(true);
 	}
-	
-	
-	
 	
 }

@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @SuppressWarnings("DuplicatedCode")
 public class FactionPacketHandler {
+	
 	private static final int PLAYER_MAX_OWNED_FACTIONS = 3;
 	private static final int FACTION_NAME_MIN_LENGTH = 2;
 	private static final int FACTION_NAME_MAX_LENGTH = 16;
@@ -33,7 +34,7 @@ public class FactionPacketHandler {
 	 * @return An error message if something went wrong, empty otherwise.
 	 */
 	private static Optional<Component> checkFactionCreationError(UUID playerUUID, String factionName) {
-		if(PlayerThrottleUtil.throttlePlayerOperation(playerUUID)) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(playerUUID)) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		//check for empty name
@@ -46,24 +47,24 @@ public class FactionPacketHandler {
 			return Optional.of(Component.translatable("caw.errors.faction.name_conflict"));
 		}
 		
-		if(factionName.length() < FACTION_NAME_MIN_LENGTH || factionName.length() > FACTION_NAME_MAX_LENGTH){
+		if (factionName.length() < FACTION_NAME_MIN_LENGTH || factionName.length() > FACTION_NAME_MAX_LENGTH) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_length", FACTION_NAME_MIN_LENGTH, FACTION_NAME_MAX_LENGTH));
 		}
 		
-		if(factionName.chars().anyMatch(c -> {
-			for(char disallowed : FACTION_NAME_DISALLOWED_CHARS){
-				if(c == disallowed){
+		if (factionName.chars().anyMatch(c -> {
+			for (char disallowed : FACTION_NAME_DISALLOWED_CHARS) {
+				if (c == disallowed) {
 					return true;
 				}
 			}
 			return false;
-		})){
+		})) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_disallowed_chars"));
 		}
 		
 		char firstChar = factionName.charAt(0);
 		int charType = Character.getType(firstChar);
-		if(charType == Character.DASH_PUNCTUATION || charType == Character.START_PUNCTUATION || charType == Character.END_PUNCTUATION || charType == Character.CONNECTOR_PUNCTUATION || charType == Character.OTHER_PUNCTUATION){
+		if (charType == Character.DASH_PUNCTUATION || charType == Character.START_PUNCTUATION || charType == Character.END_PUNCTUATION || charType == Character.CONNECTOR_PUNCTUATION || charType == Character.OTHER_PUNCTUATION) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_must_start_with_alphanumeric"));
 		}
 		
@@ -95,49 +96,49 @@ public class FactionPacketHandler {
 		return Either.left(faction);
 	}
 	
-	public static Optional<Component> checkFactionRenameError(ServerPlayer player, UUID factionUUID, String factionName){
-		if(PlayerThrottleUtil.throttlePlayerOperation(factionUUID)) {
+	public static Optional<Component> checkFactionRenameError(ServerPlayer player, UUID factionUUID, String factionName) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(factionUUID)) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
-		if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
-		if(!FactionDataManager.get().isPlayerAdminOrOwnerOfFaction(player.getUUID(), factionUUID)){
+		if (!FactionDataManager.get().isPlayerAdminOrOwnerOfFaction(player.getUUID(), factionUUID)) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_admin"));
 		}
-		if(factionName.isEmpty()){
+		if (factionName.isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_empty"));
 		}
-		if(factionName.equals(FactionDataManager.get().factions.get(factionUUID).factionName)){
+		if (factionName.equals(FactionDataManager.get().factions.get(factionUUID).factionName)) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_same"));
 		}
-		if(FactionDataManager.get().factions.values().stream().anyMatch(f -> f.factionName.equals(factionName))){
+		if (FactionDataManager.get().factions.values().stream().anyMatch(f -> f.factionName.equals(factionName))) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_conflict"));
 		}
-		if(factionName.length() < FACTION_NAME_MIN_LENGTH || factionName.length() > FACTION_NAME_MAX_LENGTH){
+		if (factionName.length() < FACTION_NAME_MIN_LENGTH || factionName.length() > FACTION_NAME_MAX_LENGTH) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_length", FACTION_NAME_MIN_LENGTH, FACTION_NAME_MAX_LENGTH));
 		}
-		if(factionName.chars().anyMatch(c -> {
-			for(char disallowed : FACTION_NAME_DISALLOWED_CHARS){
-				if(c == disallowed){
+		if (factionName.chars().anyMatch(c -> {
+			for (char disallowed : FACTION_NAME_DISALLOWED_CHARS) {
+				if (c == disallowed) {
 					return true;
 				}
 			}
 			return false;
-		})){
+		})) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_disallowed_chars"));
 		}
 		char firstChar = factionName.charAt(0);
 		int charType = Character.getType(firstChar);
-		if(charType == Character.DASH_PUNCTUATION || charType == Character.START_PUNCTUATION || charType == Character.END_PUNCTUATION || charType == Character.CONNECTOR_PUNCTUATION || charType == Character.OTHER_PUNCTUATION){
+		if (charType == Character.DASH_PUNCTUATION || charType == Character.START_PUNCTUATION || charType == Character.END_PUNCTUATION || charType == Character.CONNECTOR_PUNCTUATION || charType == Character.OTHER_PUNCTUATION) {
 			return Optional.of(Component.translatable("caw.errors.faction.name_must_start_with_alphanumeric"));
 		}
 		return Optional.empty();
 	}
 	
-	public static Either<Pair<String, String>, Component> renameFaction(ServerPlayer player, UUID factionUUID, String factionName){
+	public static Either<Pair<String, String>, Component> renameFaction(ServerPlayer player, UUID factionUUID, String factionName) {
 		Optional<Component> error = checkFactionRenameError(player, factionUUID, factionName);
-		if(error.isPresent()){
+		if (error.isPresent()) {
 			return Either.right(error.get());
 		}
 		String oldName = FactionDataManager.get().factions.get(factionUUID).factionName;
@@ -145,26 +146,26 @@ public class FactionPacketHandler {
 		FactionDataManager.get().refresh();
 		sendUpdateToOnlineMembers(factionUUID);
 		FactionDataManager.get().sendMessageToAllPlayersOnlineInFaction(factionUUID,
-			Component.translatable("caw.message.faction.faction_renamed", oldName, factionName));
+		Component.translatable("caw.message.faction.faction_renamed", oldName, factionName));
 		return Either.left(Pair.of(oldName, factionName));
 	}
 	
-	public static Optional<Component> checkSetColorError(ServerPlayer player, UUID factionUUID, int color){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> checkSetColorError(ServerPlayer player, UUID factionUUID, int color) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
-		if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
-		if(!FactionDataManager.get().isPlayerAdminOrOwnerOfFaction(player.getUUID(), factionUUID)){
+		if (!FactionDataManager.get().isPlayerAdminOrOwnerOfFaction(player.getUUID(), factionUUID)) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_admin"));
 		}
 		return Optional.empty();
 	}
 	
-	public static Either<Integer, Component> setColor(ServerPlayer player, UUID factionUUID, int color){
+	public static Either<Integer, Component> setColor(ServerPlayer player, UUID factionUUID, int color) {
 		Optional<Component> error = checkSetColorError(player, factionUUID, color);
-		if(error.isPresent()){
+		if (error.isPresent()) {
 			return Either.right(error.get());
 		}
 		FactionDataManager.get().factions.get(factionUUID).setFactionColor(color);
@@ -174,16 +175,16 @@ public class FactionPacketHandler {
 	}
 	
 	public static Optional<Component> checkSetPrimaryFactionError(ServerPlayer player, UUID factionUUID) {
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
-		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
 		if (!FactionDataManager.get().isPlayerInFaction(player.getUUID(), factionUUID)) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_in_faction"));
 		}
-		if(FactionDataManager.get().getPrimaryFaction(player.getUUID()).map(f -> f.getFactionUUID().equals(factionUUID)).orElse(false)){
+		if (FactionDataManager.get().getPrimaryFaction(player.getUUID()).map(f -> f.getFactionUUID().equals(factionUUID)).orElse(false)) {
 			return Optional.of(Component.translatable("caw.errors.faction.already_primary"));
 		}
 		return Optional.empty();
@@ -191,7 +192,8 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Sets the primary faction of the player to the given faction.
-	 * @param player The player to set the primary faction for.
+	 *
+	 * @param player      The player to set the primary faction for.
 	 * @param factionUUID The UUID of the faction to set as primary.
 	 * @return The faction data of the new primary faction or an error message if something went wrong.
 	 */
@@ -205,7 +207,7 @@ public class FactionPacketHandler {
 	}
 	
 	public static Optional<Component> checkCanInvite(ServerPlayer from, UUID to, UUID toFaction) {
-		if(PlayerThrottleUtil.throttlePlayerOperation(from.getUUID())) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(from.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		//faction must exist
@@ -238,8 +240,9 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Invites a player to a faction.
-	 * @param from The player sending the invitation.
-	 * @param to The player to invite.
+	 *
+	 * @param from      The player sending the invitation.
+	 * @param to        The player to invite.
 	 * @param toFaction The faction to invite the player to.
 	 * @return The invitation data or an error message if something went wrong.
 	 */
@@ -248,7 +251,7 @@ public class FactionPacketHandler {
 		if (error.isPresent()) {
 			return Either.right(error.get());
 		}
-		if(from.getServer() == null){
+		if (from.getServer() == null) {
 			CAWConstants.LOGGER.error("Server is null for player {} (probably Minecraft bug)", from.getUUID());
 			CAWConstants.LOGGER.error("Stacktrace:", new NullPointerException());
 			return Either.right(Component.translatable("caw.errors.generic.not_your_fault"));
@@ -258,9 +261,9 @@ public class FactionPacketHandler {
 		
 		String toPlayerName;
 		Optional<ServerPlayer> player = getPlayerIfOnline(to);
-		if(player.isEmpty()) {
+		if (player.isEmpty()) {
 			toPlayerName = "Unknown[" + to.toString().substring(0, 8) + "]";
-		}else{
+		} else {
 			toPlayerName = player.get().getGameProfile().getName();
 		}
 		
@@ -268,7 +271,7 @@ public class FactionPacketHandler {
 		
 		FactionInviteData data = new FactionInviteData(fromPlayerUUID, fromPlayerName, to, toPlayerName, toFaction, sentTime);
 		FactionDataManager.get().addInvitation(
-			data
+		data
 		);
 		sendUpdateIfOnline(to);
 		player.ifPresent(p -> {
@@ -279,7 +282,7 @@ public class FactionPacketHandler {
 	}
 	
 	public static Optional<Component> checkWithdrawInvite(ServerPlayer from, UUID to, UUID toFaction) {
-		if(PlayerThrottleUtil.throttlePlayerOperation(from.getUUID())) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(from.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		//faction must exist
@@ -299,8 +302,9 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Withdraws an invitation to a player.
-	 * @param from The player withdrawing the invitation.
-	 * @param to The player to withdraw the invitation to.
+	 *
+	 * @param from      The player withdrawing the invitation.
+	 * @param to        The player to withdraw the invitation to.
 	 * @param toFaction The faction the invitation was for.
 	 * @return The invitation data or an error message if something went wrong.
 	 */
@@ -311,17 +315,17 @@ public class FactionPacketHandler {
 		}
 		AtomicReference<FactionInviteData> dataRef = new AtomicReference<>();
 		FactionDataManager.get().getInvitationsFromPlayerToPlayerForFaction(from.getUUID(), to, toFaction)
-			.stream()
-			.findFirst()
-			.ifPresent(data -> {
-				dataRef.set(data);
-				FactionDataManager.get().removeInvitation(data);
-				sendUpdateIfOnline(to);
-				getPlayerIfOnline(to).ifPresent(p -> {
-					p.sendSystemMessage(Component.translatable("caw.message.faction.invite_withdrawn", from.getGameProfile().getName(), FactionDataManager.get().factions.get(toFaction).factionName));
-				});
+		.stream()
+		.findFirst()
+		.ifPresent(data -> {
+			dataRef.set(data);
+			FactionDataManager.get().removeInvitation(data);
+			sendUpdateIfOnline(to);
+			getPlayerIfOnline(to).ifPresent(p -> {
+				p.sendSystemMessage(Component.translatable("caw.message.faction.invite_withdrawn", from.getGameProfile().getName(), FactionDataManager.get().factions.get(toFaction).factionName));
 			});
-		if(dataRef.get() == null){
+		});
+		if (dataRef.get() == null) {
 			CAWConstants.LOGGER.error("Failed to find and remove invitation for player {} to {} in faction {} (probably Minecraft bug)", from.getUUID(), to, toFaction);
 			CAWConstants.LOGGER.error("Stacktrace:", new NullPointerException());
 			return Either.right(Component.translatable("caw.errors.generic.not_your_fault"));
@@ -330,7 +334,7 @@ public class FactionPacketHandler {
 	}
 	
 	public static Optional<Component> checkAcceptInvite(ServerPlayer player, UUID invitationUUID) {
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the invitation must still exist
@@ -341,7 +345,7 @@ public class FactionPacketHandler {
 	}
 	
 	public static Optional<Component> checkDeclineInvite(ServerPlayer player, UUID invitationUUID) {
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the invitation must still exist
@@ -353,7 +357,8 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Accepts an invitation to a faction.
-	 * @param player The player accepting the invitation.
+	 *
+	 * @param player         The player accepting the invitation.
 	 * @param invitationUUID The UUID of the invitation to accept.
 	 * @return The faction info of the faction the player joined or an error message if something went wrong.
 	 */
@@ -367,17 +372,17 @@ public class FactionPacketHandler {
 		FactionDataManager.get().addPlayerToFaction(player, data.factionUUID);
 		getPlayerIfOnline(data.fromPlayerUUID).ifPresent(p -> {
 			p.sendSystemMessage(Component.translatable("caw.message.faction.invite_accepted",
-				player.getGameProfile().getName(),
-				FactionDataManager.get().factions.get(data.factionUUID).getFactionName()
+			player.getGameProfile().getName(),
+			FactionDataManager.get().factions.get(data.factionUUID).getFactionName()
 			));
 		});
 		FactionDataManager.get().sendMessageToAllPlayersOnlineInFaction(
-			data.factionUUID,
-			Component.translatable("caw.message.faction.player_joined.from_invite",
-				player.getGameProfile().getName(),
-				data.fromPlayerName,
-				FactionDataManager.get().factions.get(data.factionUUID).getFactionName()
-			)
+		data.factionUUID,
+		Component.translatable("caw.message.faction.player_joined.from_invite",
+		player.getGameProfile().getName(),
+		data.fromPlayerName,
+		FactionDataManager.get().factions.get(data.factionUUID).getFactionName()
+		)
 		);
 		sendUpdateToOnlineMembers(data.factionUUID);
 		return Either.left(new FactionInfo(FactionDataManager.get().factions.get(data.factionUUID)));
@@ -385,7 +390,8 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Declines an invitation to a faction.
-	 * @param player The player declining the invitation.
+	 *
+	 * @param player         The player declining the invitation.
 	 * @param invitationUUID The UUID of the invitation to decline.
 	 * @return The invitation info of the declined invitation or an error message if something went wrong.
 	 */
@@ -399,15 +405,15 @@ public class FactionPacketHandler {
 		sendUpdateIfOnline(data.fromPlayerUUID);
 		getPlayerIfOnline(data.fromPlayerUUID).ifPresent(p -> {
 			p.sendSystemMessage(Component.translatable("caw.message.faction.invite_declined",
-				player.getGameProfile().getName(),
-				FactionDataManager.get().factions.get(data.factionUUID).getFactionName()
+			player.getGameProfile().getName(),
+			FactionDataManager.get().factions.get(data.factionUUID).getFactionName()
 			));
 		});
 		return Either.left(new InvitationInfo(data));
 	}
 	
 	public static Optional<Component> checkLeaveFaction(ServerPlayer player, UUID factionUUID) {
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the faction must exist
@@ -427,7 +433,8 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Makes a player leave a faction.
-	 * @param player The player to make leave the faction.
+	 *
+	 * @param player      The player to make leave the faction.
 	 * @param factionUUID The UUID of the faction to leave.
 	 * @return The faction info of the faction the player left or an error message if something went wrong.
 	 */
@@ -439,22 +446,22 @@ public class FactionPacketHandler {
 		//forced because one should be able to leave no matter what (unless owner)
 		FactionDataManager.get().removePlayerFromFaction(player.getUUID(), factionUUID, false, true);
 		FactionDataManager.get().sendMessageToAllPlayersOnlineInFaction(
-			factionUUID,
-			Component.translatable("caw.message.faction.player_left",
-				player.getGameProfile().getName(),
-				FactionDataManager.get().factions.get(factionUUID).getFactionName()
-			)
+		factionUUID,
+		Component.translatable("caw.message.faction.player_left",
+		player.getGameProfile().getName(),
+		FactionDataManager.get().factions.get(factionUUID).getFactionName()
+		)
 		);
 		sendUpdateToOnlineMembers(factionUUID);
 		return Either.left(new FactionInfo(FactionDataManager.get().factions.get(factionUUID)));
 	}
 	
-	public static Optional<Component> tryMakeAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> tryMakeAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the function must exist
-		if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
 		// must be in the faction
@@ -478,12 +485,13 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Makes a player an admin of a faction.
-	 * @param player The player making the other player an admin.
-	 * @param factionUUID The UUID of the faction to make the player an admin of.
+	 *
+	 * @param player           The player making the other player an admin.
+	 * @param factionUUID      The UUID of the faction to make the player an admin of.
 	 * @param targetPlayerUUID The UUID of the player to make an admin.
 	 * @return The faction member data of the player that was made an admin or an error message if something went wrong.
 	 */
-	public static Either<FactionMemberData, Component> makeAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
+	public static Either<FactionMemberData, Component> makeAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
 		Optional<Component> error = tryMakeAdmin(player, factionUUID, targetPlayerUUID);
 		if (error.isPresent()) {
 			return Either.right(error.get());
@@ -491,20 +499,20 @@ public class FactionPacketHandler {
 		FactionDataManager.get().getFaction(factionUUID).orElseThrow().addAdmin(targetPlayerUUID);
 		getPlayerIfOnline(targetPlayerUUID).ifPresent(p -> {
 			p.sendSystemMessage(Component.translatable("caw.message.faction.now_admin",
-				player.getGameProfile().getName(),
-				FactionDataManager.get().factions.get(factionUUID).getFactionName()
+			player.getGameProfile().getName(),
+			FactionDataManager.get().factions.get(factionUUID).getFactionName()
 			));
 		});
 		sendUpdateToOnlineMembers(factionUUID);
 		return Either.left(FactionDataManager.get().getFaction(factionUUID).orElseThrow().members.get(targetPlayerUUID));
 	}
 	
-	public static Optional<Component> tryRemoveAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> tryRemoveAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the function must exist
-		if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
 		// must be in the faction
@@ -528,12 +536,13 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Removes a player's admin status in a faction.
-	 * @param player The player removing the other player's admin status.
-	 * @param factionUUID The UUID of the faction to remove the player's admin status from.
+	 *
+	 * @param player           The player removing the other player's admin status.
+	 * @param factionUUID      The UUID of the faction to remove the player's admin status from.
 	 * @param targetPlayerUUID The UUID of the player to remove the admin status from.
 	 * @return The faction member data of the player that was removed from admin or an error message if something went wrong.
 	 */
-	public static Either<FactionMemberData, Component> removeAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
+	public static Either<FactionMemberData, Component> removeAdmin(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
 		Optional<Component> error = tryRemoveAdmin(player, factionUUID, targetPlayerUUID);
 		if (error.isPresent()) {
 			return Either.right(error.get());
@@ -541,20 +550,20 @@ public class FactionPacketHandler {
 		FactionDataManager.get().getFaction(factionUUID).orElseThrow().removeAdmin(targetPlayerUUID);
 		getPlayerIfOnline(targetPlayerUUID).ifPresent(p -> {
 			p.sendSystemMessage(Component.translatable("caw.message.faction.no_longer_admin",
-				player.getGameProfile().getName(),
-				FactionDataManager.get().factions.get(factionUUID).getFactionName()
+			player.getGameProfile().getName(),
+			FactionDataManager.get().factions.get(factionUUID).getFactionName()
 			));
 		});
 		sendUpdateToOnlineMembers(factionUUID);
 		return Either.left(FactionDataManager.get().getFaction(factionUUID).orElseThrow().members.get(targetPlayerUUID));
 	}
 	
-	public static Optional<Component> tryAssignNewOwner(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> tryAssignNewOwner(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the function must exist
-		if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
 		// must be in the faction
@@ -574,12 +583,13 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Assigns a new owner to a faction.
-	 * @param player The player assigning the new owner.
-	 * @param factionUUID The UUID of the faction to assign the new owner to.
+	 *
+	 * @param player           The player assigning the new owner.
+	 * @param factionUUID      The UUID of the faction to assign the new owner to.
 	 * @param targetPlayerUUID The UUID of the player to assign as the new owner.
 	 * @return The faction member data of the new owner or an error message if something went wrong.
 	 */
-	public static Either<Tuple<FactionData, FactionMemberData>, Component> assignNewOwner(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
+	public static Either<Tuple<FactionData, FactionMemberData>, Component> assignNewOwner(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
 		Optional<Component> error = tryAssignNewOwner(player, factionUUID, targetPlayerUUID);
 		if (error.isPresent()) {
 			return Either.right(error.get());
@@ -587,28 +597,28 @@ public class FactionPacketHandler {
 		FactionDataManager.get().getFaction(factionUUID).orElseThrow().setOwner(targetPlayerUUID);
 		sendUpdateToOnlineMembers(factionUUID);
 		FactionDataManager.get().sendMessageToAllPlayersOnlineInFaction(factionUUID, Component.translatable("caw.message.faction.transfer_message",
-			player.getGameProfile().getName(),
-			FactionDataManager.get().factions.get(factionUUID).getFactionName(),
-			OfflinePlayerDatabase.get().getName(targetPlayerUUID).orElse("Unknown[" + targetPlayerUUID.toString().substring(0, 8) + "]")
+		player.getGameProfile().getName(),
+		FactionDataManager.get().factions.get(factionUUID).getFactionName(),
+		OfflinePlayerDatabase.get().getName(targetPlayerUUID).orElse("Unknown[" + targetPlayerUUID.toString().substring(0, 8) + "]")
 		));
 		getPlayerIfOnline(targetPlayerUUID).ifPresent(targetPlayer -> {
 			targetPlayer.sendSystemMessage(Component.translatable("caw.message.faction.transferred_to_u",
-				player.getGameProfile().getName(),
-				FactionDataManager.get().factions.get(factionUUID).getFactionName()
+			player.getGameProfile().getName(),
+			FactionDataManager.get().factions.get(factionUUID).getFactionName()
 			));
 		});
 		return Either.left(
-			new Tuple<>(FactionDataManager.get().getFaction(factionUUID).orElseThrow(),
-			FactionDataManager.get().getFaction(factionUUID).orElseThrow().members.get(targetPlayerUUID))
+		new Tuple<>(FactionDataManager.get().getFaction(factionUUID).orElseThrow(),
+		FactionDataManager.get().getFaction(factionUUID).orElseThrow().members.get(targetPlayerUUID))
 		);
 	}
 	
-	public static Optional<Component> tryKickPlayer(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> tryKickPlayer(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the function must exist
-		if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
 		// must be in the faction
@@ -632,13 +642,14 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Kicks a player from a faction.
-	 * @param player The player kicking the other player.
-	 * @param factionUUID The UUID of the faction to kick the player from.
+	 *
+	 * @param player           The player kicking the other player.
+	 * @param factionUUID      The UUID of the faction to kick the player from.
 	 * @param targetPlayerUUID The UUID of the player to kick.
 	 * @return The name of the player that was kicked or an error message if something went wrong.<br>
 	 * (Can't return faction member data because the player is no longer in the faction)
 	 */
-	public static Either<String, Component> kickPlayer(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID){
+	public static Either<String, Component> kickPlayer(ServerPlayer player, UUID factionUUID, UUID targetPlayerUUID) {
 		Optional<Component> error = tryKickPlayer(player, factionUUID, targetPlayerUUID);
 		if (error.isPresent()) {
 			return Either.right(error.get());
@@ -647,22 +658,22 @@ public class FactionPacketHandler {
 		FactionDataManager.get().removePlayerFromFaction(targetPlayerUUID, factionUUID, true);
 		sendUpdateToOnlineMembers(factionUUID);
 		FactionDataManager.get().sendMessageToAllPlayersOnlineInFaction(
-			factionUUID,
-			Component.translatable("caw.message.faction.player_kicked",
-				targetPlayerName,
-				player.getGameProfile().getName(),
-				FactionDataManager.get().factions.get(factionUUID).getFactionName()
-			)
+		factionUUID,
+		Component.translatable("caw.message.faction.player_kicked",
+		targetPlayerName,
+		player.getGameProfile().getName(),
+		FactionDataManager.get().factions.get(factionUUID).getFactionName()
+		)
 		);
 		return Either.left(targetPlayerName);
 	}
 	
-	public static Optional<Component> tryDisband(ServerPlayer player, UUID factionUUID){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> tryDisband(ServerPlayer player, UUID factionUUID) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the function must exist
-		if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+		if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
 		// must be in the faction
@@ -682,11 +693,12 @@ public class FactionPacketHandler {
 	
 	/**
 	 * Disbands a faction.
-	 * @param player The player disbanding the faction.
+	 *
+	 * @param player      The player disbanding the faction.
 	 * @param factionUUID The UUID of the faction to disband.
 	 * @return The name of the faction that was disbanded or an error message if something went wrong.
 	 */
-	public static Either<String, Component> disband(ServerPlayer player, UUID factionUUID){
+	public static Either<String, Component> disband(ServerPlayer player, UUID factionUUID) {
 		Optional<Component> error = tryDisband(player, factionUUID);
 		if (error.isPresent()) {
 			return Either.right(error.get());
@@ -695,31 +707,32 @@ public class FactionPacketHandler {
 		//send before actual disband because once disbanded
 		//the faction will be removed from the data manager
 		FactionDataManager.get().sendMessageToAllPlayersOnlineInFaction(factionUUID,
-			Component.translatable("caw.message.faction.disbanded", factionName, player.getGameProfile().getName())
+		Component.translatable("caw.message.faction.disbanded", factionName, player.getGameProfile().getName())
 		);
 		UUID[] playersOfFaction = FactionDataManager.get().getFaction(factionUUID).orElseThrow().members.keySet().toArray(new UUID[0]);
 		FactionDataManager.get().disbandFaction(factionUUID);
-		for(UUID playerUUID : playersOfFaction){
+		for (UUID playerUUID : playersOfFaction) {
 			sendUpdateIfOnline(playerUUID);
 		}
 		return Either.left(factionName);
 	}
 	
-	public static Optional<Component> trySetDiplomaticRelationship(ServerPlayer player, UUID otherFaction, int relationship){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> trySetDiplomaticRelationship(ServerPlayer player, UUID otherFaction, int relationship) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the function must exist
-		if(FactionDataManager.get().getFaction(otherFaction).isEmpty()){
+		if (FactionDataManager.get().getFaction(otherFaction).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
-		// must be in the faction
-		if (!FactionDataManager.get().isPlayerInFaction(player.getUUID(), otherFaction)) {
-			return Optional.of(Component.translatable("caw.errors.faction.not_in_faction"));
+		// player must be in a primary faction
+		if (FactionDataManager.get().getPrimaryFaction(player.getUUID()).isEmpty()) {
+			return Optional.of(Component.translatable("caw.errors.faction.no_primary_faction"));
 		}
-		// must be at least admin
-		if (!FactionDataManager.get().isPlayerAdminOrOwnerOfFaction(player.getUUID(), otherFaction)) {
-			return Optional.of(Component.translatable("caw.errors.faction.not_owner"));
+		UUID primaryFaction = FactionDataManager.get().getPrimaryFaction(player.getUUID()).orElseThrow().getFactionUUID();
+		// must be at least admin of their own faction
+		if (!FactionDataManager.get().isPlayerAdminOrOwnerOfFaction(player.getUUID(), primaryFaction)) {
+			return Optional.of(Component.translatable("caw.errors.faction.not_admin"));
 		}
 		// relationship must be valid
 		if (relationship < -1 || relationship > 1) {
@@ -728,7 +741,7 @@ public class FactionPacketHandler {
 		return Optional.empty();
 	}
 	
-	public static Either<Pair<String, Integer>, Component> setDiplomaticRelationship(ServerPlayer player, UUID otherFaction, int relationship){
+	public static Either<Pair<String, Integer>, Component> setDiplomaticRelationship(ServerPlayer player, UUID otherFaction, int relationship) {
 		Optional<Component> error = trySetDiplomaticRelationship(player, otherFaction, relationship);
 		if (error.isPresent()) {
 			return Either.right(error.get());
@@ -740,12 +753,12 @@ public class FactionPacketHandler {
 		return Either.left(new Pair<>(otherFactionName, relationship));
 	}
 	
-	public static Optional<Component> trySetFakePlayerPolicy(ServerPlayer player, UUID faction, int policy){
-		if(PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
+	public static Optional<Component> trySetFakePlayerPolicy(ServerPlayer player, UUID faction, int policy) {
+		if (PlayerThrottleUtil.throttlePlayerOperation(player.getUUID())) {
 			return Optional.of(PlayerThrottleUtil.getErrorMessage());
 		}
 		// the function must exist
-		if(FactionDataManager.get().getFaction(faction).isEmpty()){
+		if (FactionDataManager.get().getFaction(faction).isEmpty()) {
 			return Optional.of(Component.translatable("caw.errors.faction.not_found"));
 		}
 		// must be in the faction
@@ -763,7 +776,7 @@ public class FactionPacketHandler {
 		return Optional.empty();
 	}
 	
-	public static Either<Pair<String, Integer>, Component> setFakePlayerPolicy(ServerPlayer player, UUID faction, int policy){
+	public static Either<Pair<String, Integer>, Component> setFakePlayerPolicy(ServerPlayer player, UUID faction, int policy) {
 		Optional<Component> error = trySetFakePlayerPolicy(player, faction, policy);
 		if (error.isPresent()) {
 			return Either.right(error.get());
@@ -784,13 +797,13 @@ public class FactionPacketHandler {
 	
 	private static void sendUpdateToOnlineMembers(UUID factionUUID) {
 		FactionDataManager.get().getFaction(factionUUID)
-			.orElseThrow()
-			.members
-			.keySet()
-			.stream()
-			.map(FactionPacketHandler::getPlayerIfOnline)
-			.filter(Optional::isPresent)
-			.map(Optional::get)
-			.forEach(FactionPacketGenerator::scheduleSend);
+		.orElseThrow()
+		.members
+		.keySet()
+		.stream()
+		.map(FactionPacketHandler::getPlayerIfOnline)
+		.filter(Optional::isPresent)
+		.map(Optional::get)
+		.forEach(FactionPacketGenerator::scheduleSend);
 	}
 }

@@ -32,38 +32,38 @@ public class OfflinePlayerDatabase extends SavedData {
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerLogin(PlayerLoggedInEvent event){
-		if(INSTANCE == null) return;
-		if(event.getEntity() instanceof ServerPlayer serverPlayer){
+	public static void onPlayerLogin(PlayerLoggedInEvent event) {
+		if (INSTANCE == null) return;
+		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
 			get().updateData(serverPlayer);
 		}
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerLogout(PlayerLoggedInEvent event){
-		if(INSTANCE == null) return;
-		if(event.getEntity() instanceof ServerPlayer serverPlayer){
+	public static void onPlayerLogout(PlayerLoggedInEvent event) {
+		if (INSTANCE == null) return;
+		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
 			get().updateData(serverPlayer);
 		}
 	}
 	
-	public static OfflinePlayerDatabase get(){
+	public static OfflinePlayerDatabase get() {
 		return INSTANCE;
 	}
 	
-	public void updateData(ServerPlayer player){
-		if((!this.knownPlayers.containsKey(player.getUUID())) || (!this.knownPlayers.get(player.getUUID()).equals(player.getScoreboardName()))) {
+	public void updateData(ServerPlayer player) {
+		if ((!this.knownPlayers.containsKey(player.getUUID())) || (!this.knownPlayers.get(player.getUUID()).equals(player.getScoreboardName()))) {
 			this.knownPlayers.put(player.getUUID(), player.getScoreboardName());
 			this.setDirty();
 		}
 	}
 	
-	public Optional<String> getName(UUID playerUUID){
+	public Optional<String> getName(UUID playerUUID) {
 		Optional.ofNullable(SERVER.getPlayerList().getPlayer(playerUUID)).ifPresent(this::updateData);
 		return Optional.ofNullable(this.knownPlayers.get(playerUUID));
 	}
 	
-	private OfflinePlayerDatabase(){
+	private OfflinePlayerDatabase() {
 		this.setDirty();
 	}
 	
@@ -80,7 +80,7 @@ public class OfflinePlayerDatabase extends SavedData {
 		return nbt;
 	}
 	
-	public static OfflinePlayerDatabase load(CompoundTag nbt){
+	public static OfflinePlayerDatabase load(CompoundTag nbt) {
 		OfflinePlayerDatabase data = new OfflinePlayerDatabase();
 		ListTag list = nbt.getList("data", Tag.TAG_COMPOUND);
 		list.forEach(tag -> {

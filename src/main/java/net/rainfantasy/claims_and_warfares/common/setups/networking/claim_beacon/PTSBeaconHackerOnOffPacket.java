@@ -9,28 +9,29 @@ import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entitie
 import java.util.function.Supplier;
 
 public class PTSBeaconHackerOnOffPacket {
+	
 	boolean isOn;
 	
-	public PTSBeaconHackerOnOffPacket(boolean isOn){
+	public PTSBeaconHackerOnOffPacket(boolean isOn) {
 		this.isOn = isOn;
 	}
 	
-	public static PTSBeaconHackerOnOffPacket fromBytes(FriendlyByteBuf byteBuf){
+	public static PTSBeaconHackerOnOffPacket fromBytes(FriendlyByteBuf byteBuf) {
 		return new PTSBeaconHackerOnOffPacket(byteBuf.readBoolean());
 	}
 	
-	public static void toBytes(PTSBeaconHackerOnOffPacket packet, FriendlyByteBuf byteBuf){
+	public static void toBytes(PTSBeaconHackerOnOffPacket packet, FriendlyByteBuf byteBuf) {
 		byteBuf.writeBoolean(packet.isOn);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
-		CAWConstants.execute(()->{
+		CAWConstants.execute(() -> {
 			ServerPlayer player = context.getSender();
-			if(player == null) return;
-			if(isOn){
+			if (player == null) return;
+			if (isOn) {
 				BeaconHackerBlockEntity.turnOn(player);
-			}else{
+			} else {
 				BeaconHackerBlockEntity.turnOff(player);
 			}
 		});

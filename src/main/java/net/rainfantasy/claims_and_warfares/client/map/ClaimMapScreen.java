@@ -5,14 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.MapRenderer;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import net.rainfantasy.claims_and_warfares.client.widgets.MapWidget;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +48,7 @@ public class ClaimMapScreen extends Screen {
 		 *
 		 */
 		Entity clientPlayer = Minecraft.getInstance().getCameraEntity();
-		if(clientPlayer != null) {
+		if (clientPlayer != null) {
 			Vec3 pos = clientPlayer.position();
 			int xLeftCorner = (this.width - CAWClientGUIManager.mapInfo.length) / 2;
 			int yTopCorner = (this.height - CAWClientGUIManager.mapInfo[0].length) / 2;

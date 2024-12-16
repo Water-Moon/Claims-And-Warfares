@@ -28,7 +28,7 @@ public class ChannelRegistry {
 	private static int i = 0;
 	public static final String VERSION = "1.0.0";
 	
-	public static boolean isSameVersion(String other){
+	public static boolean isSameVersion(String other) {
 		return VERSION.equals(other);
 	}
 	
@@ -327,27 +327,27 @@ public class ChannelRegistry {
 		
 	}
 	
-	public static void sendToClient(ServerPlayer player, Object message){
+	public static void sendToClient(ServerPlayer player, Object message) {
 		CAW_CHANNEL.sendTo(
-			message,
-			player.connection.connection,
-			NetworkDirection.PLAY_TO_CLIENT
+		message,
+		player.connection.connection,
+		NetworkDirection.PLAY_TO_CLIENT
 		);
 	}
 	
-	public static void sendToServer(Object message){
+	public static void sendToServer(Object message) {
 		CAW_CHANNEL.sendToServer(message);
 	}
 	
-	public static void reply(Context context, Object message){
+	public static void reply(Context context, Object message) {
 		CAW_CHANNEL.reply(message, context);
 	}
 	
-	public static void sendErrorToClient(ServerPlayer player, String translationKey){
+	public static void sendErrorToClient(ServerPlayer player, String translationKey) {
 		sendErrorToClient(player, Component.translatable(translationKey));
 	}
 	
-	public static void sendErrorToClient(ServerPlayer player, Component message){
+	public static void sendErrorToClient(ServerPlayer player, Component message) {
 		PTCGenericErrorPacket packet = new PTCGenericErrorPacket(message);
 		sendToClient(player, packet);
 	}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "claims_and_warfares:block/beacon_upgrade_explosion_protection"
+    }
+  }
+}

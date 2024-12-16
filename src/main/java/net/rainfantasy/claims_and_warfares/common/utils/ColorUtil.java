@@ -47,26 +47,26 @@ public class ColorUtil {
 		color = combine(255, blue(color), green(color), red(color));
 		int height1 = getTopBlockHeight(level, pos.getX() - 1, pos.getZ());
 		int height2 = getTopBlockHeight(level, pos.getX(), pos.getZ() - 1);
-		float heightDiff = pos.getY() - ((height1 + height2)/2f);   //positive if higher, negative if lower
+		float heightDiff = pos.getY() - ((height1 + height2) / 2f);   //positive if higher, negative if lower
 		double factor = Mth.clamp(heightDiff / 16, -0.5, 0.5);
-		if(factor >= 0){
-			color = lightenColor(color, (int)(factor * 255));
-		}else{
-			color = darkenColor(color, (int)(-factor * 255));
+		if (factor >= 0) {
+			color = lightenColor(color, (int) (factor * 255));
+		} else {
+			color = darkenColor(color, (int) (-factor * 255));
 		}
 		
-		if(block.getBlock() instanceof LiquidBlock){
+		if (block.getBlock() instanceof LiquidBlock) {
 			Pair<BlockState, BlockPos> data = getNonLiquidBlock(level, pos.getX(), pos.getZ());
 			int color2 = data.getLeft().getMapColor(level, data.getRight()).calculateRGBColor(Brightness.NORMAL);
 			color2 = combine(255, blue(color2), green(color2), red(color2));
 			int height21 = getTopNonLiquidBlockHeight(level, pos.getX() - 1, pos.getZ());
 			int height22 = getTopNonLiquidBlockHeight(level, pos.getX(), pos.getZ() - 1);
-			float heightDiff2 = pos.getY() - ((height21 + height22)/2f);   //positive if higher, negative if lower
+			float heightDiff2 = pos.getY() - ((height21 + height22) / 2f);   //positive if higher, negative if lower
 			double factor2 = Mth.clamp(heightDiff2 / 8, -0.5, 0.5);
-			if(factor2 >= 0){
-				color2 = lightenColor(color2, (int)(factor2 * 255));
-			}else{
-				color2 = darkenColor(color2, (int)(-factor2 * 255));
+			if (factor2 >= 0) {
+				color2 = lightenColor(color2, (int) (factor2 * 255));
+			} else {
+				color2 = darkenColor(color2, (int) (-factor2 * 255));
 			}
 			int depthDiff = pos.getY() - data.getRight().getY();
 			int alpha = Mth.clamp((depthDiff + 32) * 4, 32, 224);
@@ -83,7 +83,7 @@ public class ColorUtil {
 			BlockState state = level.getBlockState(pos);
 			if (
 			(!state.isAir()) &&
-				state.isSolidRender(level, pos)
+			state.isSolidRender(level, pos)
 			) {
 				return Pair.of(state, pos);
 			}
@@ -98,7 +98,7 @@ public class ColorUtil {
 			BlockState state = level.getBlockState(pos);
 			if (
 			(!state.isAir()) &&
-				state.isSolidRender(level, pos)
+			state.isSolidRender(level, pos)
 			) {
 				return pos.getY();
 			}
@@ -183,13 +183,13 @@ public class ColorUtil {
 	}
 	
 	@Contract(pure = true)
-	public static int randomMinecraftColor(){
+	public static int randomMinecraftColor() {
 		int v = new Random(System.currentTimeMillis()).nextInt(0, 16);
 		int color = Optional.ofNullable(ChatFormatting.getById(v)).map(ChatFormatting::getColor).orElse(16777215);
 		return combine(255, red(color), green(color), blue(color));
 	}
 	
-	public static float[] toFloatColor(int color){
-		return new float[]{red(color)/255f, green(color)/255f, blue(color)/255f};
+	public static float[] toFloatColor(int color) {
+		return new float[]{red(color) / 255f, green(color) / 255f, blue(color) / 255f};
 	}
 }

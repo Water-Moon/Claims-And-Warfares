@@ -46,7 +46,6 @@ public class ViewInvitationScreen extends Screen {
 	int currentPage = 1;
 	
 	
-	
 	public ViewInvitationScreen() {
 		super(Component.literal("View Invitation"));
 	}
@@ -106,15 +105,15 @@ public class ViewInvitationScreen extends Screen {
 		addRenderableWidget(cancelButton);
 	}
 	
-	public void onAcceptButtonPressed(){
+	public void onAcceptButtonPressed() {
 		CAWConstants.debugLog("Accept button pressed");
-		if(currentInvitation == null) return;
+		if (currentInvitation == null) return;
 		ChannelRegistry.sendToServer(new PTSAcceptInvitationPacket(currentInvitation.getInvitationUUID()));
 	}
 	
-	public void onDeclineButtonPressed(){
+	public void onDeclineButtonPressed() {
 		CAWConstants.debugLog("Decline button pressed");
-		if(currentInvitation == null) return;
+		if (currentInvitation == null) return;
 		ChannelRegistry.sendToServer(new PTSRejectInvitationPacket(currentInvitation.getInvitationUUID()));
 	}
 	
@@ -124,34 +123,34 @@ public class ViewInvitationScreen extends Screen {
 		super.render(graphics, mouseX, mouseY, delta);
 	}
 	
-	private void copyInvitationInfo(){
+	private void copyInvitationInfo() {
 		invitations.clear();
 		CAWClientDataManager.findInvitationToSelf().ifPresent(list -> {
 			invitations.addAll(list);
 		});
 	}
 	
-	private void changePage(int delta){
+	private void changePage(int delta) {
 		currentPage += delta;
 		ensurePageNumberValid();
 		populatePage();
 	}
 	
-	private void ensurePageNumberValid(){
-		if(currentPage < 1){
+	private void ensurePageNumberValid() {
+		if (currentPage < 1) {
 			currentPage = 1;
 		}
 		int maxPage = Math.max(1, invitations.size());
-		if(currentPage > maxPage){
+		if (currentPage > maxPage) {
 			currentPage = maxPage;
 		}
 	}
 	
-	private void setPageNumber(){
+	private void setPageNumber() {
 		pageNumber.setMessage(Component.translatable("caw.gui.common.a_of_b", currentPage, invitations.size()));
 	}
 	
-	private void populatePageInvalid(){
+	private void populatePageInvalid() {
 		factionName.setMessage(Component.translatable("caw.gui.label.empty"));
 		fromPlayerName.setMessage(Component.translatable("caw.gui.label.empty"));
 		sentTime.setMessage(Component.translatable("caw.gui.label.empty"));
@@ -160,7 +159,7 @@ public class ViewInvitationScreen extends Screen {
 		declineButton.active = false;
 	}
 	
-	private void populatePageValid(){
+	private void populatePageValid() {
 		factionName.setMessage(Component.literal(currentInvitation.getFactionName()));
 		fromPlayerName.setMessage(Component.literal(currentInvitation.getFromPlayerName()));
 		sentTime.setMessage(currentInvitation.getSentTime().format());
@@ -169,21 +168,21 @@ public class ViewInvitationScreen extends Screen {
 		declineButton.active = true;
 	}
 	
-	private void populatePage(){
-		if(this.currentPage < 1 || this.currentPage > invitations.size()){
+	private void populatePage() {
+		if (this.currentPage < 1 || this.currentPage > invitations.size()) {
 			populatePageInvalid();
-		}else{
+		} else {
 			currentInvitation = invitations.get(currentPage - 1);
 			populatePageValid();
 		}
 		setPageNumber();
 	}
 	
-	private void updateMessage(){
+	private void updateMessage() {
 		this.message.setMessage(CAWClientGUIManager.getLastMessage().orElse(Component.empty()));
 	}
 	
-	private void refresh(){
+	private void refresh() {
 		copyInvitationInfo();
 		ensurePageNumberValid();
 		populatePage();

@@ -22,7 +22,7 @@ public abstract class AbstractMachineMenu<T extends BlockEntity> extends Abstrac
 	public Player player;
 	public Inventory inventory;
 	
-	protected AbstractMachineMenu(@Nullable MenuType<?> menu, int containerId, Inventory inv, FriendlyByteBuf extraData){
+	protected AbstractMachineMenu(@Nullable MenuType<?> menu, int containerId, Inventory inv, FriendlyByteBuf extraData) {
 		super(menu, containerId);
 		init(inv, createOnClient(extraData));
 	}
@@ -32,7 +32,7 @@ public abstract class AbstractMachineMenu<T extends BlockEntity> extends Abstrac
 		init(inv, block);
 	}
 	
-	protected void init(Inventory inventory, T block){
+	protected void init(Inventory inventory, T block) {
 		this.player = inventory.player;
 		this.level = player.level();
 		this.inventory = inventory;
@@ -53,30 +53,30 @@ public abstract class AbstractMachineMenu<T extends BlockEntity> extends Abstrac
 		return 0;
 	}
 	
-	int getVanillaSlotCount(){
+	int getVanillaSlotCount() {
 		return 36;
 	}
 	
-	int getPlayerInventoryXPos(){
+	int getPlayerInventoryXPos() {
 		return 8;
 	}
 	
-	int getPlayerInventoryYPos(){
+	int getPlayerInventoryYPos() {
 		return 84;
 	}
 	
-	int getHotbarYPos(){
+	int getHotbarYPos() {
 		return 142;
 	}
 	
-	void addVanillaInventory(Inventory playerInventory){
-		for(int i = 0; i < 3; i++){
-			for(int j = 0; j < 9; j++){
+	void addVanillaInventory(Inventory playerInventory) {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 9; j++) {
 				this.addSlot(new Slot(playerInventory, j + i * 9 + 9, this.getPlayerInventoryXPos() + j * 18, this.getPlayerInventoryYPos() + i * 18));
 			}
 		}
 		
-		for(int i = 0; i < 9; i++){
+		for (int i = 0; i < 9; i++) {
 			this.addSlot(new Slot(playerInventory, i, this.getPlayerInventoryXPos() + i * 18, this.getHotbarYPos()));
 		}
 	}
@@ -84,30 +84,30 @@ public abstract class AbstractMachineMenu<T extends BlockEntity> extends Abstrac
 	@Override
 	public @NotNull ItemStack quickMoveStack(@NotNull Player player, int clickedSlot) {
 		Slot fromSlot = this.slots.get(clickedSlot);
-		if(!fromSlot.hasItem()) return ItemStack.EMPTY;
+		if (!fromSlot.hasItem()) return ItemStack.EMPTY;
 		
 		ItemStack sourceStack = fromSlot.getItem();
 		ItemStack copy = sourceStack.copy();
 		
-		if(clickedSlot >= this.getVanillaSlotCount()){
+		if (clickedSlot >= this.getVanillaSlotCount()) {
 			//moving from machine to player inventory
-			if(clickedSlot >= this.getVanillaSlotCount() + this.getMachineSlotCount()){
+			if (clickedSlot >= this.getVanillaSlotCount() + this.getMachineSlotCount()) {
 				CAWConstants.LOGGER.error("Invalid slot index: {}", clickedSlot);
 				return ItemStack.EMPTY;
 			}
-			if(!moveItemStackTo(sourceStack, 0, this.getVanillaSlotCount(), false)){
+			if (!moveItemStackTo(sourceStack, 0, this.getVanillaSlotCount(), false)) {
 				return ItemStack.EMPTY;
 			}
-		}else{
+		} else {
 			//moving from player inventory to machine
-			if(!moveItemStackTo(sourceStack, this.getVanillaSlotCount(), this.getVanillaSlotCount() + this.getMachineSlotCount(), false)){
+			if (!moveItemStackTo(sourceStack, this.getVanillaSlotCount(), this.getVanillaSlotCount() + this.getMachineSlotCount(), false)) {
 				return ItemStack.EMPTY;
 			}
 		}
 		
-		if(sourceStack.getCount() == 0){
+		if (sourceStack.getCount() == 0) {
 			fromSlot.set(ItemStack.EMPTY);
-		}else{
+		} else {
 			fromSlot.setChanged();
 		}
 		fromSlot.onTake(player, sourceStack);

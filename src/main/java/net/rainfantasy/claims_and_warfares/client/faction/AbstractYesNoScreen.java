@@ -41,7 +41,7 @@ public abstract class AbstractYesNoScreen extends Screen {
 		message = new StringWidget(xStart, yStart, getMessageLength(), yCenter - 50, this.question, this.font);
 		addRenderableWidget(message);
 		
-		if(cantUndo) {
+		if (cantUndo) {
 			cantUndoMessage = new StringWidget(xStart, yStart, getMessageLength(), yCenter - 30, Component.translatable("caw.gui.common.no_undo"), this.font);
 			addRenderableWidget(cantUndoMessage);
 		}
@@ -77,5 +77,6 @@ public abstract class AbstractYesNoScreen extends Screen {
 	}
 	
 	abstract void onYes();
+	
 	abstract void onNo();
 }

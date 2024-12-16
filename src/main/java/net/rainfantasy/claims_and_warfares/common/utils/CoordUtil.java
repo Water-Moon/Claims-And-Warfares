@@ -58,12 +58,12 @@ public class CoordUtil {
 	}
 	
 	public static Stream<Vector2i> iterateCoords(Vector2i min, Vector2i max) {
-		if(min.x > max.x){
+		if (min.x > max.x) {
 			int temp = min.x;
 			min.x = max.x;
 			max.x = temp;
 		}
-		if(min.y > max.y){
+		if (min.y > max.y) {
 			int temp = min.y;
 			min.y = max.y;
 			max.y = temp;
@@ -74,13 +74,13 @@ public class CoordUtil {
 		                     .limit(max.y() - min.y() + 1));
 	}
 	
-	public static Pair<BlockState, BlockPos> findTopBlockAt(Level level, BlockPos posIn, boolean solidOnly){
+	public static Pair<BlockState, BlockPos> findTopBlockAt(Level level, BlockPos posIn, boolean solidOnly) {
 		BlockPos pos = new BlockPos(posIn.getX(), level.getMaxBuildHeight(), posIn.getZ());
 		while (pos.getY() > level.getMinBuildHeight()) {
 			BlockState state = level.getBlockState(pos);
 			if (
-				(!state.isAir()) &&
-				((!solidOnly) || state.isSolidRender(level, pos))
+			(!state.isAir()) &&
+			((!solidOnly) || state.isSolidRender(level, pos))
 			) {
 				return Pair.of(state, pos);
 			}
@@ -89,7 +89,7 @@ public class CoordUtil {
 		return Pair.of(Blocks.AIR.defaultBlockState(), pos);
 	}
 	
-	public static int getTopBlockHeight(Level level, BlockPos posIn, boolean solidOnly){
+	public static int getTopBlockHeight(Level level, BlockPos posIn, boolean solidOnly) {
 		return findTopBlockAt(level, posIn, solidOnly).getRight().getY();
 	}
 	

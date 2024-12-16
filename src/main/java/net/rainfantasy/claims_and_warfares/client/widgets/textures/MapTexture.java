@@ -25,7 +25,7 @@ public class MapTexture extends AbstractMapTexture {
 	}
 	
 	private void updateArraySize() {
-		if(CAWClientGUIManager.mapInfo == null || CAWClientGUIManager.mapInfo.length == 0 || CAWClientGUIManager.mapInfo[0].length == 0) {
+		if (CAWClientGUIManager.mapInfo == null || CAWClientGUIManager.mapInfo.length == 0 || CAWClientGUIManager.mapInfo[0].length == 0) {
 			return;
 		}
 		this.imageWidth = CAWClientGUIManager.mapInfo.length;

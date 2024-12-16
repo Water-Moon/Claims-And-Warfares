@@ -10,6 +10,7 @@ import net.rainfantasy.claims_and_warfares.common.game_objs.recipes.BeaconFuelRe
 import net.rainfantasy.claims_and_warfares.common.game_objs.recipes.BeaconHackerFuelRecipe;
 
 public class RecipeRegistry {
+	
 	public static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, CAWConstants.MODID);
 	
 	public static final RegistryObject<RecipeSerializer<BeaconFuelRecipe>> BEACON_FUEL = RECIPES.register("beacon_fuel", () -> BeaconFuelRecipe.Serializer.INSTANCE);

@@ -9,6 +9,7 @@ import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import java.util.function.Supplier;
 
 public class PTCTransferFactionSuccessPacket {
+	
 	String newOwnerName;
 	String factionName;
 	

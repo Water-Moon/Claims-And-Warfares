@@ -8,12 +8,12 @@ import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.networking.FactionPacketGenerator;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.PTCGenericErrorPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegistry;
-import org.apache.logging.log4j.core.jmx.Server;
 
 import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTSInvitePlayerPacket {
+	
 	UUID toPlayer;
 	UUID toFaction;
 	
@@ -33,7 +33,7 @@ public class PTSInvitePlayerPacket {
 		byteBuf.writeUUID(packet.toFaction);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			ServerPlayer player = context.getSender();

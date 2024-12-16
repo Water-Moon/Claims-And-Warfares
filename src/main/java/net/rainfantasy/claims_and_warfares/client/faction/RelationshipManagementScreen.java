@@ -25,7 +25,7 @@ public class RelationshipManagementScreen extends Screen {
 	private static final int NAME_WIDTH = 150;
 	private static final int BUTTON_WIDTH = 50;
 	private static final int BUTTON_GAP = 10;
-	private static final int TOTAL_WIDTH = NAME_WIDTH + BUTTON_WIDTH*3 + BUTTON_GAP*2;
+	private static final int TOTAL_WIDTH = NAME_WIDTH + BUTTON_WIDTH * 3 + BUTTON_GAP * 2;
 	
 	private static final int PAGE_BUTTON_WIDTH = 100;
 	
@@ -75,7 +75,7 @@ public class RelationshipManagementScreen extends Screen {
 			
 			enemyButtons[i] = Button.builder(Component.translatable("caw.string.faction.hostile"), btn -> {
 				onButtonPressed(finalI, -1);
-			}).pos(entryLineXStart + NAME_WIDTH + BUTTON_WIDTH*2 + BUTTON_GAP*2, yStart + i * LINE_HEIGHT).size(BUTTON_WIDTH, LINE_HEIGHT).build();
+			}).pos(entryLineXStart + NAME_WIDTH + BUTTON_WIDTH * 2 + BUTTON_GAP * 2, yStart + i * LINE_HEIGHT).size(BUTTON_WIDTH, LINE_HEIGHT).build();
 			addRenderableWidget(enemyButtons[i]);
 		}
 		
@@ -84,39 +84,39 @@ public class RelationshipManagementScreen extends Screen {
 		
 		nextPageButton = Button.builder(Component.translatable("caw.gui.common.next_page"), btn -> {
 			changePage(1);
-		}).pos(xCenter + 50, yStart + (1+ENTRIES_PER_PAGE) * LINE_HEIGHT).size(PAGE_BUTTON_WIDTH, LINE_HEIGHT).build();
+		}).pos(xCenter + 50, yStart + (1 + ENTRIES_PER_PAGE) * LINE_HEIGHT).size(PAGE_BUTTON_WIDTH, LINE_HEIGHT).build();
 		addRenderableWidget(nextPageButton);
 		
 		previousPageButton = Button.builder(Component.translatable("caw.gui.common.prev_page"), btn -> {
 			changePage(-1);
-		}).pos(xCenter - PAGE_BUTTON_WIDTH - 50, yStart + (1+ENTRIES_PER_PAGE) * LINE_HEIGHT).size(PAGE_BUTTON_WIDTH, LINE_HEIGHT).build();
+		}).pos(xCenter - PAGE_BUTTON_WIDTH - 50, yStart + (1 + ENTRIES_PER_PAGE) * LINE_HEIGHT).size(PAGE_BUTTON_WIDTH, LINE_HEIGHT).build();
 		addRenderableWidget(previousPageButton);
 		
 		cancelButton = Button.builder(Component.translatable("caw.gui.common.cancel"), btn -> {
 			FactionManagementScreen.onSubPageCancel();
-		}).pos(xCenter - PAGE_BUTTON_WIDTH / 2, yStart + (2+ENTRIES_PER_PAGE) * LINE_HEIGHT).size(PAGE_BUTTON_WIDTH, LINE_HEIGHT).build();
+		}).pos(xCenter - PAGE_BUTTON_WIDTH / 2, yStart + (2 + ENTRIES_PER_PAGE) * LINE_HEIGHT).size(PAGE_BUTTON_WIDTH, LINE_HEIGHT).build();
 		addRenderableWidget(cancelButton);
 	}
 	
-	private void onButtonPressed(int index, int level){
+	private void onButtonPressed(int index, int level) {
 		UUID factionUUID = currentPageFactions[index];
 		CAWConstants.debugLog("Button pressed for faction " + factionUUID + " with level " + level);
 		ChannelRegistry.sendToServer(new PTSSetRelationshipPacket(factionUUID, level));
 	}
 	
-	private void copyFactionData(){
+	private void copyFactionData() {
 		factions.clear();
 		factions.addAll(CAWClientDataManager.getFactionUUIDs());
 	}
 	
-	private void updateMessage(){
+	private void updateMessage() {
 		CAWClientGUIManager.getLastMessage().ifPresentOrElse(
-			msg -> message.setMessage(msg),
-			() -> message.setMessage(Component.empty())
+		msg -> message.setMessage(msg),
+		() -> message.setMessage(Component.empty())
 		);
 	}
 	
-	private void setupValidEntry(int index, int listIndex){
+	private void setupValidEntry(int index, int listIndex) {
 		currentPageFactions[index] = factions.get(listIndex);
 		boolean isSelf = CAWClientDataManager.getCurrentSelectedFactionUUID().equals(currentPageFactions[index]);
 		int existingRelationship = CAWClientDataManager.getDiplomaticRelationshipWith(currentPageFactions[index]);
@@ -126,8 +126,8 @@ public class RelationshipManagementScreen extends Screen {
 		                               .map(Component::literal)
 		                               .orElse(Component.translatable("caw.gui.label.empty"));
 		
-		if(isSelf){
-			factionName.append(Component.translatable("caw.gui.format.bracket",Component.translatable("caw.gui.label.your_faction")));
+		if (isSelf) {
+			factionName.append(Component.translatable("caw.gui.format.bracket", Component.translatable("caw.gui.label.your_faction")));
 		}
 		
 		factionNames[index].setMessage(factionName);
@@ -137,41 +137,41 @@ public class RelationshipManagementScreen extends Screen {
 		enemyButtons[index].active = !isSelf && existingRelationship != -1;
 	}
 	
-	private void setupEmptyEntry(int index){
+	private void setupEmptyEntry(int index) {
 		factionNames[index].setMessage(Component.translatable("caw.gui.label.empty"));
 		allyButtons[index].active = false;
 		neutralButtons[index].active = false;
 		enemyButtons[index].active = false;
 	}
 	
-	private void changePage(int delta){
+	private void changePage(int delta) {
 		currentPage += delta;
 		ensurePageNumberValid();
 		populateCurrentPage();
 	}
 	
-	private void ensurePageNumberValid(){
-		if(currentPage < 1){
+	private void ensurePageNumberValid() {
+		if (currentPage < 1) {
 			currentPage = 1;
 		}
 		int maxPage = Math.max(1, (int) Math.ceil((double) factions.size() / ENTRIES_PER_PAGE));
-		if(currentPage > maxPage){
+		if (currentPage > maxPage) {
 			currentPage = maxPage;
 		}
 	}
 	
-	private void populateCurrentPage(){
-		for(int i = 0; i < ENTRIES_PER_PAGE; i++){
+	private void populateCurrentPage() {
+		for (int i = 0; i < ENTRIES_PER_PAGE; i++) {
 			int listIndex = (currentPage - 1) * ENTRIES_PER_PAGE + i;
-			if(listIndex < factions.size()){
+			if (listIndex < factions.size()) {
 				setupValidEntry(i, listIndex);
-			}else{
+			} else {
 				setupEmptyEntry(i);
 			}
 		}
 	}
 	
-	private void refresh(){
+	private void refresh() {
 		copyFactionData();
 		ensurePageNumberValid();
 		populateCurrentPage();

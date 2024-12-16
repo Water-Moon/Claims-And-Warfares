@@ -35,7 +35,7 @@ public class MapWidgetInGui implements Renderable, GuiEventListener, NarratableE
 	}
 	
 	public Vector2i worldCoordToRelativeCoord(int x, int y) {
-		return new Vector2i(x,y).sub(CAWClientGUIManager.mapPos).add(this.topX, this.leftY);
+		return new Vector2i(x, y).sub(CAWClientGUIManager.mapPos).add(this.topX, this.leftY);
 	}
 	
 	public boolean isMouseInBounds(int mouseX, int mouseY) {
@@ -46,7 +46,9 @@ public class MapWidgetInGui implements Renderable, GuiEventListener, NarratableE
 	@Override
 	public @NotNull NarrationPriority narrationPriority() {
 		return NarrationPriority.NONE;
-	}	@Override
+	}
+	
+	@Override
 	public void setFocused(boolean b) {
 	
 	}
@@ -54,7 +56,9 @@ public class MapWidgetInGui implements Renderable, GuiEventListener, NarratableE
 	@Override
 	public void updateNarration(@NotNull NarrationElementOutput narrationElementOutput) {
 	
-	}	@Override
+	}
+	
+	@Override
 	public boolean isFocused() {
 		return false;
 	}
@@ -63,7 +67,4 @@ public class MapWidgetInGui implements Renderable, GuiEventListener, NarratableE
 		this.texture.update();
 	}
 	
-
-	
-
 }

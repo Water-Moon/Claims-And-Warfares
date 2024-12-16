@@ -1,13 +1,10 @@
 package net.rainfantasy.claims_and_warfares.common.setups.networking.claim;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public class PTCMapResizePacket {
@@ -31,7 +28,7 @@ public class PTCMapResizePacket {
 		byteBuf.writeVarInt(packet.radiusZ);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			CAWClientGUIManager.setClaimInfoSize(this.radiusX, this.radiusZ);

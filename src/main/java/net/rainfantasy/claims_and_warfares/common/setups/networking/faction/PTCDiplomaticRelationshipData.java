@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTCDiplomaticRelationshipData {
+	
 	public UUID otherFaction;
 	public int relationship;
 	
@@ -26,7 +27,7 @@ public class PTCDiplomaticRelationshipData {
 		buf.writeInt(relationship);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			CAWClientDataManager.addDiplomaticRelationship(this);

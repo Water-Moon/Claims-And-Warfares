@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTSTransferFactionPacket {
+	
 	UUID factionUUID;
 	UUID playerUUID;
 	
@@ -33,7 +34,7 @@ public class PTSTransferFactionPacket {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			ServerPlayer player = context.getSender();
-			if(player == null) return;
+			if (player == null) return;
 			FactionPacketHandler.assignNewOwner(player, factionUUID, playerUUID)
 			.ifLeft(data -> {
 				ChannelRegistry.reply(context, new PTCTransferFactionSuccessPacket(data.getB().getKnownPlayerName(), data.getA().getFactionName()));

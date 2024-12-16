@@ -8,16 +8,17 @@ import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.mixin.accessors.WorldGenRegionAccessor;
 
 public class MinecraftUtils {
-	public static String getLevelId(Level level){
+	
+	public static String getLevelId(Level level) {
 		return level.dimension().location().toString();
 	}
 	
 	public static String getLevelId(LevelAccessor level) {
-		if(level instanceof Level l) {
+		if (level instanceof Level l) {
 			return getLevelId(l);
-		}else if(level instanceof WorldGenRegion w){
+		} else if (level instanceof WorldGenRegion w) {
 			return getLevelId(((WorldGenRegionAccessor) w).getLevel());
-		}else{
+		} else {
 			CAWConstants.LOGGER.warn("Unknown level accessor type: {}", level.getClass().getName());
 			return "unknown";
 		}

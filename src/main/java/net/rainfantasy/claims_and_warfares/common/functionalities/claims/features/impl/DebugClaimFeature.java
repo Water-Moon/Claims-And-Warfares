@@ -41,28 +41,28 @@ public class DebugClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onPlaceBlock(EntityPlaceEvent event) {
-		if(event.getEntity() == null) return true;
+		if (event.getEntity() == null) return true;
 		CAWConstants.debugLog("{} placed {} in claimed chunk", event.getEntity().getName(), event.getPlacedBlock().getBlock().getName());
 		return true;
 	}
 	
 	@Override
 	public boolean onBreakBlock(BreakEvent event) {
-		if(event.getPlayer() == null) return true;
+		if (event.getPlayer() == null) return true;
 		CAWConstants.debugLog("{} broke {} in claimed chunk", event.getPlayer().getName(), event.getState().getBlock().getName());
 		return true;
 	}
 	
 	@Override
 	public boolean onInteractBlock(RightClickBlock event) {
-		if(event.getEntity() == null) return true;
+		if (event.getEntity() == null) return true;
 		CAWConstants.debugLog("{} interacted with {} in claimed chunk", event.getEntity().getName(), event.getLevel().getBlockState(event.getPos()).getBlock().getName());
 		return true;
 	}
 	
 	@Override
 	public boolean onFarmlandTrample(FarmlandTrampleEvent event) {
-		if(event.getEntity() == null) return true;
+		if (event.getEntity() == null) return true;
 		CAWConstants.debugLog("{} trampled farmland at {} in claimed chunk", event.getEntity().getName(), event.getPos());
 		return true;
 	}

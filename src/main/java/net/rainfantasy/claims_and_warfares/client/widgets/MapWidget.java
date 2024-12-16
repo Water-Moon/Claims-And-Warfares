@@ -58,7 +58,9 @@ public class MapWidget implements Renderable, GuiEventListener, NarratableEntry 
 	@Override
 	public @NotNull NarrationPriority narrationPriority() {
 		return NarrationPriority.NONE;
-	}	@Override
+	}
+	
+	@Override
 	public void setFocused(boolean b) {
 	
 	}
@@ -66,7 +68,9 @@ public class MapWidget implements Renderable, GuiEventListener, NarratableEntry 
 	@Override
 	public void updateNarration(@NotNull NarrationElementOutput narrationElementOutput) {
 	
-	}	@Override
+	}
+	
+	@Override
 	public boolean isFocused() {
 		return false;
 	}
@@ -75,7 +79,4 @@ public class MapWidget implements Renderable, GuiEventListener, NarratableEntry 
 		this.texture.update();
 	}
 	
-
-	
-
 }

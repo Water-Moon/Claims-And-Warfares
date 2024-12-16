@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class FactionClaimDataManager extends SavedData {
+	
 	public static final String DATA_NAME = "caw_faction_claim_data";
 	
 	//faction -> claim
@@ -34,20 +35,20 @@ public class FactionClaimDataManager extends SavedData {
 		this.setDirty();
 	}
 	
-	public static FactionClaimDataManager get(){
-		if(INSTANCE == null){
+	public static FactionClaimDataManager get() {
+		if (INSTANCE == null) {
 			throw new RuntimeException("Tried to get data instance before initialization!");
 		}
 		return INSTANCE;
 	}
 	
-	public static void init(MinecraftServer server){
-		if(server == null) return;
+	public static void init(MinecraftServer server) {
+		if (server == null) return;
 		SERVER = server;
 		INSTANCE = loadOrCreate(server);
 	}
 	
-	private void reAddAllClaims(){
+	private void reAddAllClaims() {
 		ConcurrentHashMap<UUID, CopyOnWriteArraySet<UUID>> newFactionToClaimMap = new ConcurrentHashMap<>();
 		List<ClaimData> effectivelyFinalClaimData = Collections.unmodifiableList(ClaimDataManager.get().getAllClaims());
 		
@@ -58,13 +59,13 @@ public class FactionClaimDataManager extends SavedData {
 			List<UUID> claims = new ArrayList<>();
 			effectivelyFinalClaimData.forEach(claim -> {
 				//if claim is faction owned and this faction owns it
-				if(claim.getFeatures(FactionOwnedClaimFeature.class)
-				   .stream()
-				   .anyMatch(feature -> {
-					   FactionOwnedClaimFeature factionOwnedClaimFeature = (FactionOwnedClaimFeature) feature;
-					   return faction.is(factionOwnedClaimFeature.getFactionUUID());
-				   })
-				){
+				if (claim.getFeatures(FactionOwnedClaimFeature.class)
+				    .stream()
+				    .anyMatch(feature -> {
+					    FactionOwnedClaimFeature factionOwnedClaimFeature = (FactionOwnedClaimFeature) feature;
+					    return faction.is(factionOwnedClaimFeature.getFactionUUID());
+				    })
+				) {
 					claims.add(claim.getUUID());
 				}
 			});
@@ -74,7 +75,7 @@ public class FactionClaimDataManager extends SavedData {
 	}
 	
 	@SuppressWarnings("RedundantIfStatement")
-	private void validateClaims(){
+	private void validateClaims() {
 		factionToClaimMap.forEach((key, value) -> value.removeIf(claim -> {
 			Optional<ClaimData> claimData = ClaimDataManager.get().getClaim(claim);
 			//1. if claim doesn't exist
@@ -93,41 +94,42 @@ public class FactionClaimDataManager extends SavedData {
 		factionToClaimMap.values().removeIf(Set::isEmpty);
 	}
 	
-	private void validateFactions(){
+	private void validateFactions() {
 		List<UUID> factionsToRemove = new ArrayList<>();
 		factionToClaimMap.keySet().forEach(factionUUID -> {
-			if(FactionDataManager.get().getFaction(factionUUID).isEmpty()){
+			if (FactionDataManager.get().getFaction(factionUUID).isEmpty()) {
 				factionsToRemove.add(factionUUID);
 			}
 		});
 		factionsToRemove.forEach(uuid -> factionToClaimMap.remove(uuid).forEach(claim -> ClaimDataManager.get().removeClaim(claim)));
 	}
 	
-	private void removeUnownedFactionClaim(){
+	private void removeUnownedFactionClaim() {
 		List<ClaimData> effectivelyFinalClaimData = Collections.unmodifiableList(ClaimDataManager.get().getAllClaims());
 		effectivelyFinalClaimData.forEach(entry -> {
-			if(entry.hasFeature(FactionOwnedClaimFeature.class)){
+			if (entry.hasFeature(FactionOwnedClaimFeature.class)) {
 				UUID factionUUID = ((FactionOwnedClaimFeature) entry.getFeature(FactionOwnedClaimFeature.class).orElseThrow()).getFactionUUID();
-				FactionDataManager.get().getFaction(factionUUID).ifPresentOrElse(f -> {}, () -> {
+				FactionDataManager.get().getFaction(factionUUID).ifPresentOrElse(f -> {
+				}, () -> {
 					ClaimDataManager.get().removeClaim(entry.getUUID());
 				});
 			}
 		});
 	}
 	
-	public void refresh(boolean full){
+	public void refresh(boolean full) {
 		this.removeUnownedFactionClaim();
-		if(full){
+		if (full) {
 			this.reAddAllClaims();
-		}else {
+		} else {
 			this.validateClaims();
 		}
 		this.validateFactions();
 		this.setDirty();
 	}
 	
-	private static FactionClaimDataManager loadOrCreate(MinecraftServer server){
-		if(server == null) return new FactionClaimDataManager();
+	private static FactionClaimDataManager loadOrCreate(MinecraftServer server) {
+		if (server == null) return new FactionClaimDataManager();
 		ServerLevel overworld = server.getLevel(ServerLevel.OVERWORLD);
 		assert overworld != null;
 		return overworld.getDataStorage().computeIfAbsent(FactionClaimDataManager::load, FactionClaimDataManager::new, DATA_NAME);
@@ -163,21 +165,21 @@ public class FactionClaimDataManager extends SavedData {
 		return data;
 	}
 	
-	public Set<UUID> getClaimsOf(UUID faction){
+	public Set<UUID> getClaimsOf(UUID faction) {
 		return factionToClaimMap.getOrDefault(faction, new CopyOnWriteArraySet<>());
 	}
 	
-	public void addClaimTo(UUID faction, UUID claim){
+	public void addClaimTo(UUID faction, UUID claim) {
 		factionToClaimMap.computeIfAbsent(faction, k -> new CopyOnWriteArraySet<>()).add(claim);
 		refresh(false);
 	}
 	
-	public void removeClaimOf(UUID faction, UUID claim){
+	public void removeClaimOf(UUID faction, UUID claim) {
 		factionToClaimMap.computeIfAbsent(faction, k -> new CopyOnWriteArraySet<>()).remove(claim);
 		refresh(false);
 	}
 	
-	public static boolean isAuthorizedInFactionClaim(ServerPlayer player, UUID faction, int minDiplomaticLevel){
+	public static boolean isAuthorizedInFactionClaim(ServerPlayer player, UUID faction, int minDiplomaticLevel) {
 		/*
 		 * Allowed if:
 		 * 0. special check for fake player
@@ -186,14 +188,14 @@ public class FactionClaimDataManager extends SavedData {
 		 * 3. player is in a faction that is allied with the faction
 		 */
 		
-		if(FactionDataManager.get().getFaction(faction).isEmpty()){
+		if (FactionDataManager.get().getFaction(faction).isEmpty()) {
 			CAWConstants.LOGGER.warn("Faction {} doesn't exist!", faction);
 			CAWConstants.logStackTrace();
 			return true;
 		}
 		
 		//0. Fake player: check faction fake player policy
-		if(player instanceof FakePlayer){
+		if (player instanceof FakePlayer) {
 			int fakePlayerPolicy = FactionDataManager.get().getFaction(faction).get().getFakePlayerPolicy();
 			if (fakePlayerPolicy == FactionData.FAKE_PLAYER_POLICY_DENY) return false;
 			if (fakePlayerPolicy == FactionData.FAKE_PLAYER_POLICY_ALLOW) return true;
@@ -201,16 +203,16 @@ public class FactionClaimDataManager extends SavedData {
 		}
 		
 		//1. is same faction
-		if(FactionDataManager.get().isPlayerInFaction(player.getUUID(), faction)) return true;
+		if (FactionDataManager.get().isPlayerInFaction(player.getUUID(), faction)) return true;
 		
 		//2. is OP
-		if(player.hasPermissions(4)) return true;
+		if (player.hasPermissions(4)) return true;
 		
 		//3. is allied
 		AtomicBoolean flag = new AtomicBoolean(false);
 		FactionDataManager.get().getFaction(faction).get().getDiplomaticRelationships().forEach((key, value) -> {
-			if(value.getRelationship() >= minDiplomaticLevel){
-				if(FactionDataManager.get().isPlayerInFaction(player.getUUID(), key)){
+			if (value.getRelationship() >= minDiplomaticLevel) {
+				if (FactionDataManager.get().isPlayerInFaction(player.getUUID(), key)) {
 					flag.set(true);
 				}
 			}

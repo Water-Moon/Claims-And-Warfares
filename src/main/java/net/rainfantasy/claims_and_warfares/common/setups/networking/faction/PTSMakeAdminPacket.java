@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTSMakeAdminPacket {
-
+	
 	UUID playerUUID;
 	UUID factionUUID;
 	

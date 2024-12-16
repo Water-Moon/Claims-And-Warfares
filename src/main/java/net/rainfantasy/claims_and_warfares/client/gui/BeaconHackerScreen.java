@@ -7,7 +7,6 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -16,7 +15,6 @@ import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import net.rainfantasy.claims_and_warfares.client.widgets.MapWidgetInGui;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.BeaconHackerBlockEntity;
-import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.ClaimBeaconBlockEntity;
 import net.rainfantasy.claims_and_warfares.common.game_objs.screens.BeaconHackerMenu;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.claim_beacon.PTSBeaconHackerOnOffPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.claim_beacon.PTSBeaconHackerSelectTargetPacket;
@@ -30,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu> {
+	
 	private static final ResourceLocation UI_TEXTURE = CAWConstants.rl("textures/gui/beacon_hack.png");
 	
 	int x, y;
@@ -58,17 +57,16 @@ public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu
 	@Override
 	protected void init() {
 		super.init();
-		CAWClientGUIManager.setClaimInfoSize(2, 2);
-		x = (width - this.imageWidth)/2;
-		y = (height - this.imageHeight)/2;
+		x = (width - this.imageWidth) / 2;
+		y = (height - this.imageHeight) / 2;
 		
 		this.mapWidget = this.addRenderableWidget(new MapWidgetInGui(x + 8, y + 17));
-		for(int i = 0; i < 9; i++){
+		for (int i = 0; i < 9; i++) {
 			int finalI = i;
 			this.buttons[i] = this.addRenderableWidget(
-				Button.builder(Component.empty(), (btn) -> {
-					this.onButtonPress(finalI);
-				}).pos(x + 178, y + 20 + i*21).size(72, 20).build()
+			Button.builder(Component.empty(), (btn) -> {
+				this.onButtonPress(finalI);
+			}).pos(x + 178, y + 20 + i * 21).size(72, 20).build()
 			);
 		}
 		this.startButton = this.addRenderableWidget(
@@ -112,16 +110,16 @@ public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu
 		drawRemainingFuel(graphics, pMouseX, pMouseY);
 		drawIcons(graphics, pMouseX, pMouseY);
 		
-		if(this.menu.block.isEnabled()){
+		if (this.menu.block.isEnabled()) {
 			drawIndicatorLight(graphics, 96, 17, 2);
-			if(this.menu.block.isTargetValid()){
-				if(this.menu.block.getProgress() % 2 == 0){
+			if (this.menu.block.isTargetValid()) {
+				if (this.menu.block.getProgress() % 2 == 0) {
 					drawIndicatorLight(graphics, 107, 17, 2);
 				}
 			}
-		}else{
+		} else {
 			drawIndicatorLight(graphics, 96, 17, 0);
-			if(this.menu.block.isTargetValid()){
+			if (this.menu.block.isTargetValid()) {
 				drawIndicatorLight(graphics, 107, 17, 1);
 			}
 		}
@@ -132,11 +130,11 @@ public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu
 	@SuppressWarnings("DuplicatedCode")
 	@Override
 	protected void renderTooltip(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
-		if(this.mapWidget == null){
+		if (this.mapWidget == null) {
 			super.renderTooltip(graphics, mouseX, mouseY);
 			return;
 		}
-		if(mapWidget.isMouseInBounds(mouseX, mouseY)){
+		if (mapWidget.isMouseInBounds(mouseX, mouseY)) {
 			Vector2i relativePos = mapWidget.getRelativeMousePos(mouseX, mouseY);
 			Vector2i worldPos = new Vector2i(relativePos.x + CAWClientGUIManager.mapPos.x, relativePos.y + CAWClientGUIManager.mapPos.y);
 			Vector2i chunkPos = new Vector2i(relativePos.x >> 4, relativePos.y >> 4);
@@ -163,33 +161,33 @@ public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu
 	@Override
 	protected void containerTick() {
 		super.containerTick();
-		if(!this.initialized) return;
-		if(mapWidget != null) mapWidget.tick();
+		if (!this.initialized) return;
+		if (mapWidget != null) mapWidget.tick();
 		copyPos();
 		
 		this.updateButtons();
 		this.updateLabels();
 	}
 	
-	private void copyPos(){
+	private void copyPos() {
 		Set<BlockPos> pos = this.menu.block.getKnownBeaconPos();
 		localBlockPos.clear();
 		localBlockPos.addAll(pos);
 	}
 	
-	private void updateButtons(){
+	private void updateButtons() {
 		int i = 0;
-		for(BlockPos entry : localBlockPos){
+		for (BlockPos entry : localBlockPos) {
 			this.buttons[i].setMessage(Component.literal(entry.getX() + "," + entry.getZ()));
 			this.buttons[i].active = true;
 			i++;
 		}
-		while(i < 9){
+		while (i < 9) {
 			this.buttons[i].setMessage(Component.translatable("caw.gui.label.empty"));
 			this.buttons[i].active = false;
 			i++;
 		}
-		if(this.menu.block.isEnabled()){
+		if (this.menu.block.isEnabled()) {
 			this.startButton.active = false;
 			this.stopButton.active = true;
 		} else {
@@ -198,49 +196,49 @@ public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu
 		}
 	}
 	
-	private void drawProgressBar(GuiGraphics graphics, int mouseX, int mouseY){
-		int barLength1 = (int)(((float)this.menu.block.getProgress() / BeaconHackerBlockEntity.MAX_PROGRESS) * 64);
-		int barLength2 = (int)(((float)this.menu.block.getProgress2() / this.menu.block.getMaxProgress2()) * 64);
+	private void drawProgressBar(GuiGraphics graphics, int mouseX, int mouseY) {
+		int barLength1 = (int) (((float) this.menu.block.getProgress() / BeaconHackerBlockEntity.MAX_PROGRESS) * 64);
+		int barLength2 = (int) (((float) this.menu.block.getProgress2() / this.menu.block.getMaxProgress2()) * 64);
 		graphics.blit(UI_TEXTURE, x + 97, y + 27, 48, 230, barLength1, 2);
 		graphics.blit(UI_TEXTURE, x + 97, y + 31, 48, 232, barLength2, 2);
 	}
 	
-	private void drawIcons(GuiGraphics graphics, int mouseX, int mouseY){
-		if(mapWidget == null) return;
+	private void drawIcons(GuiGraphics graphics, int mouseX, int mouseY) {
+		if (mapWidget == null) return;
 		BlockPos selfPos = this.menu.block.getBlockPos();
 		Vector2i selfIconPos = mapWidget.worldCoordToRelativeCoord(selfPos.getX(), selfPos.getZ());
 		drawIconInner(graphics, selfIconPos.x, selfIconPos.y, 48, 240, 7, 8, 4, 7);
 		
 		BlockPos selectedPos = this.menu.block.getTargetPos();
-		if(this.menu.block.isTargetValid()) {
+		if (this.menu.block.isTargetValid()) {
 			Vector2i selectedIconPos = mapWidget.worldCoordToRelativeCoord(selectedPos.getX(), selectedPos.getZ());
 			drawIconInner(graphics, selectedIconPos.x, selectedIconPos.y, 64, 240, 8, 8, 4, 4);
 		}
 		
-		for(BlockPos pos : localBlockPos){
-			if(pos.equals(selectedPos)) continue;
+		for (BlockPos pos : localBlockPos) {
+			if (pos.equals(selectedPos)) continue;
 			Vector2i iconPos = mapWidget.worldCoordToRelativeCoord(pos.getX(), pos.getZ());
 			drawIconInner(graphics, iconPos.x, iconPos.y, 59, 240, 4, 4, 2, 2);
 		}
 	}
 	
 	@SuppressWarnings("SameParameterValue")
-	private void drawIconInner(GuiGraphics graphics, int tx, int ty, int u, int v, int uw, int vh, int cx, int cy){
+	private void drawIconInner(GuiGraphics graphics, int tx, int ty, int u, int v, int uw, int vh, int cx, int cy) {
 		int posX = Mth.clamp(tx - cx, this.x + 6, this.x + 6 + 80);
 		int posY = Mth.clamp(ty - cy, this.y + 15, this.y + 15 + 80);
 		
 		graphics.blit(UI_TEXTURE, posX, posY, u, v, uw, vh);
 	}
 	
-	private void drawRemainingFuel(GuiGraphics graphics, int mouseX, int mouseY){
+	private void drawRemainingFuel(GuiGraphics graphics, int mouseX, int mouseY) {
 		int fuel = this.menu.block.getRemainingFuel();
 		int maxFuel = this.menu.block.getMaxFuel();
-		int barHeight = (int)(fuel / (float)maxFuel * 16);
+		int barHeight = (int) (fuel / (float) maxFuel * 16);
 		int yStart = 16 - barHeight;
 		graphics.blit(UI_TEXTURE, x + 26, y + 117 + yStart, 44, 230 + yStart, 2, barHeight);
 	}
 	
-	private void updateLabels(){
+	private void updateLabels() {
 		BlockPos targetPos = this.menu.block.getTargetPos();
 		String targetOwner = this.menu.block.getTargetOwner();
 		String targetFaction = this.menu.block.getTargetFaction();
@@ -253,8 +251,8 @@ public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu
 		this.beaconFactionName.setMessage(Component.literal(targetFaction));
 	}
 	
-	private void onButtonPress(int i){
-		if(i >= localBlockPos.size()) return;
+	private void onButtonPress(int i) {
+		if (i >= localBlockPos.size()) return;
 		ChannelRegistry.sendToServer(new PTSBeaconHackerSelectTargetPacket(localBlockPos.get(i)));
 	}
 	
@@ -267,7 +265,8 @@ public class BeaconHackerScreen extends AbstractContainerScreen<BeaconHackerMenu
 	new int[]{28, 238},
 	new int[]{35, 238},
 	};
-	protected void drawIndicatorLight(GuiGraphics graphics, int px, int py, int type){
+	
+	protected void drawIndicatorLight(GuiGraphics graphics, int px, int py, int type) {
 		graphics.blit(UI_TEXTURE, x + px, y + py, indicatorPos[type][0], indicatorPos[type][1], 7, 7);
 	}
 }

@@ -13,6 +13,7 @@ import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -57,11 +58,11 @@ public class ClaimsAndWarfares {
 	}
 	
 	public void addCreative(BuildCreativeModeTabContentsEvent event) {
-		if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)){
+		if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
 			event.accept(ItemRegistry.CLAIM_VIEWER.get());
 			event.accept(ItemRegistry.TEAM_MANAGER.get());
 		}
-		if(event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)){
+		if (event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)) {
 			event.accept(BlockRegistry.CLAIM_BEACON.get());
 			event.accept(BlockRegistry.BEACON_UPGRADE_SIZE.get());
 			event.accept(BlockRegistry.BEACON_UPGRADE_MOB_GRIEFING.get());
@@ -87,8 +88,14 @@ public class ClaimsAndWarfares {
 	}
 	
 	@SubscribeEvent
-	public void onPlayerLogin(PlayerLoggedInEvent event){
-		if(!(event.getEntity() instanceof ServerPlayer player)) return;
+	public void onServerStop(ServerStoppedEvent event) {
+		CAWConstants.LOGGER.info("Server stopping");
+		CAWConstants.setServer(null);
+	}
+	
+	@SubscribeEvent
+	public void onPlayerLogin(PlayerLoggedInEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) return;
 		CAWConstants.execute(() -> {
 			OfflinePlayerDatabase.get().updateData(player);
 			FactionPacketGenerator.scheduleSend(player);
@@ -98,15 +105,16 @@ public class ClaimsAndWarfares {
 }
 
 @EventBusSubscriber(modid = CAWConstants.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-class CAWClient{
+class CAWClient {
+	
 	@SubscribeEvent
-	public static void onClientSetup(FMLClientSetupEvent event){
+	public static void onClientSetup(FMLClientSetupEvent event) {
 		MenuScreens.register(MenuRegistry.CLAIM_BEACON_MENU.get(), ClaimBeaconScreen::new);
 		MenuScreens.register(MenuRegistry.BEACON_HACKER_MENU.get(), BeaconHackerScreen::new);
 	}
 	
 	@SubscribeEvent
-	public static void onRegisterBlockRenderer(EntityRenderersEvent.RegisterRenderers event){
+	public static void onRegisterBlockRenderer(EntityRenderersEvent.RegisterRenderers event) {
 		event.registerBlockEntityRenderer(BlockEntityRegistry.CLAIM_BEACON_BE.get(), ClaimBeaconRenderer::new);
 		event.registerBlockEntityRenderer(BlockEntityRegistry.BEACON_HACKER_BE.get(), BeaconHackerRenderer::new);
 	}

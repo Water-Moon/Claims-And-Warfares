@@ -47,6 +47,7 @@ public class MapPacketGenerator {
 		}
 		return Blocks.AIR;
 	}
+	
 	public static Tuple<BlockState, BlockPos> getTopBlockWithInfo(Level level, int x, int z) {
 		BlockPos pos = new BlockPos(x, level.getMaxBuildHeight(), z);
 		while (pos.getY() > level.getMinBuildHeight()) {
@@ -61,7 +62,7 @@ public class MapPacketGenerator {
 		}
 		return new Tuple<>(Blocks.AIR.defaultBlockState(), pos);
 	}
-
+	
 	
 	/**
 	 * Get the map info around the player
@@ -96,6 +97,7 @@ public class MapPacketGenerator {
 	public static void scheduleSend(ServerPlayer player, int radiusX, int radiusZ) {
 		scheduleSend(player, toChunkCoords(player.position()), radiusX, radiusZ);
 	}
+	
 	@SuppressWarnings("DuplicatedCode")
 	public static void scheduleSend(ServerPlayer player, Vector2i chunkCoords, int radiusX, int radiusZ) {
 		if (player.getServer() == null) return;
@@ -110,20 +112,20 @@ public class MapPacketGenerator {
 					for (int j = -radiusZ; j <= radiusZ; j++) {
 						
 						// So to prevent sending too many packets at once
-						try{
+						try {
 							Thread.sleep(1);
-						}catch (Exception e){
+						} catch (Exception e) {
 							CAWConstants.LOGGER.error("Error in thread", e);
 						}
 						int finalI = i;
 						int finalJ = j;
-						if(!CAWConstants.execute(() ->
-							ChannelRegistry.sendToClient(player, getInfo(player, chunkCoords, finalI, finalJ, topX, topZ)))){
+						if (!CAWConstants.execute(() ->
+						                          ChannelRegistry.sendToClient(player, getInfo(player, chunkCoords, finalI, finalJ, topX, topZ)))) {
 							flag = true;
 							break;
 						}
 					}
-					if(flag) break;
+					if (flag) break;
 				}
 			});
 			sendThread.setName("Map Sender (to:" + player.getScoreboardName() + ")");
@@ -132,15 +134,15 @@ public class MapPacketGenerator {
 	}
 	
 	@SuppressWarnings("DuplicatedCode")
-	public static void sendToPlayerWithOpenMapScreen(MinecraftServer server){
+	public static void sendToPlayerWithOpenMapScreen(MinecraftServer server) {
 		server.getPlayerList().getPlayers().forEach(player -> {
-			if(player.containerMenu instanceof ClaimBeaconMenu claimBeaconMenu){
+			if (player.containerMenu instanceof ClaimBeaconMenu claimBeaconMenu) {
 				scheduleSend(player, CoordUtil.blockToChunk(claimBeaconMenu.block.getBlockPos()), 3, 3);
-			}else if(player.containerMenu instanceof BeaconHackerMenu beaconHackerMenu){
+			} else if (player.containerMenu instanceof BeaconHackerMenu beaconHackerMenu) {
 				scheduleSend(player, CoordUtil.blockToChunk(beaconHackerMenu.block.getBlockPos()), 2, 2);
-			}else {
+			} else {
 				Optional.ofNullable(MapPacketGenerator.recentlyOpenedMapSize.get(player.getUUID())).ifPresent(entry -> {
-					if(entry.a < (System.currentTimeMillis() + 60*60*1000)) {
+					if (entry.a < (System.currentTimeMillis() + 60 * 60 * 1000)) {
 						scheduleSend(player, entry.b, entry.c);
 					}
 				});

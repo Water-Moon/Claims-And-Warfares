@@ -3,7 +3,6 @@ package net.rainfantasy.claims_and_warfares.client.render.block;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -20,31 +19,33 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 public class BeaconHackerRenderer implements BlockEntityRenderer<BeaconHackerBlockEntity> {
+	
 	private static final ResourceLocation GUARDIAN_BEAM_LOCATION = new ResourceLocation("textures/entity/guardian_beam.png");
 	private static final RenderType BEAM_RENDER_TYPE = RenderType.entityCutoutNoCull(GUARDIAN_BEAM_LOCATION);
 	
 	Context context;
-	public BeaconHackerRenderer(BlockEntityRendererProvider.Context context){
+	
+	public BeaconHackerRenderer(BlockEntityRendererProvider.Context context) {
 		this.context = context;
 	}
 	
 	@Override
 	public void render(BeaconHackerBlockEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-		if(pBlockEntity.isEnabled()){
+		if (pBlockEntity.isEnabled()) {
 			renderBeam(
-				pBlockEntity,
-				pBlockEntity.getTargetPos(),
-				pPartialTick,
-				pPoseStack,
-				pBuffer,
-				pPackedLight
+			pBlockEntity,
+			pBlockEntity.getTargetPos(),
+			pPartialTick,
+			pPoseStack,
+			pBuffer,
+			pPackedLight
 			);
 		}
 	}
 	
 	@Override
 	public boolean shouldRenderOffScreen(BeaconHackerBlockEntity pBlockEntity) {
-		if(pBlockEntity.isEnabled()) return true;
+		if (pBlockEntity.isEnabled()) return true;
 		return BlockEntityRenderer.super.shouldRenderOffScreen(pBlockEntity);
 	}
 	
@@ -61,7 +62,7 @@ public class BeaconHackerRenderer implements BlockEntityRenderer<BeaconHackerBlo
 	
 	@SuppressWarnings("DuplicatedCode")
 	public void renderBeam(BeaconHackerBlockEntity thisBlock, BlockPos target, float pPartialTicks, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight) {
-		float f = Math.max(0.25f, (float)thisBlock.getProgress() / BeaconHackerBlockEntity.MAX_PROGRESS);
+		float f = Math.max(0.25f, (float) thisBlock.getProgress() / BeaconHackerBlockEntity.MAX_PROGRESS);
 		float f1 = (float) ((System.currentTimeMillis()) % 1000) + pPartialTicks;
 		float f2 = f * 0.5F % 1.0F;
 		float f3 = 0.5f;
@@ -71,34 +72,34 @@ public class BeaconHackerRenderer implements BlockEntityRenderer<BeaconHackerBlo
 		Vec3 vec31 = thisBlock.getBlockPos().getCenter();
 		Vec3 vec32 = vec3.subtract(vec31);
 		vec32 = vec32.subtract(vec32.normalize().multiply(1, 1, 1));
-		float f4 = (float)(vec32.length() + 1.0D);
+		float f4 = (float) (vec32.length() + 1.0D);
 		vec32 = vec32.normalize();
-		float f5 = (float)Math.acos(vec32.y);
-		float f6 = (float)Math.atan2(vec32.z, vec32.x);
-		pPoseStack.mulPose(Axis.YP.rotationDegrees((((float)Math.PI / 2F) - f6) * (180F / (float)Math.PI)));
-		pPoseStack.mulPose(Axis.XP.rotationDegrees(f5 * (180F / (float)Math.PI)));
+		float f5 = (float) Math.acos(vec32.y);
+		float f6 = (float) Math.atan2(vec32.z, vec32.x);
+		pPoseStack.mulPose(Axis.YP.rotationDegrees((((float) Math.PI / 2F) - f6) * (180F / (float) Math.PI)));
+		pPoseStack.mulPose(Axis.XP.rotationDegrees(f5 * (180F / (float) Math.PI)));
 		int i = 1;
 		float f7 = f1 * 0.05F * -1.5F;
 		float f8 = f * f;
-		int j = 64 + (int)(f8 * 191.0F);
-		int k = 32 + (int)(f8 * 191.0F);
-		int l = 128 - (int)(f8 * 64.0F);
+		int j = 64 + (int) (f8 * 191.0F);
+		int k = 32 + (int) (f8 * 191.0F);
+		int l = 128 - (int) (f8 * 64.0F);
 		float f11 = Mth.cos(f7 + 2.3561945F) * 0.282F;
 		float f12 = Mth.sin(f7 + 2.3561945F) * 0.282F;
-		float f13 = Mth.cos(f7 + ((float)Math.PI / 4F)) * 0.282F;
-		float f14 = Mth.sin(f7 + ((float)Math.PI / 4F)) * 0.282F;
+		float f13 = Mth.cos(f7 + ((float) Math.PI / 4F)) * 0.282F;
+		float f14 = Mth.sin(f7 + ((float) Math.PI / 4F)) * 0.282F;
 		float f15 = Mth.cos(f7 + 3.926991F) * 0.282F;
 		float f16 = Mth.sin(f7 + 3.926991F) * 0.282F;
 		float f17 = Mth.cos(f7 + 5.4977875F) * 0.282F;
 		float f18 = Mth.sin(f7 + 5.4977875F) * 0.282F;
-		float f19 = Mth.cos(f7 + (float)Math.PI) * 0.2F;
-		float f20 = Mth.sin(f7 + (float)Math.PI) * 0.2F;
+		float f19 = Mth.cos(f7 + (float) Math.PI) * 0.2F;
+		float f20 = Mth.sin(f7 + (float) Math.PI) * 0.2F;
 		float f21 = Mth.cos(f7 + 0.0F) * 0.2F;
 		float f22 = Mth.sin(f7 + 0.0F) * 0.2F;
-		float f23 = Mth.cos(f7 + ((float)Math.PI / 2F)) * 0.2F;
-		float f24 = Mth.sin(f7 + ((float)Math.PI / 2F)) * 0.2F;
-		float f25 = Mth.cos(f7 + ((float)Math.PI * 1.5F)) * 0.2F;
-		float f26 = Mth.sin(f7 + ((float)Math.PI * 1.5F)) * 0.2F;
+		float f23 = Mth.cos(f7 + ((float) Math.PI / 2F)) * 0.2F;
+		float f24 = Mth.sin(f7 + ((float) Math.PI / 2F)) * 0.2F;
+		float f25 = Mth.cos(f7 + ((float) Math.PI * 1.5F)) * 0.2F;
+		float f26 = Mth.sin(f7 + ((float) Math.PI * 1.5F)) * 0.2F;
 		float f29 = -1.0F + f2;
 		float f30 = f4 * 2.5F + f29;
 		VertexConsumer vertexconsumer = pBuffer.getBuffer(BEAM_RENDER_TYPE);

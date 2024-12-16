@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "claims_and_warfares:block/beacon_upgrade_explosion_protection"
+  }
+}

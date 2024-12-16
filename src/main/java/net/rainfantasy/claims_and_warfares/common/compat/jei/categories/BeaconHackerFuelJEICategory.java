@@ -16,7 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
-import net.rainfantasy.claims_and_warfares.common.game_objs.recipes.BeaconFuelRecipe;
 import net.rainfantasy.claims_and_warfares.common.game_objs.recipes.BeaconHackerFuelRecipe;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.BlockRegistry;
 import net.rainfantasy.claims_and_warfares.common.utils.ColorUtil;
@@ -24,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BeaconHackerFuelJEICategory implements IRecipeCategory<BeaconHackerFuelRecipe> {
+	
 	public static final ResourceLocation UID = CAWConstants.rl("beacon_hacker_fuel");
 	public static final ResourceLocation TEXTURE = CAWConstants.rl("textures/gui/beacon_hack_jei.png");
 	

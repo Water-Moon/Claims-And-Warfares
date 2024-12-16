@@ -1,8 +1,6 @@
 package net.rainfantasy.claims_and_warfares.common.setups.networking.faction.menu;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.networking.FactionPacketGenerator;

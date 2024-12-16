@@ -2,17 +2,14 @@ package net.rainfantasy.claims_and_warfares.common.setups.networking.faction;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
-import net.rainfantasy.claims_and_warfares.common.functionalities.factions.networking.FactionPacketGenerator;
-import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.menu.PTCOpenFactionManagePacket;
-import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegistry;
 
 import java.util.function.Supplier;
 
 public class PTCLeaveFactionSuccessPacket {
+	
 	String factionName;
 	
 	public PTCLeaveFactionSuccessPacket(String factionName) {

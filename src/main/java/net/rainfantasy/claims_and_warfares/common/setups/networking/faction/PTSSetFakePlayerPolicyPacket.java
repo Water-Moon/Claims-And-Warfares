@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 import static net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionData.*;
 
 public class PTSSetFakePlayerPolicyPacket {
+	
 	int policy;
 	UUID factionUUID;
 	
@@ -34,7 +35,7 @@ public class PTSSetFakePlayerPolicyPacket {
 		byteBuf.writeVarInt(packet.policy);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			ServerPlayer player = context.getSender();

@@ -24,7 +24,7 @@ public class FactionManagementScreen extends Screen {
 	
 	StringWidget currentFactionName;
 	Button selectFactionButton;
-
+	
 	Button viewPendingInviteButton;
 	Button createPageButton;
 	Button invitePageButton;
@@ -37,11 +37,11 @@ public class FactionManagementScreen extends Screen {
 	
 	Button cancelButton;
 	
-	private static Component getFactionDisplay(){
+	private static Component getFactionDisplay() {
 		return Component.translatable(
-			"caw.gui.label.current_selected",
-			CAWClientDataManager.getCurrentSelectedFactionName(),
-			CAWClientDataManager.getPermissionInCurrentSelectedFaction()
+		"caw.gui.label.current_selected",
+		CAWClientDataManager.getCurrentSelectedFactionName(),
+		CAWClientDataManager.getPermissionInCurrentSelectedFaction()
 		);
 	}
 	
@@ -53,7 +53,7 @@ public class FactionManagementScreen extends Screen {
 		int yCenter = this.height / 2;
 		int y_start = yCenter - 50;
 		
-		currentFactionName = new StringWidget(0, 0, 200, 20, getFactionDisplay(),this.font);
+		currentFactionName = new StringWidget(0, 0, 200, 20, getFactionDisplay(), this.font);
 		currentFactionName.alignLeft();
 		selectFactionButton = Button.builder(Component.translatable("caw.gui.button.select_primary"), btn -> {
 			openSelectScreen();
@@ -80,24 +80,24 @@ public class FactionManagementScreen extends Screen {
 		diplomacyPageButton = Button.builder(Component.translatable("caw.gui.button.diplomacy"), btn -> {
 			openDiplomacyScreen();
 			CAWConstants.debugLog("Diplomacy button pressed");
-		}).pos(xCenter - BUTTON_WIDTH / 2, y_start + BUTTON_HEIGHT * 2).size(BUTTON_WIDTH/2, BUTTON_HEIGHT).build();
+		}).pos(xCenter - BUTTON_WIDTH / 2, y_start + BUTTON_HEIGHT * 2).size(BUTTON_WIDTH / 2, BUTTON_HEIGHT).build();
 		this.addRenderableWidget(diplomacyPageButton);
 		
 		settingsPageButton = Button.builder(Component.translatable("caw.gui.button.faction_settings"), btn -> {
 			openSettingsScreen();
 			CAWConstants.debugLog("Settings button pressed");
-		}).pos(xCenter, y_start + BUTTON_HEIGHT * 2).size(BUTTON_WIDTH/2, BUTTON_HEIGHT).build();
+		}).pos(xCenter, y_start + BUTTON_HEIGHT * 2).size(BUTTON_WIDTH / 2, BUTTON_HEIGHT).build();
 		this.addRenderableWidget(settingsPageButton);
 		
 		
 		memberPageButton = Button.builder(Component.translatable("caw.gui.button.manage_members"), btn -> {
 			openManageScreen();
-		}).pos(xCenter - BUTTON_WIDTH / 2, y_start + BUTTON_HEIGHT * 3).size(BUTTON_WIDTH/2, BUTTON_HEIGHT).build();
+		}).pos(xCenter - BUTTON_WIDTH / 2, y_start + BUTTON_HEIGHT * 3).size(BUTTON_WIDTH / 2, BUTTON_HEIGHT).build();
 		this.addRenderableWidget(memberPageButton);
 		
 		transferButton = Button.builder(Component.translatable("caw.gui.button.transfer_faction"), btn -> {
 			openTransferScreen();
-		}).pos(xCenter, y_start + BUTTON_HEIGHT * 3).size(BUTTON_WIDTH/2, BUTTON_HEIGHT).build();
+		}).pos(xCenter, y_start + BUTTON_HEIGHT * 3).size(BUTTON_WIDTH / 2, BUTTON_HEIGHT).build();
 		this.addRenderableWidget(transferButton);
 		
 		disbandPageButton = Button.builder(Component.translatable("caw.gui.button.disband_faction"), btn -> {
@@ -116,7 +116,7 @@ public class FactionManagementScreen extends Screen {
 		this.addRenderableWidget(cancelButton);
 	}
 	
-	private void refresh(){
+	private void refresh() {
 		currentFactionName.setMessage(getFactionDisplay());
 		CAWClientDataManager.getClientPlayerUUID().flatMap(CAWClientDataManager::findInvitationTo).ifPresentOrElse(invitations -> {
 			viewPendingInviteButton.setMessage(Component.translatable("caw.gui.button.invitations_with_count", invitations.size()));
@@ -132,13 +132,13 @@ public class FactionManagementScreen extends Screen {
 		boolean clientPlayerIsFactionAdmin = false;
 		
 		if (clientPlayerHasFaction && clientPlayerExists) {
-		    UUID playerUUID = CAWClientDataManager.getClientPlayerUUID().get();
-		    clientPlayerIsFactionOwner = CAWClientDataManager.getCurrentSelectedFaction()
-		        .map(faction -> faction.isPlayerOwner(playerUUID))
-		        .orElse(false);
+			UUID playerUUID = CAWClientDataManager.getClientPlayerUUID().get();
+			clientPlayerIsFactionOwner = CAWClientDataManager.getCurrentSelectedFaction()
+			                             .map(faction -> faction.isPlayerOwner(playerUUID))
+			                             .orElse(false);
 			clientPlayerIsFactionAdmin = CAWClientDataManager.getCurrentSelectedFaction()
-		        .map(faction -> faction.isPlayerAdmin(playerUUID))
-		        .orElse(false) || clientPlayerIsFactionOwner;
+			                             .map(faction -> faction.isPlayerAdmin(playerUUID))
+			                             .orElse(false) || clientPlayerIsFactionOwner;
 		}
 		
 		selectFactionButton.active = clientPlayerExists;
@@ -173,11 +173,11 @@ public class FactionManagementScreen extends Screen {
 		ChannelRegistry.sendToServer(new PTSOpenFactionManagePacket());
 	}
 	
-	void openSelectScreen(){
+	void openSelectScreen() {
 		ChannelRegistry.sendToServer(new PTSOpenSelectActiveFactionPacket());
 	}
 	
-	void openViewInvitationScreen(){
+	void openViewInvitationScreen() {
 		ChannelRegistry.sendToServer(new PTSOpenViewInvitationPacket());
 	}
 	
@@ -189,19 +189,19 @@ public class FactionManagementScreen extends Screen {
 		ChannelRegistry.sendToServer(new PTSOpenFactionInvitePacket());
 	}
 	
-	void openManageScreen(){
+	void openManageScreen() {
 		ChannelRegistry.sendToServer(new PTSOpenMemberManagePacket());
 	}
 	
-	void openTransferScreen(){
+	void openTransferScreen() {
 		ChannelRegistry.sendToServer(new PTSOpenTransferFactionPacket());
 	}
 	
-	void openDisbandScreen(){
+	void openDisbandScreen() {
 		ChannelRegistry.sendToServer(new PTSOpenDisbandFactionPacket());
 	}
 	
-	void openLeaveFactionScreen(){
+	void openLeaveFactionScreen() {
 		ChannelRegistry.sendToServer(new PTSOpenLeaveFactionPacket());
 	}
 	

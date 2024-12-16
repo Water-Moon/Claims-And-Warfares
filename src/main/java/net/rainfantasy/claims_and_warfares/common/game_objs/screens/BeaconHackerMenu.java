@@ -6,16 +6,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.BeaconHackerBlockEntity;
-import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.ClaimBeaconBlockEntity;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.BlockRegistry;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.MenuRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -34,7 +31,7 @@ public class BeaconHackerMenu extends AbstractMachineMenu<BeaconHackerBlockEntit
 		ClientLevel l = Minecraft.getInstance().level;
 		assert l != null;
 		BlockEntity be = l.getBlockEntity(extraData.readBlockPos());
-		if (be instanceof BeaconHackerBlockEntity b){
+		if (be instanceof BeaconHackerBlockEntity b) {
 			b.load(Objects.requireNonNull(extraData.readNbt()));
 			return b;
 		}

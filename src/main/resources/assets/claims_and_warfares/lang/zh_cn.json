@@ -97,6 +97,7 @@
   "caw.errors.faction.name_same": "输入的名称与当前名称一致",
   "caw.errors.faction.not_found": "未找到指定的势力",
   "caw.errors.faction.not_in_faction": "您并不是那个势力的成员",
+  "caw.errors.faction.no_primary_faction": "您必须在一个势力中才能这样做",
   "caw.errors.faction.not_in_faction.other": "此玩家并不是那个势力的成员",
   "caw.errors.faction.already_in_faction.other": "此玩家已经是这个势力的成员了",
   "caw.errors.faction.already_primary": "这已经是您的首选势力",

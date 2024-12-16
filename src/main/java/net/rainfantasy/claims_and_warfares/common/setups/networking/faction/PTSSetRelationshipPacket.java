@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTSSetRelationshipPacket {
+	
 	UUID factionUUID;
 	int relationship;
 	
@@ -30,7 +31,7 @@ public class PTSSetRelationshipPacket {
 		byteBuf.writeVarInt(packet.relationship);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			ServerPlayer player = context.getSender();

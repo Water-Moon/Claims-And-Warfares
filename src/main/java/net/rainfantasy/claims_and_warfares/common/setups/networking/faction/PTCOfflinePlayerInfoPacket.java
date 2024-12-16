@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTCOfflinePlayerInfoPacket {
+	
 	UUID uuid;
 	String name;
 	
@@ -29,7 +30,7 @@ public class PTCOfflinePlayerInfoPacket {
 		byteBuf.writeUtf(packet.name);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			CAWClientDataManager.addOfflinePlayerData(new OfflinePlayerData(uuid, name));

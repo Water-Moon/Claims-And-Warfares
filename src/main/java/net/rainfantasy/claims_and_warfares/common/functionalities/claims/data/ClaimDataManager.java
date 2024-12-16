@@ -3,7 +3,6 @@ package net.rainfantasy.claims_and_warfares.common.functionalities.claims.data;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -22,7 +21,6 @@ import org.joml.Vector2i;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 public class ClaimDataManager extends SavedData {
 	
@@ -56,12 +54,12 @@ public class ClaimDataManager extends SavedData {
 		return INSTANCE;
 	}
 	
-	public static Optional<Level> getLevelById(String id){
+	public static Optional<Level> getLevelById(String id) {
 		return Optional.ofNullable(levelCache.computeIfAbsent(id,
 		(idIn) -> {
 			AtomicReference<Level> result = new AtomicReference<>(null);
 			SERVER.getAllLevels().forEach(lvl -> {
-				if(MinecraftUtils.getLevelId(lvl).equals(idIn)){
+				if (MinecraftUtils.getLevelId(lvl).equals(idIn)) {
 					result.set(lvl);
 				}
 			});
@@ -101,7 +99,7 @@ public class ClaimDataManager extends SavedData {
 		claims.forEach((uuid, claimData) -> {
 			claimData.claimedChunks.forEach(chunk -> {
 				getClaimsIn(claimData.dimension)
-					.computeIfAbsent(chunk, k -> new CopyOnWriteArraySet<>()).add(uuid);
+				.computeIfAbsent(chunk, k -> new CopyOnWriteArraySet<>()).add(uuid);
 			});
 		});
 	}
@@ -112,12 +110,13 @@ public class ClaimDataManager extends SavedData {
 	
 	////////
 	
-	private Map<Vector2i, Set<UUID>> getClaimsIn(String dimension){
+	private Map<Vector2i, Set<UUID>> getClaimsIn(String dimension) {
 		return this.chunkToClaim.computeIfAbsent(dimension, k -> new HashMap<>());
 	}
 	
 	/**
 	 * get the set of claim UUIDs at a given chunk
+	 *
 	 * @param chunk the chunk to check
 	 * @return Set of UUID, of the claims at the chunk
 	 */
@@ -127,6 +126,7 @@ public class ClaimDataManager extends SavedData {
 	
 	/**
 	 * get the set of claim UUIDs at a given position
+	 *
 	 * @param pos the position to check
 	 * @return Set of UUID, of the claims at the position
 	 */
@@ -168,13 +168,14 @@ public class ClaimDataManager extends SavedData {
 	
 	////////
 	
-	public void addClaim(ClaimData claim){
+	public void addClaim(ClaimData claim) {
 		claims.put(claim.claimUUID, claim);
 		this.refresh();
 	}
 	
 	/**
 	 * remove a claim by UUID
+	 *
 	 * @param claimUUID the UUID of the claim to remove
 	 */
 	public void removeClaim(UUID claimUUID) {
@@ -188,8 +189,9 @@ public class ClaimDataManager extends SavedData {
 	
 	/**
 	 * check if a claim contains a given position
+	 *
 	 * @param claimUUID the UUID of the claim to check
-	 * @param pos the position to check
+	 * @param pos       the position to check
 	 * @return true if the claim contains the position, false otherwise
 	 */
 	public boolean doesClaimContain(UUID claimUUID, BlockPos pos) {
@@ -200,6 +202,7 @@ public class ClaimDataManager extends SavedData {
 	
 	/**
 	 * get the claims at a given chunk
+	 *
 	 * @param chunk the chunk to check
 	 * @return List of the claims at the chunk
 	 */
@@ -215,6 +218,7 @@ public class ClaimDataManager extends SavedData {
 	
 	/**
 	 * get the claims at a given position
+	 *
 	 * @param pos the position to check
 	 * @return List of the claims at the position
 	 */
@@ -225,7 +229,7 @@ public class ClaimDataManager extends SavedData {
 	public List<ClaimData> getClaimsAt(LevelAccessor level, BlockPos pos) {
 		return getClaimsAt(MinecraftUtils.getLevelId(level), new Vector2i(pos.getX() >> 4, pos.getZ() >> 4));
 	}
-
+	
 	public List<UUID> getClaimUUIDsInZone(Level level, Vector2i min, Vector2i max) {
 		String levelId = MinecraftUtils.getLevelId(level);
 		List<UUID> claimUUIDs = new ArrayList<>();
@@ -235,6 +239,7 @@ public class ClaimDataManager extends SavedData {
 	
 	/**
 	 * get the claim data by UUID
+	 *
 	 * @param claimUUID the UUID of the claim to get
 	 * @return the claim data, or empty if the claim does not exist
 	 */
@@ -244,6 +249,7 @@ public class ClaimDataManager extends SavedData {
 	
 	/**
 	 * get all the claim UUIDs
+	 *
 	 * @return List of all the claim UUIDs
 	 */
 	public List<UUID> getAllClaimUUIDs() {

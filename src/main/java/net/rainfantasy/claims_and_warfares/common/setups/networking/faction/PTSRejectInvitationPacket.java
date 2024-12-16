@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTSRejectInvitationPacket {
+	
 	UUID invitationUUID;
 	
 	public PTSRejectInvitationPacket(UUID invitationUUID) {

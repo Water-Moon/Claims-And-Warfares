@@ -32,7 +32,7 @@ public class FactionOwnedClaimFeature extends AbstractClaimFeature {
 	final UUID factionUUID;
 	int minAllowedDiplomaticLevel = DiplomaticRelationshipData.ALLY;
 	
-	public FactionOwnedClaimFeature(){
+	public FactionOwnedClaimFeature() {
 		this(UUID.randomUUID());
 	}
 	
@@ -68,15 +68,15 @@ public class FactionOwnedClaimFeature extends AbstractClaimFeature {
 		return factionUUID;
 	}
 	
-	public boolean checkAllowed(Entity entity){
+	public boolean checkAllowed(Entity entity) {
 		//only protect against players
 		
-		if(entity == null) return true;
-		if(!(entity instanceof ServerPlayer player)) return true;
+		if (entity == null) return true;
+		if (!(entity instanceof ServerPlayer player)) return true;
 		return FactionClaimDataManager.isAuthorizedInFactionClaim(player, factionUUID, minAllowedDiplomaticLevel);
 	}
 	
-	public String getFactionName(){
+	public String getFactionName() {
 		return FactionDataManager.get().getFactionName(factionUUID);
 	}
 	

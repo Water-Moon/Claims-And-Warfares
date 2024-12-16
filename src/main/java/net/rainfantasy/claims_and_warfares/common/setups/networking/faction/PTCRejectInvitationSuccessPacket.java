@@ -9,6 +9,7 @@ import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import java.util.function.Supplier;
 
 public class PTCRejectInvitationSuccessPacket {
+	
 	String factionName;
 	
 	public PTCRejectInvitationSuccessPacket(String factionName) {

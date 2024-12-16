@@ -29,7 +29,7 @@ public class PTCDisbandSuccessPacket {
 		CAWConstants.execute(() -> {
 			CAWClientGUIManager.openFactionManagementPage();
 			CAWClientGUIManager.displayMessage(
-				Component.translatable("caw.message.faction.disband_success", factionName)
+			Component.translatable("caw.message.faction.disband_success", factionName)
 			);
 		});
 		context.setPacketHandled(true);

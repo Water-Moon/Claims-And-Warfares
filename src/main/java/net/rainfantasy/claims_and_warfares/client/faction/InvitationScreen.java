@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class InvitationScreen extends Screen {
+	
 	private static final int PLAYERS_PER_PAGE = 5;
 	
 	private static final int LINE_HEIGHT = 20;
@@ -89,43 +90,43 @@ public class InvitationScreen extends Screen {
 		
 	}
 	
-	private void onInviteButtonPressed(int index){
+	private void onInviteButtonPressed(int index) {
 		UUID playerUUID = currentPagePlayers[index];
 		UUID currentFaction = CAWClientDataManager.getCurrentSelectedFaction().map(ClientFactionData::getFactionUUID).orElse(null);
 		boolean hasInvitation = anyInvitationTo(playerUUID);
-		if(hasInvitation){
+		if (hasInvitation) {
 			CAWConstants.debugLog("Withdrawing invitation to player {}", playerUUID);
 			ChannelRegistry.sendToServer(new PTSCancelInvitePacket(playerUUID, currentFaction));
-		}else{
+		} else {
 			CAWConstants.debugLog("Inviting player {} to faction {}", playerUUID, currentFaction);
 			ChannelRegistry.sendToServer(new PTSInvitePlayerPacket(playerUUID, currentFaction));
 		}
 	}
 	
-	private static boolean anyInvitationTo(UUID playerUUID){
+	private static boolean anyInvitationTo(UUID playerUUID) {
 		Optional<UUID> selfUUID = CAWClientDataManager.getClientPlayerUUID();
 		UUID currentFactionUUID = CAWClientDataManager.getCurrentSelectedFaction().map(ClientFactionData::getFactionUUID).orElse(null);
-		if(selfUUID.isEmpty() || currentFactionUUID == null){
+		if (selfUUID.isEmpty() || currentFactionUUID == null) {
 			return false;
 		}
 		return CAWClientDataManager.findInvitationToPlayerForFaction(playerUUID, currentFactionUUID).isPresent();
 	}
 	
-	private void setButtonMessage(int index, UUID playerUUID){
-		if(anyInvitationTo(playerUUID)){
+	private void setButtonMessage(int index, UUID playerUUID) {
+		if (anyInvitationTo(playerUUID)) {
 			inviteButtons[index].setMessage(Component.translatable("caw.gui.button.cancel_invite"));
-		}else{
+		} else {
 			inviteButtons[index].setMessage(Component.translatable("caw.gui.button.invite"));
 		}
 	}
 	
-	private void setupPlayerButton(int indexInList, int index){
+	private void setupPlayerButton(int indexInList, int index) {
 		UUID playerUUID = players.get(indexInList);
 		Optional<ClientPlayerData> data = CAWClientDataManager.getPlayerData(playerUUID);
 		data.ifPresentOrElse(playerData -> {
 			playerNames[index].setMessage(Component.literal(playerData.getPlayerName()));
 			currentPagePlayers[index] = playerUUID;
-			if(CAWClientDataManager.isPlayerInCurrentSelectedFaction(playerUUID)){
+			if (CAWClientDataManager.isPlayerInCurrentSelectedFaction(playerUUID)) {
 				inviteButtons[index].active = false;
 				inviteButtons[index].setMessage(Component.translatable("caw.gui.button.is_member"));
 			} else {
@@ -134,55 +135,55 @@ public class InvitationScreen extends Screen {
 			}
 		}, () -> {
 			CAWClientDataManager.getFallbackPlayerNameFromInvitation(playerUUID).ifPresentOrElse(
-				name -> {
-					currentPagePlayers[index] = playerUUID;
-					playerNames[index].setMessage(Component.literal(name).append(
-						Component.translatable("caw.gui.format.bracket",
-							Component.translatable("caw.gui.common.offline")
-						)
-					));
-					inviteButtons[index].active = true;
-					setButtonMessage(index, playerUUID);
-				},
-				() -> setupButtonNoPlayer(index)
+			name -> {
+				currentPagePlayers[index] = playerUUID;
+				playerNames[index].setMessage(Component.literal(name).append(
+				Component.translatable("caw.gui.format.bracket",
+				Component.translatable("caw.gui.common.offline")
+				)
+				));
+				inviteButtons[index].active = true;
+				setButtonMessage(index, playerUUID);
+			},
+			() -> setupButtonNoPlayer(index)
 			);
 		});
 	}
 	
-	private void setupButtonNoPlayer(int index){
+	private void setupButtonNoPlayer(int index) {
 		currentPagePlayers[index] = null;
 		playerNames[index].setMessage(Component.translatable("caw.gui.label.empty"));
 		inviteButtons[index].active = false;
 	}
 	
-	private void changePage(int delta){
+	private void changePage(int delta) {
 		currentPage += delta;
 		ensurePageNumberValid();
 		populateCurrentPage();
 	}
 	
-	private void ensurePageNumberValid(){
-		if(currentPage < 1){
+	private void ensurePageNumberValid() {
+		if (currentPage < 1) {
 			currentPage = 1;
 		}
 		int maxPage = Math.max(1, (int) Math.ceil((double) players.size() / PLAYERS_PER_PAGE));
-		if(currentPage > maxPage){
+		if (currentPage > maxPage) {
 			currentPage = maxPage;
 		}
 	}
 	
-	private void populateCurrentPage(){
-		for(int i = 0; i < PLAYERS_PER_PAGE; i++){
+	private void populateCurrentPage() {
+		for (int i = 0; i < PLAYERS_PER_PAGE; i++) {
 			int playerIndex = (currentPage - 1) * PLAYERS_PER_PAGE + i;
-			if(playerIndex < players.size()){
+			if (playerIndex < players.size()) {
 				setupPlayerButton(playerIndex, i);
-			}else{
+			} else {
 				setupButtonNoPlayer(i);
 			}
 		}
 	}
 	
-	private void copyPlayerData(){
+	private void copyPlayerData() {
 		players.clear();
 		Set<UUID> currentPlayerAndInvitedPlayers = new HashSet<>();
 		currentPlayerAndInvitedPlayers.addAll(CAWClientDataManager.getPlayerUUIDsExcludeSelf());
@@ -190,14 +191,14 @@ public class InvitationScreen extends Screen {
 		players.addAll(currentPlayerAndInvitedPlayers);
 	}
 	
-	private void updateMessage(){
+	private void updateMessage() {
 		CAWClientGUIManager.getLastMessage().ifPresentOrElse(
-			message::setMessage,
-			() -> message.setMessage(Component.empty())
+		message::setMessage,
+		() -> message.setMessage(Component.empty())
 		);
 	}
 	
-	private void refresh(){
+	private void refresh() {
 		copyPlayerData();
 		ensurePageNumberValid();
 		populateCurrentPage();

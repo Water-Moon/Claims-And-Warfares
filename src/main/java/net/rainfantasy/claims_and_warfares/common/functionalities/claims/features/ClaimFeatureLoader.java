@@ -15,20 +15,19 @@ public class ClaimFeatureLoader {
 	
 	static HashMap<ResourceLocation, Function<CompoundTag, AbstractClaimFeature>> loaders = new HashMap<>();
 	
-	static{
+	static {
 		register(new DebugClaimFeature());
 		register(new DebugFullyProtectedClaim());
 		register(new FactionOwnedClaimFeature());
 		register(new BeaconLinkedClaimFeature());
 	}
 	
-	
 	public static AbstractClaimFeature read(CompoundTag nbt) {
 		ResourceLocation type = new ResourceLocation(nbt.getString("type"));
 		CompoundTag data = nbt.getCompound("data");
-		if(loaders.containsKey(type)) {
+		if (loaders.containsKey(type)) {
 			AbstractClaimFeature result = loaders.get(type).apply(data);
-			if(result == null){
+			if (result == null) {
 				throw new NullPointerException("Failed to load claim feature: " + type);
 			}
 			return result;
@@ -46,7 +45,7 @@ public class ClaimFeatureLoader {
 		return nbt;
 	}
 	
-	public static void register(AbstractClaimFeature instance){
+	public static void register(AbstractClaimFeature instance) {
 		try {
 			loaders.put(instance.getRegistryName(), instance::readFromNBT);
 		} catch (Exception e) {

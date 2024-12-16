@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "claims_and_warfares:item/claim_viewer"
+  }
+}

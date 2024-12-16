@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.network.NetworkDirection;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTSCreateFactionPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegistry;
@@ -102,6 +101,5 @@ public class FactionCreationScreen extends Screen {
 		String factionName = factionNameInput.getValue();
 		ChannelRegistry.sendToServer(new PTSCreateFactionPacket(factionName));
 	}
-	
 	
 }

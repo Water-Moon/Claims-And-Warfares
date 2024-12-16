@@ -20,10 +20,10 @@ public class BorderRenderHandler {
 	
 	private static final Set<Border> borders = new CopyOnWriteArraySet<>();
 	
-	//TODO for testing
-	static {
-		borders.add(new Border(new Vector2d(0, 0), new Vector2d(100, 100), 0xFFFF00));
-	}
+	
+//	static {
+//		borders.add(new Border(new Vector2d(0, 0), new Vector2d(100, 100), 0xFFFF00));
+//	}
 	
 	@SubscribeEvent
 	public static void onRenderLevel(RenderLevelStageEvent event) {

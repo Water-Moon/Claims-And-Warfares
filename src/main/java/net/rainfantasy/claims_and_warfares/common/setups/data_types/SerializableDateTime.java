@@ -10,7 +10,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.TimeZone;
 
 public class SerializableDateTime implements ISerializableNBTData<SerializableDateTime, CompoundTag>, Comparable<SerializableDateTime>, INetworkInfo<SerializableDateTime> {
 	
@@ -206,20 +205,20 @@ public class SerializableDateTime implements ISerializableNBTData<SerializableDa
 		return new SerializableDateTime(this.toZonedDateTime().plusYears(years));
 	}
 	
-	public SerializableDateTime toNextSpecificHour(int hour){
+	public SerializableDateTime toNextSpecificHour(int hour) {
 		ZonedDateTime zonedDateTime = this.toZonedDateTime();
-		if(zonedDateTime.getHour() >= hour){
+		if (zonedDateTime.getHour() >= hour) {
 			zonedDateTime = zonedDateTime.plusDays(1);
 		}
 		return new SerializableDateTime(zonedDateTime.withHour(hour).withMinute(0).withSecond(0).withNano(0));
 	}
 	
-	public SerializableDateTime toNextSpecificHourWithAtLeastIntervalHourOrElseNextDay(int specificHour, int minIntervalHour){
+	public SerializableDateTime toNextSpecificHourWithAtLeastIntervalHourOrElseNextDay(int specificHour, int minIntervalHour) {
 		ZonedDateTime zonedDateTime = this.toZonedDateTime();
-		if(zonedDateTime.getHour() >= specificHour){
+		if (zonedDateTime.getHour() >= specificHour) {
 			zonedDateTime = zonedDateTime.plusDays(1);
 		}
-		if(zonedDateTime.getHour() - specificHour < minIntervalHour){
+		if (zonedDateTime.getHour() - specificHour < minIntervalHour) {
 			zonedDateTime = zonedDateTime.plusDays(1);
 		}
 		return new SerializableDateTime(zonedDateTime.withHour(specificHour).withMinute(0).withSecond(0).withNano(0));
@@ -266,7 +265,7 @@ public class SerializableDateTime implements ISerializableNBTData<SerializableDa
 	}
 	
 	//return this - other
-	public long getDiffMillis(SerializableDateTime other){
+	public long getDiffMillis(SerializableDateTime other) {
 		return this.toEpochMillis() - other.toEpochMillis();
 	}
 	
@@ -282,7 +281,7 @@ public class SerializableDateTime implements ISerializableNBTData<SerializableDa
 		return Component.translatable("caw.gui.common.time_format", year, month, day, hour, minute, second);
 	}
 	
-	public Component format(){
+	public Component format() {
 		return this.format(ZoneId.systemDefault());
 	}
 	

@@ -10,6 +10,7 @@ import net.rainfantasy.claims_and_warfares.common.functionalities.factions.netwo
 import java.util.function.Supplier;
 
 public class PTCInvitationSuccessPacket {
+	
 	InvitationInfo info;
 	
 	public PTCInvitationSuccessPacket(InvitationInfo info) {
@@ -25,7 +26,7 @@ public class PTCInvitationSuccessPacket {
 		packet.info.toBytes(byteBuf);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			Component message = Component.translatable("caw.message.faction.invitation.sent", info.getToPlayerName(), info.getFactionName());

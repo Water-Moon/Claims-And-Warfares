@@ -6,7 +6,7 @@ import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.AbstractClaimFeature;
 
 public class ColoredClaimFeature extends AbstractClaimFeature {
-
+	
 	int color;
 	
 	public ColoredClaimFeature() {

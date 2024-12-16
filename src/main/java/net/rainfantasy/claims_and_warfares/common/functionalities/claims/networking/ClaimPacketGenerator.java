@@ -29,8 +29,8 @@ public class ClaimPacketGenerator {
 		int chunkTopX = topX >> 4;
 		int chunkLeftZ = leftZ >> 4;
 		Component name = Component.translatable("caw.gui.label.claim_unknown");
-		if(data.hasFeature(FactionOwnedClaimFeature.class)){
-			UUID factionUUID = ((FactionOwnedClaimFeature)data.getFeature(FactionOwnedClaimFeature.class).orElseThrow()).getFactionUUID();
+		if (data.hasFeature(FactionOwnedClaimFeature.class)) {
+			UUID factionUUID = ((FactionOwnedClaimFeature) data.getFeature(FactionOwnedClaimFeature.class).orElseThrow()).getFactionUUID();
 			name = Component.translatable("caw.gui.label.claim_faction",
 			FactionDataManager.get().getFaction(factionUUID).map(FactionData::getFactionName).map(Component::literal).orElse(Component.translatable("caw.gui.label.claim_unknown")));
 		}
@@ -67,15 +67,15 @@ public class ClaimPacketGenerator {
 						int finalI = i;
 						int finalJ = j;
 						
-						if(!CAWConstants.execute(() ->{
+						if (!CAWConstants.execute(() -> {
 							Optional<PTCClaimInfoPacket> packet = getInfo(player, chunkCoords, finalI, finalJ, topX, leftZ);
 							packet.ifPresent(p -> ChannelRegistry.sendToClient(player, p));
-						})){
+						})) {
 							flag = true;
 							break;
 						}
 					}
-					if(flag){
+					if (flag) {
 						break;
 					}
 				}
@@ -86,15 +86,15 @@ public class ClaimPacketGenerator {
 	}
 	
 	@SuppressWarnings("DuplicatedCode")
-	public static void sendToPlayerWithOpenMapScreen(MinecraftServer server){
+	public static void sendToPlayerWithOpenMapScreen(MinecraftServer server) {
 		server.getPlayerList().getPlayers().forEach(player -> {
-			if(player.containerMenu instanceof ClaimBeaconMenu claimBeaconMenu){
+			if (player.containerMenu instanceof ClaimBeaconMenu claimBeaconMenu) {
 				scheduleSend(player, CoordUtil.blockToChunk(claimBeaconMenu.block.getBlockPos()), 3, 3);
-			}else if(player.containerMenu instanceof BeaconHackerMenu beaconHackerMenu){
+			} else if (player.containerMenu instanceof BeaconHackerMenu beaconHackerMenu) {
 				scheduleSend(player, CoordUtil.blockToChunk(beaconHackerMenu.block.getBlockPos()), 2, 2);
-			}else {
+			} else {
 				Optional.ofNullable(MapPacketGenerator.recentlyOpenedMapSize.get(player.getUUID())).ifPresent(entry -> {
-					if(entry.a < (System.currentTimeMillis() + 60*60*1000)) {
+					if (entry.a < (System.currentTimeMillis() + 60 * 60 * 1000)) {
 						scheduleSend(player, entry.b, entry.c);
 					}
 				});

@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTCUpdateClientUUIDPacket {
+	
 	UUID clientUUID;
 	
 	public PTCUpdateClientUUIDPacket(UUID clientUUID) {

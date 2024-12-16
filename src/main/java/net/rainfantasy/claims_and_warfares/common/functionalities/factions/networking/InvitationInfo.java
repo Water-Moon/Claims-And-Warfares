@@ -10,6 +10,7 @@ import net.rainfantasy.claims_and_warfares.common.setups.data_types.Serializable
 import java.util.UUID;
 
 public class InvitationInfo implements INetworkInfo<InvitationInfo> {
+	
 	private final UUID fromPlayerUUID;
 	private final String fromPlayerName;
 	private final UUID toPlayerUUID;
@@ -18,8 +19,8 @@ public class InvitationInfo implements INetworkInfo<InvitationInfo> {
 	private final String factionName;
 	private final SerializableDateTime sentTime;
 	private final UUID invitationUUID;
-
-	public InvitationInfo(){
+	
+	public InvitationInfo() {
 		this.fromPlayerUUID = null;
 		this.fromPlayerName = null;
 		this.toPlayerUUID = null;
@@ -57,19 +58,19 @@ public class InvitationInfo implements INetworkInfo<InvitationInfo> {
 	public UUID getFromPlayerUUID() {
 		return fromPlayerUUID;
 	}
-
+	
 	public String getFromPlayerName() {
 		return fromPlayerName;
 	}
-
+	
 	public UUID getToPlayerUUID() {
 		return toPlayerUUID;
 	}
-
+	
 	public String getToPlayerName() {
 		return toPlayerName;
 	}
-
+	
 	public UUID getFactionUUID() {
 		return factionUUID;
 	}
@@ -77,26 +78,26 @@ public class InvitationInfo implements INetworkInfo<InvitationInfo> {
 	public String getFactionName() {
 		return factionName;
 	}
-
+	
 	public SerializableDateTime getSentTime() {
 		return sentTime;
 	}
-
+	
 	public UUID getInvitationUUID() {
 		return invitationUUID;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "InvitationInfo{" +
-				"fromPlayerUUID=" + fromPlayerUUID +
-				", fromPlayerName='" + fromPlayerName + '\'' +
-				", toPlayerUUID=" + toPlayerUUID +
-				", toPlayerName='" + toPlayerName + '\'' +
-				", factionUUID=" + factionUUID +
-				", sentTime=" + sentTime +
-				", invitationUUID=" + invitationUUID +
-				'}';
+		       "fromPlayerUUID=" + fromPlayerUUID +
+		       ", fromPlayerName='" + fromPlayerName + '\'' +
+		       ", toPlayerUUID=" + toPlayerUUID +
+		       ", toPlayerName='" + toPlayerName + '\'' +
+		       ", factionUUID=" + factionUUID +
+		       ", sentTime=" + sentTime +
+		       ", invitationUUID=" + invitationUUID +
+		       '}';
 	}
 	
 	@Override
@@ -114,14 +115,14 @@ public class InvitationInfo implements INetworkInfo<InvitationInfo> {
 	@Override
 	public InvitationInfo fromBytes(FriendlyByteBuf byteBuf) {
 		return new InvitationInfo(
-				byteBuf.readUUID(),
-				byteBuf.readUtf(),
-				byteBuf.readUUID(),
-				byteBuf.readUtf(),
-				byteBuf.readUUID(),
-				byteBuf.readUtf(),
-				new SerializableDateTime().fromBytes(byteBuf),
-				byteBuf.readUUID()
+		byteBuf.readUUID(),
+		byteBuf.readUtf(),
+		byteBuf.readUUID(),
+		byteBuf.readUtf(),
+		byteBuf.readUUID(),
+		byteBuf.readUtf(),
+		new SerializableDateTime().fromBytes(byteBuf),
+		byteBuf.readUUID()
 		);
 	}
 }

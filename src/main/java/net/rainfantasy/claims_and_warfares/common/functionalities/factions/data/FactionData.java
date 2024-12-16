@@ -102,7 +102,7 @@ public class FactionData implements ISerializableNBTData<FactionData, CompoundTa
 	 * @return true if the player is an admin or the owner, false otherwise.
 	 */
 	public boolean isAdminOrOwner(UUID playerUUID) {
-		if(!this.members.containsKey(playerUUID)) return false;
+		if (!this.members.containsKey(playerUUID)) return false;
 		return this.members.get(playerUUID).isAdmin || this.members.get(playerUUID).isOwner;
 	}
 	
@@ -247,7 +247,7 @@ public class FactionData implements ISerializableNBTData<FactionData, CompoundTa
 	}
 	
 	public boolean canRemoveMember(UUID playerUUID) {
-		if(!this.members.containsKey(playerUUID)) return false;
+		if (!this.members.containsKey(playerUUID)) return false;
 		//false if owner or admin
 		return !this.members.get(playerUUID).isOwner && !this.members.get(playerUUID).isAdmin;
 	}
@@ -286,22 +286,22 @@ public class FactionData implements ISerializableNBTData<FactionData, CompoundTa
 	}
 	
 	public boolean isAdmin(UUID targetPlayerUUID) {
-		if(!this.members.containsKey(targetPlayerUUID)) return false;
+		if (!this.members.containsKey(targetPlayerUUID)) return false;
 		return this.members.get(targetPlayerUUID).isAdmin;
 	}
 	
 	public void addAdmin(UUID targetPlayerUUID) {
-		if(!this.members.containsKey(targetPlayerUUID)) return;
+		if (!this.members.containsKey(targetPlayerUUID)) return;
 		this.members.get(targetPlayerUUID).isAdmin = true;
 	}
 	
 	public void removeAdmin(UUID targetPlayerUUID) {
-		if(!this.members.containsKey(targetPlayerUUID)) return;
+		if (!this.members.containsKey(targetPlayerUUID)) return;
 		this.members.get(targetPlayerUUID).isAdmin = false;
 	}
 	
 	public boolean isOwner(UUID targetPlayerUUID) {
-		if(!this.members.containsKey(targetPlayerUUID)) return false;
+		if (!this.members.containsKey(targetPlayerUUID)) return false;
 		return this.members.get(targetPlayerUUID).isOwner;
 	}
 	

@@ -39,32 +39,31 @@ public class ClaimBeaconBlock extends BaseEntityBlock {
 	
 	@Override
 	public void onRemove(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull BlockState pNewState, boolean pMovedByPiston) {
-		//TODO drop item
 		super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
 	}
 	
 	@Override
 	public @NotNull InteractionResult use(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHit) {
-		if((!pLevel.isClientSide) && (pPlayer instanceof ServerPlayer serverPlayer)){
+		if ((!pLevel.isClientSide) && (pPlayer instanceof ServerPlayer serverPlayer)) {
 			BlockEntity be = pLevel.getBlockEntity(pPos);
-			if(be instanceof ClaimBeaconBlockEntity claimBeaconBlockEntity){
+			if (be instanceof ClaimBeaconBlockEntity claimBeaconBlockEntity) {
 				Optional<Component> errorMsg = BeaconHelper.accessUIAllowed(serverPlayer, claimBeaconBlockEntity);
-				if(errorMsg.isPresent()){
+				if (errorMsg.isPresent()) {
 					serverPlayer.sendSystemMessage(errorMsg.get());
 					return InteractionResult.PASS;
 				}
 				
-				if(!claimBeaconBlockEntity.isOwnerValid()) {
+				if (!claimBeaconBlockEntity.isOwnerValid()) {
 					claimBeaconBlockEntity.tryBindPlayer(serverPlayer);
 				}
-				if(!claimBeaconBlockEntity.isFactionValid()){
+				if (!claimBeaconBlockEntity.isFactionValid()) {
 					claimBeaconBlockEntity.tryBindFaction(serverPlayer);
 				}
 				MapPacketGenerator.scheduleSend(serverPlayer, CoordUtil.blockToChunk(pPos), 3, 3);
 				ClaimPacketGenerator.scheduleSend(serverPlayer, CoordUtil.blockToChunk(pPos), 3, 3);
 				FactionPacketGenerator.scheduleSend(serverPlayer);
 				claimBeaconBlockEntity.openScreen(serverPlayer);
-			}else{
+			} else {
 				throw new IllegalStateException("Block entity missing for " + pState + " at " + pPos);
 			}
 		}
@@ -78,20 +77,21 @@ public class ClaimBeaconBlock extends BaseEntityBlock {
 	
 	@Override
 	public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType) {
-		if(pLevel.isClientSide) return null;
+		if (pLevel.isClientSide) return null;
 		
 		return createTickerHelper(
-			pBlockEntityType,
-			BlockEntityRegistry.CLAIM_BEACON_BE.get(),
-			((level, blockPos, blockState, claimBeaconBlockEntity) -> claimBeaconBlockEntity.tick(level, blockPos, blockState))
+		pBlockEntityType,
+		BlockEntityRegistry.CLAIM_BEACON_BE.get(),
+		((level, blockPos, blockState, claimBeaconBlockEntity) -> claimBeaconBlockEntity.tick(level, blockPos, blockState))
 		);
 	}
 	
 	@Override
 	public float getDestroyProgress(@NotNull BlockState pState, @NotNull Player pPlayer, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
+		if (pPlayer.level().isClientSide) return super.getDestroyProgress(pState, pPlayer, pLevel, pPos);
 		BlockEntity be = pLevel.getBlockEntity(pPos);
-		if(be instanceof ClaimBeaconBlockEntity cbbe){
-			if(!BeaconHelper.canBreak(pPlayer, cbbe)) return -1f;
+		if (be instanceof ClaimBeaconBlockEntity cbbe) {
+			if (!BeaconHelper.canBreak(pPlayer, cbbe)) return -1f;
 		}
 		return super.getDestroyProgress(pState, pPlayer, pLevel, pPos);
 	}
@@ -103,9 +103,10 @@ public class ClaimBeaconBlock extends BaseEntityBlock {
 	
 	@Override
 	public boolean canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
+		if (entity.getCommandSenderWorld().isClientSide) return super.canEntityDestroy(state, level, pos, entity);
 		BlockEntity be = level.getBlockEntity(pos);
-		if(be instanceof ClaimBeaconBlockEntity cbbe){
-			if(!(entity instanceof ServerPlayer player)) return false;
+		if (be instanceof ClaimBeaconBlockEntity cbbe) {
+			if (!(entity instanceof ServerPlayer player)) return false;
 			return BeaconHelper.canBreak(player, cbbe);
 		}
 		return super.canEntityDestroy(state, level, pos, entity);

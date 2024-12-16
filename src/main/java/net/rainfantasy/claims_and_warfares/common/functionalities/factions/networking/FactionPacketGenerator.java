@@ -38,12 +38,12 @@ public class FactionPacketGenerator {
 		ChannelRegistry.sendToClient(player, packet);
 	}
 	
-	private static void sendFactionInfo(ServerPlayer player, MinecraftServer server){
+	private static void sendFactionInfo(ServerPlayer player, MinecraftServer server) {
 		FactionDataManager.get().getAllFactions().forEach(factionData -> {
 			FactionInfo info = new FactionInfo(factionData);
-			if(FactionDataManager.get().isPlayerInFaction(player.getUUID(), factionData.getFactionUUID())){
+			if (FactionDataManager.get().isPlayerInFaction(player.getUUID(), factionData.getFactionUUID())) {
 				ChannelRegistry.sendToClient(player, new PTCFactionInfoPacket(info));
-			}else{
+			} else {
 				ChannelRegistry.sendToClient(player, new PTCFactionInfoPacket(info, true));
 			}
 		});
@@ -52,32 +52,32 @@ public class FactionPacketGenerator {
 	public static void sendKnownInvitationsTo(ServerPlayer player) {
 		UUID playerUUID = player.getUUID();
 		Stream.concat(
-			FactionDataManager.get().getInvitationsToPlayer(playerUUID).stream(),
-			FactionDataManager.get().getInvitationsFromPlayer(playerUUID).stream()
+		FactionDataManager.get().getInvitationsToPlayer(playerUUID).stream(),
+		FactionDataManager.get().getInvitationsFromPlayer(playerUUID).stream()
 		).map(InvitationInfo::new)
 		.forEach(info -> ChannelRegistry.sendToClient(player, new PTCInvitationInfoPacket(info)));
 	}
 	
-	public static void sendClientUUIDInfo(ServerPlayer player){
+	public static void sendClientUUIDInfo(ServerPlayer player) {
 		ChannelRegistry.sendToClient(player, new PTCUpdateClientUUIDPacket(player));
 	}
 	
-	public static void sendClientSelectedFactionInfo(ServerPlayer player){
+	public static void sendClientSelectedFactionInfo(ServerPlayer player) {
 		Optional<FactionData> selectedFaction = FactionDataManager.get().getPrimaryFaction(player.getUUID());
 		selectedFaction.ifPresent(
-			factionData -> ChannelRegistry.sendToClient(player, new PTCUpdateCurrentSelectedFactionPacket(new FactionInfo(factionData)))
+		factionData -> ChannelRegistry.sendToClient(player, new PTCUpdateCurrentSelectedFactionPacket(new FactionInfo(factionData)))
 		);
 	}
 	
-	public static List<Tuple<UUID, String>> collectRelatedOfflinePlayers(ServerPlayer player){
+	public static List<Tuple<UUID, String>> collectRelatedOfflinePlayers(ServerPlayer player) {
 		MinecraftServer server = player.getServer();
-		if(server == null) return new ArrayList<>();
+		if (server == null) return new ArrayList<>();
 		ArrayList<Tuple<UUID, String>> list = new ArrayList<>();
 		
 		//other players in the same faction
 		FactionDataManager.get().getFactionsForPlayer(player.getUUID()).forEach(factionData -> {
 			factionData.getMembers().forEach(uuid -> {
-				if(!isPlayerOnline(uuid, server)){
+				if (!isPlayerOnline(uuid, server)) {
 					String name = factionData.getDataOf(uuid).getKnownPlayerName();
 					list.add(new Tuple<>(uuid, name));
 				}
@@ -86,14 +86,14 @@ public class FactionPacketGenerator {
 		
 		//players who have invitations to the player
 		FactionDataManager.get().getInvitationsToPlayer(player.getUUID()).forEach(inviteInfo -> {
-			if(!isPlayerOnline(inviteInfo.getFromPlayerUUID(), server)){
+			if (!isPlayerOnline(inviteInfo.getFromPlayerUUID(), server)) {
 				list.add(new Tuple<>(inviteInfo.getFromPlayerUUID(), inviteInfo.getFromPlayerName()));
 			}
 		});
 		
 		//players who have invitations from the player
 		FactionDataManager.get().getInvitationsFromPlayer(player.getUUID()).forEach(inviteInfo -> {
-			if(!isPlayerOnline(inviteInfo.getToPlayerUUID(), server)){
+			if (!isPlayerOnline(inviteInfo.getToPlayerUUID(), server)) {
 				list.add(new Tuple<>(inviteInfo.getToPlayerUUID(), inviteInfo.getToPlayerName()));
 			}
 		});
@@ -102,16 +102,16 @@ public class FactionPacketGenerator {
 	}
 	
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
-	public static boolean isPlayerOnline(UUID playerUUID, MinecraftServer server){
+	public static boolean isPlayerOnline(UUID playerUUID, MinecraftServer server) {
 		return server.getPlayerList().getPlayer(playerUUID) != null;
 	}
 	
-	public static void sendOfflinePlayerInfo(ServerPlayer player){
+	public static void sendOfflinePlayerInfo(ServerPlayer player) {
 		List<Tuple<UUID, String>> list = collectRelatedOfflinePlayers(player);
 		list.forEach(tuple -> ChannelRegistry.sendToClient(player, new PTCOfflinePlayerInfoPacket(tuple.getA(), tuple.getB())));
 	}
 	
-	public static void sendDiplomaticRelationshipInfo(ServerPlayer player){
+	public static void sendDiplomaticRelationshipInfo(ServerPlayer player) {
 		FactionDataManager.get().getPrimaryFaction(player.getUUID()).ifPresent(factionData -> {
 			factionData.getDiplomaticRelationships().forEach((otherFaction, relationship) -> {
 				ChannelRegistry.sendToClient(player, new PTCDiplomaticRelationshipData(otherFaction, relationship.getRelationship()));
@@ -120,7 +120,7 @@ public class FactionPacketGenerator {
 	}
 	
 	public static void scheduleSend(@Nullable ServerPlayer player) {
-		if(player == null) return;
+		if (player == null) return;
 		MinecraftServer server = player.getServer();
 		if (server == null) return;
 		server.executeIfPossible(() -> {

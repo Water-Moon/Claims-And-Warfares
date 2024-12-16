@@ -10,7 +10,6 @@ import net.rainfantasy.claims_and_warfares.common.functionalities.factions.netwo
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.PTCDiplomaticRelationshipData;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -52,17 +51,17 @@ public class CAWClientDataManager {
 	
 	public static Optional<String> getPlayerNameIfKnown(UUID playerUUID) {
 		return getPlayerData(playerUUID)
-		    .map(ClientPlayerData::getPlayerName)
-		    .or(() -> getOfflinePlayerData(playerUUID).map(OfflinePlayerData::getPlayerName));
+		       .map(ClientPlayerData::getPlayerName)
+		       .or(() -> getOfflinePlayerData(playerUUID).map(OfflinePlayerData::getPlayerName));
 	}
 	
-	public static Component getPermissionInFaction(UUID playerUUID, UUID FactionUUID){
-		if(playerUUID == null || FactionUUID == null){
+	public static Component getPermissionInFaction(UUID playerUUID, UUID FactionUUID) {
+		if (playerUUID == null || FactionUUID == null) {
 			return Component.translatable("caw.gui.label.empty");
 		}
-		if(factionData.containsKey(FactionUUID)){
+		if (factionData.containsKey(FactionUUID)) {
 			Optional<ClientFactionData> factionData = getFactionData(FactionUUID);
-			if(factionData.isEmpty()) return Component.translatable("caw.gui.label.empty");
+			if (factionData.isEmpty()) return Component.translatable("caw.gui.label.empty");
 			if (factionData.get().isPlayerOwner(playerUUID)) {
 				return Component.translatable("caw.string.faction.owner");
 			} else if (factionData.get().isPlayerAdmin(playerUUID)) {
@@ -74,37 +73,37 @@ public class CAWClientDataManager {
 		return Component.translatable("caw.gui.label.empty");
 	}
 	
-	public static Component getClientPlayerPermissionInFaction(UUID FactionUUID){
-		if(getClientPlayerUUID().isPresent()){
+	public static Component getClientPlayerPermissionInFaction(UUID FactionUUID) {
+		if (getClientPlayerUUID().isPresent()) {
 			return getPermissionInFaction(clientPlayerUUID.get(), FactionUUID);
-		}else{
+		} else {
 			return Component.translatable("caw.gui.label.empty");
 		}
 	}
 	
-	public static Component getPermissionInCurrentSelectedFaction(){
-		if(getCurrentSelectedFaction().isPresent()){
+	public static Component getPermissionInCurrentSelectedFaction() {
+		if (getCurrentSelectedFaction().isPresent()) {
 			return getPermissionInFaction(clientPlayerUUID.get(), getCurrentSelectedFaction().get().getFactionUUID());
-		}else{
+		} else {
 			return Component.translatable("caw.gui.label.empty");
 		}
 	}
 	
-	public static Component getCurrentSelectedFactionName(){
-		if(getCurrentSelectedFaction().isPresent()){
+	public static Component getCurrentSelectedFactionName() {
+		if (getCurrentSelectedFaction().isPresent()) {
 			return Component.literal(getCurrentSelectedFaction().get().getFactionName());
-		}else{
+		} else {
 			return Component.translatable("caw.gui.label.empty");
 		}
 	}
 	
-	public static UUID getCurrentSelectedFactionUUID(){
+	public static UUID getCurrentSelectedFactionUUID() {
 		synchronized (currentSelectedFaction) {
 			return currentSelectedFaction.get();
 		}
 	}
 	
-	public synchronized static void clearAllLocalData(){
+	public synchronized static void clearAllLocalData() {
 		clearPlayerData();
 		clearFactionData();
 		clearInvitations();
@@ -139,15 +138,15 @@ public class CAWClientDataManager {
 	public static Set<UUID> getUUIDsOfPlayersWhoHasInvitationFromClientPlayer() {
 		UUID factionUUID = currentSelectedFaction.get();
 		UUID clientPlayerUUID = CAWClientDataManager.clientPlayerUUID.get();
-		if(factionUUID == null || clientPlayerUUID == null) return Set.of();
+		if (factionUUID == null || clientPlayerUUID == null) return Set.of();
 		synchronized (knownInvitations) {
 			return knownInvitations.values()
 			       .stream()
 			       .filter(info -> {
-					   if (!info.getFactionUUID().equals(factionUUID)) return false;
-					   if (!info.getFromPlayerUUID().equals(clientPlayerUUID)) return false;
-					   return info.getToPlayerUUID() != null;
-				   })
+				       if (!info.getFactionUUID().equals(factionUUID)) return false;
+				       if (!info.getFromPlayerUUID().equals(clientPlayerUUID)) return false;
+				       return info.getToPlayerUUID() != null;
+			       })
 			       .map(InvitationInfo::getToPlayerUUID)
 			       .collect(Collectors.toSet());
 		}
@@ -159,7 +158,7 @@ public class CAWClientDataManager {
 		}
 	}
 	
-	public static Optional<String> getFallbackPlayerNameFromInvitation(UUID toPlayerUUID){
+	public static Optional<String> getFallbackPlayerNameFromInvitation(UUID toPlayerUUID) {
 		synchronized (knownInvitations) {
 			return knownInvitations.values().stream()
 			       .filter(info -> info.getToPlayerUUID().equals(toPlayerUUID))
@@ -216,14 +215,14 @@ public class CAWClientDataManager {
 		}
 	}
 	
-	public static Optional<List<InvitationInfo>> findInvitationToSelf(){
+	public static Optional<List<InvitationInfo>> findInvitationToSelf() {
 		return getClientPlayerUUID().flatMap(CAWClientDataManager::findInvitationTo);
 	}
 	
 	public static Optional<List<InvitationInfo>> findInvitationTo(UUID playerUUID) {
 		synchronized (knownInvitations) {
 			return Optional.of(knownInvitations.values().stream().filter(info -> {
-				if(info.getFromPlayerUUID() == null) return false;
+				if (info.getFromPlayerUUID() == null) return false;
 				return info.getToPlayerUUID().equals(playerUUID);
 			}).toList()).filter(list -> !list.isEmpty());
 		}
@@ -232,7 +231,7 @@ public class CAWClientDataManager {
 	public static Optional<List<InvitationInfo>> findInvitationToPlayerForFaction(UUID playerUUID, UUID factionUUID) {
 		synchronized (knownInvitations) {
 			return Optional.of(knownInvitations.values().stream().filter(info -> {
-				if(info.getFromPlayerUUID() == null) return false;
+				if (info.getFromPlayerUUID() == null) return false;
 				return info.getToPlayerUUID().equals(playerUUID) && info.getFactionUUID().equals(factionUUID);
 			}).toList()).filter(list -> !list.isEmpty());
 		}
@@ -263,20 +262,20 @@ public class CAWClientDataManager {
 		}
 	}
 	
-	public static void addDiplomaticRelationship(PTCDiplomaticRelationshipData data){
+	public static void addDiplomaticRelationship(PTCDiplomaticRelationshipData data) {
 		synchronized (diplomaticRelationshipDataOfSelectedFaction) {
 			CAWConstants.debugLog("Adding diplomatic relationship data: {}", data);
 			diplomaticRelationshipDataOfSelectedFaction.put(data.otherFaction, data.relationship);
 		}
 	}
 	
-	public static int getDiplomaticRelationshipWith(UUID factionUUID){
+	public static int getDiplomaticRelationshipWith(UUID factionUUID) {
 		synchronized (diplomaticRelationshipDataOfSelectedFaction) {
 			return diplomaticRelationshipDataOfSelectedFaction.getOrDefault(factionUUID, DiplomaticRelationshipData.NEUTRAL);
 		}
 	}
 	
-	public static void clearDiplomaticRelationshipData(){
+	public static void clearDiplomaticRelationshipData() {
 		synchronized (diplomaticRelationshipDataOfSelectedFaction) {
 			diplomaticRelationshipDataOfSelectedFaction.clear();
 		}
@@ -308,17 +307,17 @@ public class CAWClientDataManager {
 		return getCurrentSelectedFaction().map(factionData -> factionData.isPlayerOwner(currentPagePlayer)).orElse(false);
 	}
 	
-	public static boolean isClientPlayerInFaction(UUID factionUUID){
+	public static boolean isClientPlayerInFaction(UUID factionUUID) {
 		synchronized (factionData) {
 			return Optional.ofNullable(factionData.get(factionUUID)).map(data -> data.isPlayerInFaction(getClientPlayerUUID().orElse(CAWConstants.NIL_UUID))).orElse(false);
 		}
 	}
 	
-	public static int getCurrentSelectedFactionColor(){
+	public static int getCurrentSelectedFactionColor() {
 		return getCurrentSelectedFaction().map(ClientFactionData::getColor).orElse(16777215);
 	}
 	
-	public static int getCurrentSelectedFactionFakePlayerPolicy(){
+	public static int getCurrentSelectedFactionFakePlayerPolicy() {
 		return getCurrentSelectedFaction().map(ClientFactionData::getFakePlayerPolicy).orElse(0);
 	}
 }

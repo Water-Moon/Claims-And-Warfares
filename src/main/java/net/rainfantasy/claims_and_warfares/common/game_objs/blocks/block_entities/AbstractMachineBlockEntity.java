@@ -46,27 +46,27 @@ public abstract class AbstractMachineBlockEntity extends BlockEntity implements 
 		this.readSynced(tag);
 	}
 	
-	public void sendData(){
-		if(this.level instanceof ServerLevel serverLevel){
+	public void sendData() {
+		if (this.level instanceof ServerLevel serverLevel) {
 			serverLevel.getChunkSource().blockChanged(getBlockPos());
 		}
 	}
 	
-	public void refresh(){
+	public void refresh() {
 		this.setChanged();
 		this.sendData();
 	}
 	
-	public void readSynced(CompoundTag nbt){
+	public void readSynced(CompoundTag nbt) {
 		this.load(nbt);
 	}
 	
-	public CompoundTag writeSynced(CompoundTag nbt){
+	public CompoundTag writeSynced(CompoundTag nbt) {
 		this.saveAdditional(nbt);
 		return nbt;
 	}
 	
-	public void openScreen(ServerPlayer player){
+	public void openScreen(ServerPlayer player) {
 		NetworkHooks.openScreen(player, this, byteBuf -> {
 			byteBuf.writeBlockPos(this.getBlockPos());
 			byteBuf.writeNbt(this.getUpdateTag());

@@ -3,7 +3,6 @@ package net.rainfantasy.claims_and_warfares.common.setups.networking.faction.men
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
-import net.rainfantasy.claims_and_warfares.client.CAWClientDataManager;
 import net.rainfantasy.claims_and_warfares.client.CAWClientGUIManager;
 import org.jetbrains.annotations.NotNull;
 

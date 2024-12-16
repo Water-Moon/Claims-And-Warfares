@@ -13,6 +13,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class PTSRenamePacket {
+	
 	String newName;
 	UUID factionUUID;
 	
@@ -32,7 +33,7 @@ public class PTSRenamePacket {
 		byteBuf.writeUtf(packet.newName);
 	}
 	
-	public void execute(Supplier<Context> supplier){
+	public void execute(Supplier<Context> supplier) {
 		Context context = supplier.get();
 		CAWConstants.execute(() -> {
 			ServerPlayer player = context.getSender();
@@ -40,7 +41,7 @@ public class PTSRenamePacket {
 			FactionPacketHandler.renameFaction(player, factionUUID, newName)
 			.ifLeft(data -> {
 				ChannelRegistry.sendToClient(player, new PTCGenericMessagePacket(
-					Component.translatable("caw.message.faction.faction_renamed_success", data.getFirst(), data.getSecond())
+				Component.translatable("caw.message.faction.faction_renamed_success", data.getFirst(), data.getSecond())
 				));
 			}).ifRight(error -> {
 				ChannelRegistry.sendErrorToClient(player, error);

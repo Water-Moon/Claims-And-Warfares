@@ -3,6 +3,7 @@ package net.rainfantasy.claims_and_warfares.client.data_types;
 import java.util.UUID;
 
 public class OfflinePlayerData {
+	
 	UUID playerUUID;
 	String playerName;
 	

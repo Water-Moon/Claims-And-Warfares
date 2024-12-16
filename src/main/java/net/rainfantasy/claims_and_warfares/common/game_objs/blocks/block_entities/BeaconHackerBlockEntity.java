@@ -21,10 +21,10 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.BeaconLinkedClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.ClaimBeaconBlockEntity.BeaconHelper;
-import net.rainfantasy.claims_and_warfares.common.game_objs.recipes.BeaconFuelRecipe;
 import net.rainfantasy.claims_and_warfares.common.game_objs.recipes.BeaconHackerFuelRecipe;
 import net.rainfantasy.claims_and_warfares.common.game_objs.screens.BeaconHackerMenu;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.BlockEntityRegistry;
@@ -37,15 +37,16 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
-	//public static final int MAX_PROGRESS = 10;
-	public static final int MAX_PROGRESS = 9;
+public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity {
 	
-	private final ItemStackHandler itemHandler = new ItemStackHandler(1){
+	
+	public static final int MAX_PROGRESS = CAWConstants.USE_TEST_TIMES ? 2 : 10;
+	
+	private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 		@Override
 		protected void onContentsChanged(int slot) {
 			setChanged();
-			if(level == null || level.isClientSide) return;
+			if (level == null || level.isClientSide) return;
 			
 			level.sendBlockUpdated(
 			getBlockPos(), getBlockState(), getBlockState(), 3
@@ -91,7 +92,7 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 	
 	@Override
 	public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		if(cap == ForgeCapabilities.ITEM_HANDLER){
+		if (cap == ForgeCapabilities.ITEM_HANDLER) {
 			return lazyItemHandler.cast();
 		}
 		return super.getCapability(cap, side);
@@ -121,7 +122,7 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 	
 	@Override
 	public void tick(Level level, BlockPos pos, BlockState state) {
-		if(++this.tickCounter < 20) return;
+		if (++this.tickCounter < 20) return;
 		this.tickCounter = 0;
 		this.rescanBeacons(level, pos, state);
 		this.tryRefuel();
@@ -130,47 +131,47 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 		this.sendData();
 	}
 	
-	private void tickProgress(Level level, BlockPos pos, BlockState state){
-		if(!this.enabled) return;
+	private void tickProgress(Level level, BlockPos pos, BlockState state) {
+		if (!this.enabled) return;
 		BlockEntity target = level.getBlockEntity(this.targetPos);
-		if(!(target instanceof ClaimBeaconBlockEntity beacon)){
+		if (!(target instanceof ClaimBeaconBlockEntity beacon)) {
 			this.enabled = false;
 			return;
 		}
-		if(!BeaconHelper.isProperRunning(beacon.getStatus())){
+		if (!BeaconHelper.isProperRunning(beacon.getStatus())) {
 			this.enabled = false;
 			return;
 		}
-		if(--this.remainingFuel <= 0){
+		if (--this.remainingFuel <= 0) {
 			this.enabled = false;
 			return;
 		}
-		if(this.progress++ >= MAX_PROGRESS){
+		if (this.progress++ >= MAX_PROGRESS) {
 			this.progress = 0;
 			beacon.doHack(1);
 		}
 	}
 	
-	private void tryRefuel(){
-		if(this.level == null || this.level.isClientSide) return;
+	private void tryRefuel() {
+		if (this.level == null || this.level.isClientSide) return;
 		
 		SimpleContainer inventory = new SimpleContainer(this.itemHandler.getSlots());
-		for(int i = 0; i < itemHandler.getSlots(); i++){
+		for (int i = 0; i < itemHandler.getSlots(); i++) {
 			inventory.setItem(i, this.itemHandler.getStackInSlot(i));
 		}
 		
 		Optional<BeaconHackerFuelRecipe> recipe = this.level.getRecipeManager().getRecipeFor(BeaconHackerFuelRecipe.Type.INSTANCE, inventory, this.level);
-		if(recipe.isEmpty()) return;
+		if (recipe.isEmpty()) return;
 		int resultFuelAmount = this.remainingFuel + recipe.get().getFuelValue();
-		if(resultFuelAmount > this.getMaxFuel()) return;
+		if (resultFuelAmount > this.getMaxFuel()) return;
 		
 		this.itemHandler.extractItem(0, 1, false);
 		this.remainingFuel = resultFuelAmount;
 	}
 	
-	private void updateTargetInfo(Level level, BlockPos pos, BlockState state){
+	private void updateTargetInfo(Level level, BlockPos pos, BlockState state) {
 		BlockEntity target = level.getBlockEntity(this.targetPos);
-		if(!(target instanceof ClaimBeaconBlockEntity beacon)){
+		if (!(target instanceof ClaimBeaconBlockEntity beacon)) {
 			this.progress2 = 0;
 			this.targetValid = false;
 			this.targetOwner = "???";
@@ -184,13 +185,13 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 		this.targetFaction = beacon.getOwningFactionName();
 	}
 	
-	private void rescanBeacons(Level level, BlockPos pos, BlockState state){
+	private void rescanBeacons(Level level, BlockPos pos, BlockState state) {
 		Vector2i thisChunkPos = CoordUtil.blockToChunk(pos);
 		this.knownBeaconPos.clear();
 		CoordUtil.iterateCoords(thisChunkPos.sub(1, 1, new Vector2i()), thisChunkPos.add(1, 1, new Vector2i())).forEach(vec -> {
 			ClaimDataManager.get().getClaimsAt(level, vec).forEach(data -> {
 				data.getFeature(BeaconLinkedClaimFeature.class).ifPresent(feature -> {
-					if(!(feature instanceof BeaconLinkedClaimFeature beaconLinkedClaimFeature)){
+					if (!(feature instanceof BeaconLinkedClaimFeature beaconLinkedClaimFeature)) {
 						throw new IllegalArgumentException();
 					}
 					this.knownBeaconPos.add(beaconLinkedClaimFeature.getBeaconPos());
@@ -243,7 +244,7 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 		
 		this.knownBeaconPos.clear();    //ARE YOU KIDDING ME???
 		nbt.getList("knownBeacons", IntArrayTag.TAG_INT_ARRAY).forEach(tag -> {
-			int[] vals = ((IntArrayTag)tag).getAsIntArray();
+			int[] vals = ((IntArrayTag) tag).getAsIntArray();
 			this.knownBeaconPos.add(new BlockPos(vals[0], vals[1], vals[2]));
 		});
 	}
@@ -291,7 +292,7 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 		return remainingFuel;
 	}
 	
-	public int getMaxFuel(){
+	public int getMaxFuel() {
 		return 120;
 	}
 	
@@ -301,23 +302,23 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 	
 	//////// Setters ////////
 	
-	public static boolean validateAccess(ServerPlayer player, BeaconHackerBlockEntity block){
-		if(player.getEyePosition().distanceTo(block.getBlockPos().getCenter()) > 6){
+	public static boolean validateAccess(ServerPlayer player, BeaconHackerBlockEntity block) {
+		if (player.getEyePosition().distanceTo(block.getBlockPos().getCenter()) > 6) {
 			player.sendSystemMessage(Component.translatable("caw.errors.generic.too_far"));
 			return false;
 		}
 		return true;
 	}
 	
-	public static void setTargetPos(ServerPlayer player, BlockPos target){
-		if(player == null) return;
+	public static void setTargetPos(ServerPlayer player, BlockPos target) {
+		if (player == null) return;
 		
-		if(!(player.containerMenu instanceof BeaconHackerMenu menu)) return;
+		if (!(player.containerMenu instanceof BeaconHackerMenu menu)) return;
 		BeaconHackerBlockEntity block = menu.block;
 		
-		if(!validateAccess(player, block)) return;
+		if (!validateAccess(player, block)) return;
 		
-		if(!block.knownBeaconPos.contains(target)){
+		if (!block.knownBeaconPos.contains(target)) {
 			player.sendSystemMessage(Component.translatable("caw.errors.beacon_hacker.unknown_beacon"));
 			return;
 		}
@@ -325,25 +326,25 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity{
 		block.sendData();
 	}
 	
-	public static void turnOn(ServerPlayer player){
-		if(player == null) return;
+	public static void turnOn(ServerPlayer player) {
+		if (player == null) return;
 		
-		if(!(player.containerMenu instanceof BeaconHackerMenu menu)) return;
+		if (!(player.containerMenu instanceof BeaconHackerMenu menu)) return;
 		BeaconHackerBlockEntity block = menu.block;
 		
-		if(!validateAccess(player, block)) return;
+		if (!validateAccess(player, block)) return;
 		
 		block.enabled = true;
 		block.sendData();
 	}
 	
-	public static void turnOff(ServerPlayer player){
-		if(player == null) return;
+	public static void turnOff(ServerPlayer player) {
+		if (player == null) return;
 		
-		if(!(player.containerMenu instanceof BeaconHackerMenu menu)) return;
+		if (!(player.containerMenu instanceof BeaconHackerMenu menu)) return;
 		BeaconHackerBlockEntity block = menu.block;
 		
-		if(!validateAccess(player, block)) return;
+		if (!validateAccess(player, block)) return;
 		
 		block.enabled = false;
 		block.sendData();

@@ -57,10 +57,10 @@ public class PTCServerPlayerInfoPacket {
 		CAWConstants.execute(() -> {
 			for (ServerPlayerInfo playerInfo : this.playerInfoList) {
 				CAWClientDataManager.addPlayerData(
-					new ClientPlayerData(
-					playerInfo.getPlayerName(),
-					playerInfo.getPlayerUUID(),
-					playerInfo.getFactions())
+				new ClientPlayerData(
+				playerInfo.getPlayerName(),
+				playerInfo.getPlayerUUID(),
+				playerInfo.getFactions())
 				);
 			}
 		});
