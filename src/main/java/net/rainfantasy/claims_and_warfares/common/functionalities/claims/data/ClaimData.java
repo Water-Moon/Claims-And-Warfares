@@ -206,4 +206,8 @@ public class ClaimData implements ISerializableNBTData<ClaimData, CompoundTag> {
 	public Optional<AbstractClaimFeature> getFeatureCheckType(UUID featureUUID, Class<? extends AbstractClaimFeature> clazz) {
 		return this.claimFeatures.stream().filter(feature -> feature.getUUID().equals(featureUUID) && clazz.isInstance(feature)).findFirst();
 	}
+	
+	public List<AbstractClaimFeature> getAllFeatures() {
+		return new ArrayList<>(this.claimFeatures);
+	}
 }

@@ -137,6 +137,15 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 		return false;
 	}
 	
+	/**
+	 * Called when checking claim-ability
+	 * @return true if a claim with this feature should conflict with other faction claims. <br>
+	 * i.e. if true, it will prevent any other faction claim from overlapping with itself.
+	 */
+	public boolean conflictWithFactionClaims(){
+		return false;
+	}
+	
 	protected abstract AbstractClaimFeature readNBT(CompoundTag nbt);
 	
 	protected abstract CompoundTag writeNBT(CompoundTag nbt);

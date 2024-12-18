@@ -22,6 +22,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimDataManager;
+import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.AbstractClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.BeaconLinkedClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.FactionOwnedClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionClaimDataManager;
@@ -327,7 +328,13 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 		CoordUtil.iterateCoords(chunkCoord.sub(actualSize, actualSize, new Vector2i()), chunkCoord.add(actualSize, actualSize, new Vector2i()))
 		.forEach(chunk -> {
 			if (ClaimDataManager.get().getClaimsAt(level, chunk).stream().anyMatch(claim -> {
-				return claim.hasFeature(BeaconLinkedClaimFeature.class) && (!claim.getUUID().equals(this.linkedClaimUUID));
+				if(claim.hasFeature(BeaconLinkedClaimFeature.class) && (!claim.getUUID().equals(this.linkedClaimUUID))){
+					return true;
+				}
+				if(claim.getAllFeatures().stream().anyMatch(AbstractClaimFeature::conflictWithFactionClaims)) {
+					return true;
+				}
+				return false;
 			})) {
 				this.status = STATUS_ERRORED_STOPPING;
 				this.errorCode = ERROR_CLAIM_CONFLICT;
@@ -532,13 +539,9 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 			
 			if (BeaconHelper.isUnstableState(this.status)) {
 				//do not allow adding upgrade during unstable state
-				boolean flag = false;
 				for (int i = this.upgradeData.getTotalUpgradeCount(); i < knownUpgrade.size(); i++) {
 					level.destroyBlock(knownUpgrade.get(i), false);
 					level.explode(null, knownUpgrade.get(i).getX(), knownUpgrade.get(i).getY(), knownUpgrade.get(i).getZ(), 2, true, ExplosionInteraction.BLOCK);
-					flag = true;
-				}
-				if (flag) {
 				}
 			} else if (BeaconHelper.isProperRunning(this.status)) {
 				this.status = STATUS_ERRORED_STOPPING;

@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
@@ -18,6 +19,8 @@ import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.Cl
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.AbstractClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.ClaimBeaconBlockEntity;
+import net.rainfantasy.claims_and_warfares.common.setups.registries.TagRegistry;
+import net.rainfantasy.claims_and_warfares.common.setups.registries.TagRegistry.Blocks;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -146,6 +149,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onPlaceBlock(EntityPlaceEvent event) {
+		if (event.getPlacedBlock().is(Blocks.ALLOW_PLACE)) return super.onPlaceBlock(event);
 		if (checkAllowed(event.getEntity())) return super.onPlaceBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
@@ -155,21 +159,24 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onBreakBlock(BreakEvent event) {
+		if (event.getState().is(TagRegistry.Blocks.ALLOW_BREAK)) return super.onBreakBlock(event);
 		if (checkAllowed(event.getPlayer())) return super.onBreakBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getPlayer().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.break",
-		factionName, event.getPlayer().level().getBlockState(event.getPos()).getBlock().getName()));
+		factionName, event.getState().getBlock().getName()));
 		return false;
 	}
 	
 	@Override
 	public boolean onInteractBlock(RightClickBlock event) {
+		BlockState state = event.getEntity().level().getBlockState(event.getPos());
+		if (state.is(TagRegistry.Blocks.ALLOW_INTERACT)) return super.onInteractBlock(event);
 		if (checkAllowed(event.getEntity())) return super.onInteractBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.interact",
-		factionName, event.getEntity().level().getBlockState(event.getPos()).getBlock().getName()));
+		factionName, state.getBlock().getName()));
 		return false;
 	}
 	

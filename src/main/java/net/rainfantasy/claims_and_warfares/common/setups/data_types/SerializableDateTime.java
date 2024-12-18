@@ -215,10 +215,8 @@ public class SerializableDateTime implements ISerializableNBTData<SerializableDa
 	
 	public SerializableDateTime toNextSpecificHourWithAtLeastIntervalHourOrElseNextDay(int specificHour, int minIntervalHour) {
 		ZonedDateTime zonedDateTime = this.toZonedDateTime();
+		zonedDateTime = zonedDateTime.plusHours(minIntervalHour);
 		if (zonedDateTime.getHour() >= specificHour) {
-			zonedDateTime = zonedDateTime.plusDays(1);
-		}
-		if (zonedDateTime.getHour() - specificHour < minIntervalHour) {
 			zonedDateTime = zonedDateTime.plusDays(1);
 		}
 		return new SerializableDateTime(zonedDateTime.withHour(specificHour).withMinute(0).withSecond(0).withNano(0));
