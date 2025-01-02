@@ -20,6 +20,7 @@ public class BlockDrops extends BlockLootSubProvider {
 		this.dropSelf(BlockRegistry.CLAIM_BEACON.get());
 		this.dropSelf(BlockRegistry.BEACON_HACKER.get());
 		this.dropSelf(BlockRegistry.BEACON_UPGRADE_SIZE.get());
+		this.dropSelf(BlockRegistry.BEACON_UPGRADE_INTERACT_PROTECTION.get());
 		this.dropSelf(BlockRegistry.BEACON_UPGRADE_MOB_GRIEFING.get());
 		this.dropSelf(BlockRegistry.BEACON_UPGRADE_EXPLOSION_PROTECTION.get());
 	}

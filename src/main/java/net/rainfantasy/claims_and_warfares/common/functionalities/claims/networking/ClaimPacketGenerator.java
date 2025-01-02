@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimDataManager;
+import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.AbstractClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.FactionOwnedClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
@@ -33,6 +34,13 @@ public class ClaimPacketGenerator {
 			UUID factionUUID = ((FactionOwnedClaimFeature) data.getFeature(FactionOwnedClaimFeature.class).orElseThrow()).getFactionUUID();
 			name = Component.translatable("caw.gui.label.claim_faction",
 			FactionDataManager.get().getFaction(factionUUID).map(FactionData::getFactionName).map(Component::literal).orElse(Component.translatable("caw.gui.label.claim_unknown")));
+		}else{
+			for (AbstractClaimFeature feature : data.getAllFeatures()) {
+				if (!feature.getDisplayName().getString().isEmpty()) {
+					name = feature.getDisplayName();
+					break;
+				}
+			}
 		}
 		ClaimedChunkInfo info = new ClaimedChunkInfo(chunkX, chunkZ, name, data.getClaimColor());
 		return new PTCClaimInfoPacket(chunkX - chunkTopX, chunkZ - chunkLeftZ, info);

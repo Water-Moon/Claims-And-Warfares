@@ -39,6 +39,7 @@
 
   "caw.gui.label.claim_unknown": "Unknown's claim",
   "caw.gui.label.claim_system": "System claim",
+  "caw.gui.label.claim_system_unprotected": "System claim (Unprotected)",
   "caw.gui.label.claim_faction": "%1$s's claim",
 
   "caw.gui.string.question.really_leave": "Are you sure you want to leave %1$s?",
@@ -177,6 +178,11 @@
 
   "caw.message.beacon.owner_assigned": "You now own this claim beacon",
   "caw.message.beacon.faction_assigned": "This beacon is now claiming for %1$s. To change, set your primary faction using faction manager, then click the set button in the beacon.",
+
+  "caw.command.success.claim": "Successfully created system claim",
+  "caw.command.success.unclaim": "Successfully removed system claim",
+  "caw.command.success.bypass_off": "You are no longer exempt from claims/zones detection.",
+  "caw.command.success.bypass_on": "You are now exempt from claims/zones detection.",
 
   "caw.label.beacon.owner": "Owner: %1$s",
   "caw.label.beacon.faction": "Faction: %1$s",

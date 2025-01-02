@@ -47,8 +47,8 @@ public class ClaimsAndWarfares {
 		MenuRegistry.register(modEventBus);
 		RecipeRegistry.register(modEventBus);
 		
-		MinecraftForge.EVENT_BUS.register(this);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+		MinecraftForge.EVENT_BUS.register(this);
 		modEventBus.addListener(this::addCreative);
 	}
 	
@@ -65,6 +65,7 @@ public class ClaimsAndWarfares {
 		if (event.getTabKey().equals(CreativeModeTabs.FUNCTIONAL_BLOCKS)) {
 			event.accept(BlockRegistry.CLAIM_BEACON.get());
 			event.accept(BlockRegistry.BEACON_UPGRADE_SIZE.get());
+			event.accept(BlockRegistry.BEACON_UPGRADE_INTERACT_PROTECTION.get());
 			event.accept(BlockRegistry.BEACON_UPGRADE_MOB_GRIEFING.get());
 			event.accept(BlockRegistry.BEACON_UPGRADE_EXPLOSION_PROTECTION.get());
 			event.accept(BlockRegistry.BEACON_HACKER.get());

@@ -206,7 +206,8 @@ public class FactionClaimDataManager extends SavedData {
 		if (FactionDataManager.get().isPlayerInFaction(player.getUUID(), faction)) return true;
 		
 		//2. is OP
-		if (player.hasPermissions(4)) return true;
+		//replaced by bypass command
+//		if (player.hasPermissions(4)) return true;
 		
 		//3. is allied
 		AtomicBoolean flag = new AtomicBoolean(false);

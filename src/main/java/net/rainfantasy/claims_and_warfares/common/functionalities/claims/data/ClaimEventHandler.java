@@ -7,8 +7,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
 import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
@@ -127,6 +129,18 @@ public class ClaimEventHandler {
 		});
 	}
 	
+	public static void onMobGriefing(EntityMobGriefingEvent event){
+		Level level = event.getEntity().level();
+		BlockPos pos = event.getEntity().getOnPos();
+		ClaimDataManager.get().getClaimsAt(level, pos).forEach(data -> {
+			data.claimFeatures.forEach(feature -> {
+				if (!feature.onMobGriefing(event)) {
+					event.setCanceled(true);
+				}
+			});
+		});
+	}
+	
 	//claim -> list of players
 	private static final HashMap<UUID, CopyOnWriteArraySet<UUID>> playersInClaims = new HashMap<>();
 	private static long lastEnterExitCheckTime = 0;
@@ -138,6 +152,7 @@ public class ClaimEventHandler {
 		lastEnterExitCheckTime = currentTime;
 		
 		event.getServer().getPlayerList().getPlayers().forEach(player -> {
+			if(ClaimDataManager.get().canPlayerBypass(player.getUUID())) return;
 			Vec3 pos = player.getPosition(1);
 			Stream.concat(
 			ClaimDataManager.get().getClaimsAt(player.level(), CoordUtil.blockToChunk(pos)).stream(),
@@ -180,6 +195,28 @@ public class ClaimEventHandler {
 		playersInClaims.remove(data.getUUID());
 	}
 	
+	public static void fireExitEventForPlayerCommon(ServerPlayer player){
+		playersInClaims.keySet().forEach(claimUUID -> {
+			ClaimDataManager.get().getClaim(claimUUID).ifPresent(claim -> {
+				UUID playerUUID = player.getUUID();
+				if (playersInClaims.computeIfAbsent(claim.getUUID(), k -> new CopyOnWriteArraySet<>()).contains(playerUUID)) {
+					playersInClaims.get(claim.getUUID()).remove(playerUUID);
+					claim.claimFeatures.forEach(feature -> {
+						feature.onPlayerLeaveClaim(player);
+					});
+				}
+			});
+		});
+	}
+	
+	public static void fireExitEventOnLogout(ServerPlayer player){
+		fireExitEventForPlayerCommon(player);
+	}
+	
+	public static void fireExitEventOnBypassEnable(ServerPlayer player){
+		fireExitEventForPlayerCommon(player);
+	}
+	
 	public static void onEntityTick(LivingTickEvent event) {
 		if (event.getEntity().getCommandSenderWorld().isClientSide) return;
 		
@@ -211,24 +248,28 @@ class ClaimEventListener {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onBlockBreak(BreakEvent event) {
 		if (event.getLevel().isClientSide()) return;
+		if(event.getPlayer() != null && ClaimDataManager.get().canPlayerBypass(event.getPlayer().getUUID())) return;
 		ClaimEventHandler.onBlockBreak(event);
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onBlockPlace(EntityPlaceEvent event) {
 		if (event.getLevel().isClientSide()) return;
+		if(event.getEntity() != null && ClaimDataManager.get().canPlayerBypass(event.getEntity().getUUID())) return;
 		ClaimEventHandler.onBlockPlace(event);
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onInteract(RightClickBlock event) {
 		if (event.getLevel().isClientSide()) return;
+		if ((event.getEntity() instanceof ServerPlayer player) && ClaimDataManager.get().canPlayerBypass(player.getUUID())) return;
 		ClaimEventHandler.onInteract(event);
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onFarmlandTrample(FarmlandTrampleEvent event) {
 		if (event.getLevel().isClientSide()) return;
+		if ((event.getEntity() instanceof ServerPlayer player) && ClaimDataManager.get().canPlayerBypass(player.getUUID())) return;
 		ClaimEventHandler.onFarmlandTrample(event);
 	}
 	
@@ -241,12 +282,21 @@ class ClaimEventListener {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onEntityTick(LivingTickEvent event) {
 		if (event.getEntity().getCommandSenderWorld().isClientSide()) return;
+		if ((event.getEntity() instanceof ServerPlayer player) && ClaimDataManager.get().canPlayerBypass(player.getUUID())) return;
 		ClaimEventHandler.onEntityTick(event);
 	}
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onAttack(LivingAttackEvent event) {
 		if (event.getEntity().getCommandSenderWorld().isClientSide()) return;
+		if ((event.getEntity() instanceof ServerPlayer player) && ClaimDataManager.get().canPlayerBypass(player.getUUID())) return;
 		ClaimEventHandler.onAttack(event);
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public static void onPlayerLogout(PlayerLoggedOutEvent event){
+		if (event.getEntity().getCommandSenderWorld().isClientSide()) return;
+		if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+		ClaimEventHandler.fireExitEventOnLogout(serverPlayer);
 	}
 }

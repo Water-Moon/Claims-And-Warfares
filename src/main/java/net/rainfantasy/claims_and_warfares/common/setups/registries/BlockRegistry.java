@@ -13,6 +13,7 @@ import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.BeaconHackerB
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.ClaimBeaconBlock;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconExplosionProtectionUpgrade;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconMobGriefingProtectionUpgrade;
+import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconPreventInteractUpgrade;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconSizeUpgrade;
 
 import java.util.function.Supplier;
@@ -26,6 +27,7 @@ public class BlockRegistry {
 	public static RegistryObject<Block> BEACON_HACKER = registerBlock("beacon_hacker", BeaconHackerBlock::new);
 	
 	public static RegistryObject<Block> BEACON_UPGRADE_SIZE = registerBlock("beacon_upgrade_size", BeaconSizeUpgrade::new);
+	public static RegistryObject<Block> BEACON_UPGRADE_INTERACT_PROTECTION = registerBlock("beacon_upgrade_interact_protection", BeaconPreventInteractUpgrade::new);
 	public static RegistryObject<Block> BEACON_UPGRADE_MOB_GRIEFING = registerBlock("beacon_upgrade_mob_grief", BeaconMobGriefingProtectionUpgrade::new);
 	public static RegistryObject<Block> BEACON_UPGRADE_EXPLOSION_PROTECTION = registerBlock("beacon_upgrade_explosion_protection", BeaconExplosionProtectionUpgrade::new);
 	

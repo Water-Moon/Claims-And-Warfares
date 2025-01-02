@@ -757,6 +757,7 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 		
 		nbt.put("upgradeData", this.upgradeData.writeToNBT(new CompoundTag()));
 		
+		nbt.put("inventory", itemHandler.serializeNBT());
 		
 		super.saveAdditional(nbt);
 	}
@@ -788,6 +789,8 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 		this.eventTime = new SerializableDateTime().readFromNBT(nbt.getCompound("eventTime"));
 		
 		this.upgradeData.readFromNBT(nbt.getCompound("upgradeData"));
+		
+		itemHandler.deserializeNBT(nbt.getCompound("inventory"));
 	}
 	
 	@Override

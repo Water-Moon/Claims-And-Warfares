@@ -1,8 +1,10 @@
 package net.rainfantasy.claims_and_warfares.common.functionalities.claims.features;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -96,6 +98,16 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	}
 	
 	/**
+	 * Called when a mob attempt to modify blocks in a claimed chunk
+	 * E.g. explosion, enderman picking up blocks, etc.
+	 * @param event The event
+	 * @return False if the mob should not be able to modify blocks
+	 */
+	public boolean onMobGriefing(EntityMobGriefingEvent event){
+		return true;
+	}
+	
+	/**
 	 * Called each game tick for each entity inside the claim
 	 * Use this to e.g. apply effect, damage, etc.
 	 *
@@ -144,6 +156,10 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	 */
 	public boolean conflictWithFactionClaims(){
 		return false;
+	}
+	
+	public Component getDisplayName(){
+		return Component.empty();
 	}
 	
 	protected abstract AbstractClaimFeature readNBT(CompoundTag nbt);

@@ -13,6 +13,7 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 	HashMap<String, Integer> totalUpgradeCount = new HashMap<>();
 	int sizeIncrease = 0;
 	int increaseFuelCost = 0;
+	boolean interactProtection = false;
 	boolean mobGriefProtection = false;
 	boolean explosionProtection = false;
 	
@@ -41,6 +42,10 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 	
 	public void increaseFuelCost(int fuelCost) {
 		this.increaseFuelCost += fuelCost;
+	}
+	
+	public void setInteractProtection(boolean interactProtection) {
+		this.interactProtection = interactProtection;
 	}
 	
 	public void setMobGriefProtection(boolean mobGriefProtection) {
@@ -100,6 +105,10 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 	
 	public int getIncreaseFuelCost() {
 		return increaseFuelCost;
+	}
+	
+	public boolean isInteractProtection() {
+		return interactProtection;
 	}
 	
 	public boolean isMobGriefProtection() {

@@ -3,10 +3,7 @@ package net.rainfantasy.claims_and_warfares.common.functionalities.claims.featur
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.BeaconLinkedClaimFeature;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.DebugClaimFeature;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.DebugFullyProtectedClaim;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.FactionOwnedClaimFeature;
+import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.*;
 
 import java.util.HashMap;
 import java.util.function.Function;
@@ -17,7 +14,10 @@ public class ClaimFeatureLoader {
 	
 	static {
 		register(new DebugClaimFeature());
+		register(new ColoredClaimFeature());
 		register(new DebugFullyProtectedClaim());
+		register(new SystemProtectedClaimFeature());
+		register(new UnprotectedSystemClaimFeature());
 		register(new FactionOwnedClaimFeature());
 		register(new BeaconLinkedClaimFeature());
 	}

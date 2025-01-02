@@ -6,7 +6,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.level.BlockEvent.BreakEvent;
@@ -31,6 +33,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	UUID claimUUID;
 	UUID linkedFactionClaimFeatureUUID;
 	boolean enabled = true;
+	boolean protectInteraction = true;
 	boolean protectMobGriefing = false;
 	boolean protectExplosions = false;
 	int size;
@@ -77,10 +80,14 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		UUID claimUUID = UUID.fromString(nbt.getString("claimUUID"));
 		int size = nbt.getInt("size");
 		boolean enabled = nbt.getBoolean("enabled");
+		boolean protectInteraction = nbt.getBoolean("protectInteraction");
 		boolean protectMobGriefing = nbt.getBoolean("protectMobGriefing");
 		boolean protectExplosions = nbt.getBoolean("protectExplosions");
 		BeaconLinkedClaimFeature feature = new BeaconLinkedClaimFeature(new BlockPos(pos[0], pos[1], pos[2]), claimUUID, size);
 		feature.enabled = enabled;
+		feature.protectInteraction = protectInteraction;
+		feature.protectMobGriefing = protectMobGriefing;
+		feature.protectExplosions = protectExplosions;
 		return feature;
 	}
 	
@@ -90,6 +97,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		nbt.putString("claimUUID", this.claimUUID.toString());
 		nbt.putInt("size", this.size);
 		nbt.putBoolean("enabled", this.enabled);
+		nbt.putBoolean("protectInteraction", this.protectInteraction);
 		nbt.putBoolean("protectMobGriefing", this.protectMobGriefing);
 		nbt.putBoolean("protectExplosions", this.protectExplosions);
 		return nbt;
@@ -170,6 +178,8 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onInteractBlock(RightClickBlock event) {
+		if (!protectInteraction) return super.onInteractBlock(event);
+		
 		BlockState state = event.getEntity().level().getBlockState(event.getPos());
 		if (state.is(TagRegistry.Blocks.ALLOW_INTERACT)) return super.onInteractBlock(event);
 		if (checkAllowed(event.getEntity())) return super.onInteractBlock(event);
@@ -230,6 +240,12 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		super.onExplosion(event);
 	}
 	
+	@Override
+	public boolean onMobGriefing(EntityMobGriefingEvent event) {
+		if(protectMobGriefing) return false;
+		return super.onMobGriefing(event);
+	}
+	
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
@@ -240,5 +256,9 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	public void setProtectExplosions(boolean protectExplosions) {
 		this.protectExplosions = protectExplosions;
+	}
+	
+	public void setProtectInteraction(boolean protectInteraction) {
+		this.protectInteraction = protectInteraction;
 	}
 }

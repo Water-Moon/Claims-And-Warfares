@@ -5,10 +5,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
+import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.ClaimFeatureLoader;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.DebugClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.DebugFullyProtectedClaim;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.networking.ClaimPacketGenerator;
@@ -30,6 +32,7 @@ public class ClaimDataManager extends SavedData {
 	private static MinecraftServer SERVER;
 	private final HashMap<String, HashMap<Vector2i, Set<UUID>>> chunkToClaim = new HashMap<>();
 	private HashMap<UUID, ClaimData> claims = new HashMap<>();
+	private HashSet<UUID> bypassPlayers = new HashSet<>();
 	private static final HashMap<String, Level> levelCache = new HashMap<>();
 	
 	private ClaimDataManager() {
@@ -260,6 +263,20 @@ public class ClaimDataManager extends SavedData {
 		return new ArrayList<>(claims.values());
 	}
 	
+	public boolean canPlayerBypass(UUID playerUUID) {
+		return bypassPlayers.contains(playerUUID);
+	}
+	
+	public void addBypassPlayer(ServerPlayer player) {
+		bypassPlayers.add(player.getUUID());
+		ClaimEventHandler.fireExitEventOnBypassEnable(player);
+		this.setDirty();
+	}
+	
+	public void removeBypassPlayer(UUID playerUUID) {
+		bypassPlayers.remove(playerUUID);
+		this.setDirty();
+	}
 	////////
 	
 	public static ClaimDataManager load(CompoundTag tag) {
@@ -270,7 +287,16 @@ public class ClaimDataManager extends SavedData {
 			ClaimData claimData = new ClaimData().readFromNBT(claimTag);
 			claims.put(claimData.claimUUID, claimData);
 		}
-		return new ClaimDataManager(claims);
+		ClaimDataManager dataManager = new ClaimDataManager(claims);
+		
+		ListTag bypassList = tag.getList("bypass", ListTag.TAG_COMPOUND);
+		dataManager.bypassPlayers = new HashSet<>();
+		for (int i = 0; i < bypassList.size(); i++) {
+			CompoundTag bypassTag = bypassList.getCompound(i);
+			dataManager.bypassPlayers.add(bypassTag.getUUID("uuid"));
+		}
+		
+		return dataManager;
 	}
 	
 	@Override
@@ -283,6 +309,16 @@ public class ClaimDataManager extends SavedData {
 			claimList.add(claimTag);
 		});
 		nbt.put("claims", claimList);
+		
+		
+		ListTag bypassList = new ListTag();
+		for(UUID uuid : this.bypassPlayers){
+			CompoundTag bypassTag = new CompoundTag();
+			bypassTag.putUUID("uuid", uuid);
+			bypassList.add(bypassTag);
+		}
+		nbt.put("bypass", bypassList);
+		
 		return nbt;
 	}
 	

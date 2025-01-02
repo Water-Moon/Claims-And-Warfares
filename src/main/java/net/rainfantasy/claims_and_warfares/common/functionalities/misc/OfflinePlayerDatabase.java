@@ -26,7 +26,7 @@ public class OfflinePlayerDatabase extends SavedData {
 	static MinecraftServer SERVER;
 	
 	public static void init(MinecraftServer server) {
-		if (server == null) return;
+		if (server == null || server == SERVER) return;
 		SERVER = server;
 		INSTANCE = loadOrCreate(server);
 	}

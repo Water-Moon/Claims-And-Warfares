@@ -221,6 +221,8 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity {
 		}
 		nbt.put("knownBeacons", knownBeacons);
 		
+		nbt.put("inventory", this.itemHandler.serializeNBT());
+		
 		super.saveAdditional(nbt);
 	}
 	
@@ -247,6 +249,8 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity {
 			int[] vals = ((IntArrayTag) tag).getAsIntArray();
 			this.knownBeaconPos.add(new BlockPos(vals[0], vals[1], vals[2]));
 		});
+		
+		this.itemHandler.deserializeNBT(nbt.getCompound("inventory"));
 	}
 	
 	@Override

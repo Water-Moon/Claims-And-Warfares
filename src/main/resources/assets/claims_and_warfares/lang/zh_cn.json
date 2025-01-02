@@ -39,6 +39,7 @@
 
   "caw.gui.label.claim_unknown": "未知领地",
   "caw.gui.label.claim_system": "系统 的领土",
+  "caw.gui.label.claim_system_unprotected": "系统 的领土（无保护）",
   "caw.gui.label.claim_faction": "%1$s 的领土",
 
 
@@ -179,6 +180,11 @@
   "caw.message.beacon.owner_assigned": "您现在是这个信标的拥有者了。",
   "caw.message.beacon.faction_assigned": "这个信标将为 %1$s 声明领地。要修改，请在势力管理器中选择势力，然后在信标界面中点击设定势力按钮。",
 
+  "caw.command.success.claim": "成功创建系统领地",
+  "caw.command.success.unclaim": "成功移除系统领地",
+  "caw.command.success.bypass_off": "您 将会正常触发 领地或区域的事件检测。",
+  "caw.command.success.bypass_on": "您 将不再触发 领地或区域的事件检测。",
+
   "caw.label.beacon.owner": "拥有者: %1$s",
   "caw.label.beacon.faction": "所属势力: %1$s",
   "caw.label.beacon.hacking": "正被破解 (%1$s / %2$s)",
@@ -213,6 +219,7 @@
   "block.claims_and_warfares.beacon_hacker": "信标破解器",
 
   "block.claims_and_warfares.beacon_upgrade_size": "声明信标升级 - 尺寸",
+  "block.claims_and_warfares.beacon_upgrade_interact_protection": "声明信标升级 - 阻止交互",
   "block.claims_and_warfares.beacon_upgrade_mob_grief": "声明信标升级 - 防止生物破坏",
   "block.claims_and_warfares.beacon_upgrade_explosion_protection": "声明信标升级 - 防爆"
 }
