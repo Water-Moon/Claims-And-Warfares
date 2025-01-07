@@ -210,6 +210,8 @@ public class FactionClaimDataManager extends SavedData {
 //		if (player.hasPermissions(4)) return true;
 		
 		//3. is allied
+		if (minDiplomaticLevel == DiplomaticRelationshipData.OWNER)
+			return false; //if only owner is allowed, then no one else is allowed
 		AtomicBoolean flag = new AtomicBoolean(false);
 		FactionDataManager.get().getFaction(faction).get().getDiplomaticRelationships().forEach((key, value) -> {
 			if (value.getRelationship() >= minDiplomaticLevel) {

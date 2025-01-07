@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public class BeaconHackerBlock extends BaseEntityBlock {
+	
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	
 	public BeaconHackerBlock() {

@@ -21,7 +21,8 @@ public class CAWConstants {
 	public static final UUID NIL_UUID = new UUID(0, 0);
 	
 	private static final boolean isProduction = FMLLoader.isProduction();
-	public static final boolean USE_TEST_TIMES = false;
+	//public static final boolean USE_TEST_TIMES = true;
+	public static final boolean USE_TEST_TIMES = (!isProduction);
 	
 	private static MinecraftServer server;
 	

@@ -6,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -26,6 +25,9 @@ import net.rainfantasy.claims_and_warfares.common.setups.registries.TagRegistry.
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.FactionOwnedClaimFeature.BREAK_PLACE;
+import static net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.FactionOwnedClaimFeature.INTERACT;
 
 public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
@@ -146,19 +148,19 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		}).orElse("Unknown");
 	}
 	
-	private boolean checkAllowed(Entity entity) {
+	private boolean checkAllowed(Entity entity, int type) {
 		//only protect against players
 		if (entity == null) return true;
 		if (!enabled) return true;
 		if (!(entity instanceof ServerPlayer player)) return (!this.protectMobGriefing);
-		return (this.getLinkedClaimFeature().map(factionOwnedClaimFeature -> factionOwnedClaimFeature.checkAllowed(player)).orElse(true));
+		return (this.getLinkedClaimFeature().map(factionOwnedClaimFeature -> factionOwnedClaimFeature.checkAllowed(player, type)).orElse(true));
 	}
 	
 	
 	@Override
 	public boolean onPlaceBlock(EntityPlaceEvent event) {
 		if (event.getPlacedBlock().is(Blocks.ALLOW_PLACE)) return super.onPlaceBlock(event);
-		if (checkAllowed(event.getEntity())) return super.onPlaceBlock(event);
+		if (checkAllowed(event.getEntity(), BREAK_PLACE)) return super.onPlaceBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.place", factionName, event.getPlacedBlock().getBlock().getName()));
@@ -168,7 +170,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	@Override
 	public boolean onBreakBlock(BreakEvent event) {
 		if (event.getState().is(TagRegistry.Blocks.ALLOW_BREAK)) return super.onBreakBlock(event);
-		if (checkAllowed(event.getPlayer())) return super.onBreakBlock(event);
+		if (checkAllowed(event.getPlayer(), BREAK_PLACE)) return super.onBreakBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getPlayer().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.break",
@@ -182,7 +184,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		
 		BlockState state = event.getEntity().level().getBlockState(event.getPos());
 		if (state.is(TagRegistry.Blocks.ALLOW_INTERACT)) return super.onInteractBlock(event);
-		if (checkAllowed(event.getEntity())) return super.onInteractBlock(event);
+		if (checkAllowed(event.getEntity(), INTERACT)) return super.onInteractBlock(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.interact",
@@ -192,7 +194,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onFarmlandTrample(FarmlandTrampleEvent event) {
-		if (checkAllowed(event.getEntity())) return super.onFarmlandTrample(event);
+		if (checkAllowed(event.getEntity(), BREAK_PLACE)) return super.onFarmlandTrample(event);
 		String factionName = getLinkedFactionName();
 		event.getEntity().sendSystemMessage(
 		Component.translatable("caw.message.claim.protected.faction.trample",
@@ -223,9 +225,15 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 		super.onPlayerLeaveClaim(player);
 	}
 	
-	public void setMinAllowedDiplomaticLevel(int minAllowedDiplomaticLevel) {
+	public void setMinAllowedDiplomaticLevel(int minAllowedDiplomaticLevel, int type) {
 		this.getLinkedClaimFeature().ifPresent(factionOwnedClaimFeature -> {
-			factionOwnedClaimFeature.minAllowedDiplomaticLevel = minAllowedDiplomaticLevel;
+			if (type == BREAK_PLACE) {
+				factionOwnedClaimFeature.minAllowedDiplomaticLevelBreakPlace = minAllowedDiplomaticLevel;
+			} else if (type == FactionOwnedClaimFeature.INTERACT) {
+				factionOwnedClaimFeature.minAllowedDiplomaticLevelInteract = minAllowedDiplomaticLevel;
+			} else {
+				throw new IllegalArgumentException("Unknown interaction type " + type);
+			}
 		});
 	}
 	
@@ -242,7 +250,7 @@ public class BeaconLinkedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onMobGriefing(EntityMobGriefingEvent event) {
-		if(protectMobGriefing) return false;
+		if (protectMobGriefing) return false;
 		return super.onMobGriefing(event);
 	}
 	

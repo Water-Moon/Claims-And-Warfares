@@ -88,42 +88,42 @@ public class DebugCommand {
 		return Commands.literal("claim")
 		       .then(Commands.argument("size", IntegerArgumentType.integer(1))
 		             .then(Commands.argument("full_protection", BoolArgumentType.bool())
-		       .executes(e -> {
-			       CommandSourceStack source = e.getSource();
-			       try {
-				       if (source.isPlayer()) {
-					       ServerPlayer player = source.getPlayer();
-					       assert player != null;
-					       BlockPos pos = player.blockPosition();
-					       Vector2i chunkPos = CoordUtil.blockToChunk(pos);
-						   int size = e.getArgument("size", Integer.class);
-							
-							ClaimData claim = new ClaimData(source.getLevel());
-							Vector2i actualPos = new Vector2i(size - 1);
-							CoordUtil.iterateCoords(chunkPos.sub(actualPos, new Vector2i()), chunkPos.add(actualPos, new Vector2i()))
-							.forEach(claim::claimChunk);
-							
-							boolean fullProtection = e.getArgument("full_protection", Boolean.class);
-							if(fullProtection) {
-								claim.addClaimFeature(new SystemProtectedClaimFeature());
-								claim.addClaimFeature(new ColoredClaimFeature(ColorUtil.combine(255, 255, 255, 255)));
-							}else {
-								claim.addClaimFeature(new UnprotectedSystemClaimFeature());
-								claim.addClaimFeature(new ColoredClaimFeature(ColorUtil.combine(255, 255, 255, 128)));
-							}
-							
-							ClaimDataManager.get().addClaim(claim);
-							
-							source.sendSuccess(() -> Component.translatable("caw.command.success.claim"), true);
-				       }
-			       } catch (Exception ex) {
-				       source.sendFailure(Component.literal(ex.getMessage()));
-				       for (StackTraceElement element : ex.getStackTrace()) {
-					       source.sendFailure(Component.literal(element.toString()));
-				       }
-			       }
-			       return 1;
-		       })));
+		                   .executes(e -> {
+			                   CommandSourceStack source = e.getSource();
+			                   try {
+				                   if (source.isPlayer()) {
+					                   ServerPlayer player = source.getPlayer();
+					                   assert player != null;
+					                   BlockPos pos = player.blockPosition();
+					                   Vector2i chunkPos = CoordUtil.blockToChunk(pos);
+					                   int size = e.getArgument("size", Integer.class);
+					                   
+					                   ClaimData claim = new ClaimData(source.getLevel());
+					                   Vector2i actualPos = new Vector2i(size - 1);
+					                   CoordUtil.iterateCoords(chunkPos.sub(actualPos, new Vector2i()), chunkPos.add(actualPos, new Vector2i()))
+					                   .forEach(claim::claimChunk);
+					                   
+					                   boolean fullProtection = e.getArgument("full_protection", Boolean.class);
+					                   if (fullProtection) {
+						                   claim.addClaimFeature(new SystemProtectedClaimFeature(claim.getUUID()));
+						                   claim.addClaimFeature(new ColoredClaimFeature(ColorUtil.combine(255, 255, 255, 255)));
+					                   } else {
+						                   claim.addClaimFeature(new UnprotectedSystemClaimFeature(claim.getUUID()));
+						                   claim.addClaimFeature(new ColoredClaimFeature(ColorUtil.combine(255, 255, 255, 128)));
+					                   }
+					                   
+					                   ClaimDataManager.get().addClaim(claim);
+					                   
+					                   source.sendSuccess(() -> Component.translatable("caw.command.success.claim"), true);
+				                   }
+			                   } catch (Exception ex) {
+				                   source.sendFailure(Component.literal(ex.getMessage()));
+				                   for (StackTraceElement element : ex.getStackTrace()) {
+					                   source.sendFailure(Component.literal(element.toString()));
+				                   }
+			                   }
+			                   return 1;
+		                   })));
 	}
 	
 	public static LiteralArgumentBuilder<CommandSourceStack> systemUnclaimCommand() {
@@ -136,16 +136,16 @@ public class DebugCommand {
 					       assert player != null;
 					       BlockPos pos = player.blockPosition();
 					       Vector2i chunkPos = CoordUtil.blockToChunk(pos);
-						   HashSet<UUID> claimsToRemove = new HashSet<>();
+					       HashSet<UUID> claimsToRemove = new HashSet<>();
 					       ClaimDataManager.get().getClaimsAt(player.level(), chunkPos).forEach(claim -> {
-							   if(claim.hasFeature(SystemProtectedClaimFeature.class) || claim.hasFeature(UnprotectedSystemClaimFeature.class)) {
-								   claimsToRemove.add(claim.getUUID());
-							   }
+						       if (claim.hasFeature(SystemProtectedClaimFeature.class) || claim.hasFeature(UnprotectedSystemClaimFeature.class)) {
+							       claimsToRemove.add(claim.getUUID());
+						       }
 					       });
-						   
-						   claimsToRemove.forEach(claimUUID -> ClaimDataManager.get().removeClaim(claimUUID));
-						   
-						   source.sendSuccess(() -> Component.translatable("caw.command.success.unclaim"), true);
+					       
+					       claimsToRemove.forEach(claimUUID -> ClaimDataManager.get().removeClaim(claimUUID));
+					       
+					       source.sendSuccess(() -> Component.translatable("caw.command.success.unclaim"), true);
 				       }
 			       } catch (Exception ex) {
 				       source.sendFailure(Component.literal(ex.getMessage()));
@@ -180,7 +180,7 @@ public class DebugCommand {
 		;
 	}
 	
-	public static LiteralArgumentBuilder<CommandSourceStack> toggleBypassCommand(){
+	public static LiteralArgumentBuilder<CommandSourceStack> toggleBypassCommand() {
 		return Commands.literal("toggle_bypass")
 		       .executes(e -> {
 			       CommandSourceStack source = e.getSource();
@@ -188,14 +188,14 @@ public class DebugCommand {
 				       if (source.isPlayer()) {
 					       ServerPlayer player = source.getPlayer();
 					       assert player != null;
-						   UUID playerUUID = player.getUUID();
-						   if(ClaimDataManager.get().canPlayerBypass(playerUUID)){
-							   ClaimDataManager.get().removeBypassPlayer(playerUUID);
-							   source.sendSuccess(() -> Component.translatable("caw.command.success.bypass_off"), true);
-						   } else {
-							   ClaimDataManager.get().addBypassPlayer(player);
-							   source.sendSuccess(() -> Component.translatable("caw.command.success.bypass_on"), true);
-						   }
+					       UUID playerUUID = player.getUUID();
+					       if (ClaimDataManager.get().canPlayerBypass(playerUUID)) {
+						       ClaimDataManager.get().removeBypassPlayer(playerUUID);
+						       source.sendSuccess(() -> Component.translatable("caw.command.success.bypass_off"), true);
+					       } else {
+						       ClaimDataManager.get().addBypassPlayer(player);
+						       source.sendSuccess(() -> Component.translatable("caw.command.success.bypass_on"), true);
+					       }
 				       }
 			       } catch (Exception ex) {
 				       source.sendFailure(Component.literal(ex.getMessage()));

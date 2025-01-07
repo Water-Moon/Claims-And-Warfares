@@ -15,21 +15,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-@SuppressWarnings("deprecation")
-public abstract class AbstractBeaconUpgradeBlock extends Block {
+@SuppressWarnings({"deprecation", "DuplicatedCode"})
+public abstract class BaseBeaconUpgradeBlock extends Block {
 	
-	public AbstractBeaconUpgradeBlock() {
+	public BaseBeaconUpgradeBlock() {
 		super(Properties.copy(Blocks.SMITHING_TABLE).explosionResistance(3600000.0F));
 	}
 	
 	private static Optional<ClaimBeaconBlockEntity> findBeacon(Level level, BlockPos selfPos) {
-		while (level.getBlockState(selfPos).getBlock() instanceof AbstractBeaconUpgradeBlock) {
-			selfPos = selfPos.above();
-		}
-		if (level.getBlockEntity(selfPos) instanceof ClaimBeaconBlockEntity) {
-			return Optional.of((ClaimBeaconBlockEntity) level.getBlockEntity(selfPos));
-		}
-		return Optional.empty();
+		return BaseAdvancedBeaconUpgradeBlock.findBeacon(level, selfPos);
 	}
 	
 	@Override
@@ -47,8 +41,4 @@ public abstract class AbstractBeaconUpgradeBlock extends Block {
 		Optional<ClaimBeaconBlockEntity> beacon = findBeacon((Level) level, pos);
 		return beacon.map(block -> BeaconHelper.canBreak(player, block)).orElseGet(() -> super.canEntityDestroy(state, level, pos, entity));
 	}
-	
-	public abstract void apply(BeaconUpgradeLoader loader);
-	
-	public abstract String getId();
 }

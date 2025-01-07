@@ -3,7 +3,6 @@ package net.rainfantasy.claims_and_warfares;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
@@ -23,10 +22,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.rainfantasy.claims_and_warfares.client.gui.BeaconHackerScreen;
 import net.rainfantasy.claims_and_warfares.client.gui.ClaimBeaconScreen;
+import net.rainfantasy.claims_and_warfares.client.gui.beacon_upgrade_gui.BeaconDiplomaticUpgradeScreen;
 import net.rainfantasy.claims_and_warfares.client.render.block.BeaconHackerRenderer;
 import net.rainfantasy.claims_and_warfares.client.render.block.ClaimBeaconRenderer;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimDataManager;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.networking.ClaimPacketGenerator;
 import net.rainfantasy.claims_and_warfares.common.functionalities.commands.DebugCommand;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionClaimDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
@@ -68,6 +67,7 @@ public class ClaimsAndWarfares {
 			event.accept(BlockRegistry.BEACON_UPGRADE_INTERACT_PROTECTION.get());
 			event.accept(BlockRegistry.BEACON_UPGRADE_MOB_GRIEFING.get());
 			event.accept(BlockRegistry.BEACON_UPGRADE_EXPLOSION_PROTECTION.get());
+			event.accept(BlockRegistry.BEACON_UPGRADE_DIPLOMATIC.get());
 			event.accept(BlockRegistry.BEACON_HACKER.get());
 		}
 	}
@@ -112,6 +112,7 @@ class CAWClient {
 	public static void onClientSetup(FMLClientSetupEvent event) {
 		MenuScreens.register(MenuRegistry.CLAIM_BEACON_MENU.get(), ClaimBeaconScreen::new);
 		MenuScreens.register(MenuRegistry.BEACON_HACKER_MENU.get(), BeaconHackerScreen::new);
+		MenuScreens.register(MenuRegistry.BEACON_DIPLOMATIC_UPGRADE_MENU.get(), BeaconDiplomaticUpgradeScreen::new);
 	}
 	
 	@SubscribeEvent

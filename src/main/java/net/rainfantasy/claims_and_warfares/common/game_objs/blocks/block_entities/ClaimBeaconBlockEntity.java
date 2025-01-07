@@ -29,8 +29,8 @@ import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.misc.OfflinePlayerDatabase;
-import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.AbstractBeaconUpgradeBlock;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconUpgradeLoader;
+import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.IBeaconUpgrade;
 import net.rainfantasy.claims_and_warfares.common.game_objs.recipes.BeaconFuelRecipe;
 import net.rainfantasy.claims_and_warfares.common.game_objs.screens.ClaimBeaconMenu;
 import net.rainfantasy.claims_and_warfares.common.setups.data_types.SerializableDateTime;
@@ -120,7 +120,7 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 	
 	@SuppressWarnings({"DuplicateBranchesInSwitch", "LoggingSimilarMessage"})
 	public int getTransientTime(int status) {
-		if(CAWConstants.USE_TEST_TIMES) {
+		if (CAWConstants.USE_TEST_TIMES) {
 			switch (status) {
 				case STATUS_OFF, STATUS_ERRORED_OFF -> {
 					return -1;
@@ -151,19 +151,19 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 					return -1;
 				}
 			}
-		}else{
+		} else {
 			switch (status) {
 				case STATUS_OFF, STATUS_ERRORED_OFF -> {
 					return -1;
 				}
 				case STATUS_STARTING -> {
-					return this.fullyInitialized ? 60 : 15*60;
+					return this.fullyInitialized ? 60 : 15 * 60;
 				}
 				case STATUS_STOPPING, STATUS_ERRORED_STOPPING, STATUS_UNSTABLE_STOPPING -> {
 					return 10;
 				}
 				case STATUS_UNSTABLE_REPAIRING -> {
-					return 30*60;
+					return 30 * 60;
 				}
 				case STATUS_UNSTABLE_RUNNING -> {
 					CAWConstants.LOGGER.error("Time remaining for unstable running phase should be obtained by calling getUnstableTime()!");
@@ -199,9 +199,9 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 	}
 	
 	private SerializableDateTime getDeactivateTime() {
-		if(CAWConstants.USE_TEST_TIMES){
+		if (CAWConstants.USE_TEST_TIMES) {
 			return new SerializableDateTime().plusSeconds(10);
-		}else {
+		} else {
 			return new SerializableDateTime().toNextSpecificHourWithAtLeastIntervalHourOrElseNextDay(20, 8);
 		}
 	}
@@ -328,10 +328,10 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 		CoordUtil.iterateCoords(chunkCoord.sub(actualSize, actualSize, new Vector2i()), chunkCoord.add(actualSize, actualSize, new Vector2i()))
 		.forEach(chunk -> {
 			if (ClaimDataManager.get().getClaimsAt(level, chunk).stream().anyMatch(claim -> {
-				if(claim.hasFeature(BeaconLinkedClaimFeature.class) && (!claim.getUUID().equals(this.linkedClaimUUID))){
+				if (claim.hasFeature(BeaconLinkedClaimFeature.class) && (!claim.getUUID().equals(this.linkedClaimUUID))) {
 					return true;
 				}
-				if(claim.getAllFeatures().stream().anyMatch(AbstractClaimFeature::conflictWithFactionClaims)) {
+				if (claim.getAllFeatures().stream().anyMatch(AbstractClaimFeature::conflictWithFactionClaims)) {
 					return true;
 				}
 				return false;
@@ -522,15 +522,15 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 	private void checkUpgrade(Level level, BlockPos pos, BlockState state) {
 		ArrayList<BlockPos> knownUpgrade = new ArrayList<>();
 		pos = pos.below();
-		while (level.getBlockState(pos).getBlock() instanceof AbstractBeaconUpgradeBlock) {
+		while (level.getBlockState(pos).getBlock() instanceof IBeaconUpgrade) {
 			knownUpgrade.add(pos);
 			pos = pos.below();
 		}
 		
 		BeaconUpgradeLoader newUpgradeData = new BeaconUpgradeLoader();
 		knownUpgrade.forEach(upgradePos -> {
-			if (level.getBlockState(upgradePos).getBlock() instanceof AbstractBeaconUpgradeBlock upgradeBlock) {
-				newUpgradeData.doApply(upgradeBlock);
+			if (level.getBlockState(upgradePos).getBlock() instanceof IBeaconUpgrade upgradeBlock) {
+				newUpgradeData.doApply(upgradeBlock, level, upgradePos);
 			}
 		});
 		
@@ -546,10 +546,9 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 			} else if (BeaconHelper.isProperRunning(this.status)) {
 				this.status = STATUS_ERRORED_STOPPING;
 				this.errorCode = ERROR_UPGRADE_CHANGED;
-			} else {
-				this.upgradeData = newUpgradeData;
 			}
 		}
+		this.upgradeData = newUpgradeData;
 	}
 	
 	private void applyUpgrade(Level level, BlockPos pos, BlockState state) {
@@ -561,6 +560,13 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 			.ifPresent(feature -> {
 				((BeaconLinkedClaimFeature) feature).setProtectExplosions(this.upgradeData.isExplosionProtection());
 				((BeaconLinkedClaimFeature) feature).setProtectMobGriefing(this.upgradeData.isMobGriefProtection());
+				((BeaconLinkedClaimFeature) feature).setProtectInteraction(this.upgradeData.isInteractProtection());
+			});
+			ClaimDataManager.get().getClaim(this.linkedClaimUUID)
+			.flatMap(claim -> claim.getFeature(FactionOwnedClaimFeature.class))
+			.ifPresent(feature -> {
+				((FactionOwnedClaimFeature) feature).setInteractLevel(this.upgradeData.getInteractDiplomaticLevel());
+				((FactionOwnedClaimFeature) feature).setBreakPlaceLevel(this.upgradeData.getBreakPlaceDiplomaticLevel());
 			});
 		}
 	}
@@ -958,32 +964,6 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 			if (!FactionDataManager.get().isPermissionEqualOrHigher(beacon.getOwnerUUID(), player.getUUID(), beacon.getOwningFactionUUID())) {
 				return Optional.of(
 				Component.translatable("caw.errors.beacon.lower_permission", beacon.getOwnerName(), beacon.getOwningFactionName())
-				);
-			}
-			return Optional.empty();
-		}
-		
-		public static Optional<Component> allowedToOperate(Player player, ClaimBeaconBlockEntity beacon) {
-			if (!beacon.isOwnerAndFactionValid()) return Optional.empty();
-			return checkFactionPermission(player, beacon);
-		}
-		
-		public static Optional<Component> allowedToTransfer(Player player, ClaimBeaconBlockEntity beacon) {
-			if (isProperOff(beacon.status)) {
-				if (FactionDataManager.get()
-				    .getPrimaryFaction(player.getUUID())
-				    .map(factionData -> factionData.getFactionUUID().equals(beacon.getOwningFactionUUID()))
-				    .orElse(false) &&
-				    
-				    player.getUUID().equals(beacon.getOwnerUUID())
-				) {
-					return Optional.of(
-					Component.translatable("caw.errors.beacon.same_faction_set")
-					);
-				}
-			} else {
-				return Optional.of(
-				Component.translatable("caw.errors.beacon.must_turn_off")
 				);
 			}
 			return Optional.empty();

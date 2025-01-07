@@ -10,7 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.ClaimFeatureLoader;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.DebugClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl.DebugFullyProtectedClaim;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.networking.ClaimPacketGenerator;
@@ -312,7 +311,7 @@ public class ClaimDataManager extends SavedData {
 		
 		
 		ListTag bypassList = new ListTag();
-		for(UUID uuid : this.bypassPlayers){
+		for (UUID uuid : this.bypassPlayers) {
 			CompoundTag bypassTag = new CompoundTag();
 			bypassTag.putUUID("uuid", uuid);
 			bypassList.add(bypassTag);

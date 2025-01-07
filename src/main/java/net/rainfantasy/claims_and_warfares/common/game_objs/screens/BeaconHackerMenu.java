@@ -53,17 +53,17 @@ public class BeaconHackerMenu extends AbstractMachineMenu<BeaconHackerBlockEntit
 	}
 	
 	@Override
-	int getMachineSlotCount() {
+	public int getMachineSlotCount() {
 		return 1;
 	}
 	
 	@Override
-	int getPlayerInventoryYPos() {
+	public int getPlayerInventoryYPos() {
 		return 147;
 	}
 	
 	@Override
-	int getHotbarYPos() {
+	public int getHotbarYPos() {
 		return 205;
 	}
 	

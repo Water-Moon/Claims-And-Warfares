@@ -15,8 +15,9 @@ import net.minecraftforge.event.level.ExplosionEvent.Detonate;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.AbstractClaimFeature;
+import net.rainfantasy.claims_and_warfares.common.setups.registries.TagRegistry;
+import net.rainfantasy.claims_and_warfares.common.setups.registries.TagRegistry.Blocks;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class SystemProtectedClaimFeature extends AbstractClaimFeature {
@@ -60,6 +61,7 @@ public class SystemProtectedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onPlaceBlock(EntityPlaceEvent event) {
+		if (event.getPlacedBlock().is(Blocks.ALLOW_PLACE)) return super.onPlaceBlock(event);
 		if (event.getEntity() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.system.place", event.getPlacedBlock().getBlock().getName()));
 			return false;
@@ -69,6 +71,7 @@ public class SystemProtectedClaimFeature extends AbstractClaimFeature {
 	
 	@Override
 	public boolean onBreakBlock(BreakEvent event) {
+		if (event.getState().is(TagRegistry.Blocks.ALLOW_BREAK)) return super.onBreakBlock(event);
 		if (event.getPlayer() instanceof ServerPlayer player) {
 			player.sendSystemMessage(Component.translatable("caw.message.claim.protected.system.break",
 			player.level().getBlockState(event.getPos()).getBlock().getName()));

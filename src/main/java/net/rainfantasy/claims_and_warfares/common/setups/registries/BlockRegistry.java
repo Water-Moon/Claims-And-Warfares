@@ -11,10 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.BeaconHackerBlock;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.ClaimBeaconBlock;
-import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconExplosionProtectionUpgrade;
-import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconMobGriefingProtectionUpgrade;
-import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconPreventInteractUpgrade;
-import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.BeaconSizeUpgrade;
+import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades.*;
 
 import java.util.function.Supplier;
 
@@ -30,6 +27,7 @@ public class BlockRegistry {
 	public static RegistryObject<Block> BEACON_UPGRADE_INTERACT_PROTECTION = registerBlock("beacon_upgrade_interact_protection", BeaconPreventInteractUpgrade::new);
 	public static RegistryObject<Block> BEACON_UPGRADE_MOB_GRIEFING = registerBlock("beacon_upgrade_mob_grief", BeaconMobGriefingProtectionUpgrade::new);
 	public static RegistryObject<Block> BEACON_UPGRADE_EXPLOSION_PROTECTION = registerBlock("beacon_upgrade_explosion_protection", BeaconExplosionProtectionUpgrade::new);
+	public static RegistryObject<Block> BEACON_UPGRADE_DIPLOMATIC = registerBlock("beacon_upgrade_diplomatic", BeaconDiplomaticUpgrade::new);
 	
 	private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
 		RegistryObject<T> result = BLOCKS.register(name, block);

@@ -9,6 +9,7 @@ public class DiplomaticRelationshipData implements ISerializableNBTData<Diplomat
 	
 	public static int NEUTRAL = 0;
 	public static int ALLY = 1;
+	public static int OWNER = 99;
 	public static int ENEMY = -1;
 	
 	UUID otherFaction;

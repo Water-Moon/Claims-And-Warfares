@@ -49,27 +49,27 @@ public abstract class AbstractMachineMenu<T extends BlockEntity> extends Abstrac
 	
 	protected abstract void addSlots();
 	
-	int getMachineSlotCount() {
+	public int getMachineSlotCount() {
 		return 0;
 	}
 	
-	int getVanillaSlotCount() {
+	public int getVanillaSlotCount() {
 		return 36;
 	}
 	
-	int getPlayerInventoryXPos() {
+	public int getPlayerInventoryXPos() {
 		return 8;
 	}
 	
-	int getPlayerInventoryYPos() {
+	public int getPlayerInventoryYPos() {
 		return 84;
 	}
 	
-	int getHotbarYPos() {
+	public int getHotbarYPos() {
 		return 142;
 	}
 	
-	void addVanillaInventory(Inventory playerInventory) {
+	public void addVanillaInventory(Inventory playerInventory) {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
 				this.addSlot(new Slot(playerInventory, j + i * 9 + 9, this.getPlayerInventoryXPos() + j * 18, this.getPlayerInventoryYPos() + i * 18));

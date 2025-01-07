@@ -1,10 +1,14 @@
 package net.rainfantasy.claims_and_warfares.common.game_objs.blocks.beacon_upgrades;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.Level;
 import net.rainfantasy.claims_and_warfares.common.setups.data_types.ISerializableNBTData;
 
 import java.util.HashMap;
+
+import static net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.DiplomaticRelationshipData.ALLY;
 
 public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLoader, CompoundTag> {
 	
@@ -16,6 +20,8 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 	boolean interactProtection = false;
 	boolean mobGriefProtection = false;
 	boolean explosionProtection = false;
+	int interactDiplomaticLevel = ALLY;
+	int breakPlaceDiplomaticLevel = ALLY;
 	
 	public BeaconUpgradeLoader() {
 	
@@ -25,14 +31,14 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 		return this.totalUpgradeCount.values().stream().mapToInt(Integer::intValue).sum();
 	}
 	
-	public void doApply(AbstractBeaconUpgradeBlock upgrade) {
+	public void doApply(IBeaconUpgrade upgrade, Level level, BlockPos pos) {
 		String upgradeName = upgrade.getId();
 		if (this.totalUpgradeCount.containsKey(upgradeName)) {
 			this.totalUpgradeCount.put(upgradeName, this.totalUpgradeCount.get(upgradeName) + 1);
 		} else {
 			this.totalUpgradeCount.put(upgradeName, 1);
 		}
-		upgrade.apply(this);
+		upgrade.apply(this, level, pos);
 	}
 	
 	public void increaseSize(int size) {
@@ -70,6 +76,11 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 		this.increaseFuelCost = nbt.getInt("increaseFuelCost");
 		this.mobGriefProtection = nbt.getBoolean("mobGriefProtection");
 		this.explosionProtection = nbt.getBoolean("explosionProtection");
+		this.interactProtection = nbt.getBoolean("interactProtection");
+		
+		this.interactDiplomaticLevel = nbt.getInt("interactTrust");
+		this.breakPlaceDiplomaticLevel = nbt.getInt("breakPlaceTrust");
+		
 		return this;
 	}
 	
@@ -87,6 +98,11 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 		nbt.putInt("increaseFuelCost", this.increaseFuelCost);
 		nbt.putBoolean("mobGriefProtection", this.mobGriefProtection);
 		nbt.putBoolean("explosionProtection", this.explosionProtection);
+		nbt.putBoolean("interactProtection", this.interactProtection);
+		
+		nbt.putInt("interactTrust", interactDiplomaticLevel);
+		nbt.putInt("breakPlaceTrust", breakPlaceDiplomaticLevel);
+		
 		return nbt;
 	}
 	
@@ -117,5 +133,21 @@ public class BeaconUpgradeLoader implements ISerializableNBTData<BeaconUpgradeLo
 	
 	public boolean isExplosionProtection() {
 		return explosionProtection;
+	}
+	
+	public int getInteractDiplomaticLevel() {
+		return interactDiplomaticLevel;
+	}
+	
+	public int getBreakPlaceDiplomaticLevel() {
+		return breakPlaceDiplomaticLevel;
+	}
+	
+	public void setInteractDiplomaticLevel(int interactDiplomaticLevel) {
+		this.interactDiplomaticLevel = interactDiplomaticLevel;
+	}
+	
+	public void setBreakPlaceDiplomaticLevel(int breakPlaceDiplomaticLevel) {
+		this.breakPlaceDiplomaticLevel = breakPlaceDiplomaticLevel;
 	}
 }

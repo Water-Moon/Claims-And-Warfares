@@ -1,6 +1,5 @@
 package net.rainfantasy.claims_and_warfares.datagen;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;

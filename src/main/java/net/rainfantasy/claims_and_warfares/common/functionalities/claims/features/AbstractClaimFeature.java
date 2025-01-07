@@ -7,9 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.rainfantasy.claims_and_warfares.common.setups.data_types.ISerializableNBTData;
@@ -100,10 +98,11 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	/**
 	 * Called when a mob attempt to modify blocks in a claimed chunk
 	 * E.g. explosion, enderman picking up blocks, etc.
+	 *
 	 * @param event The event
 	 * @return False if the mob should not be able to modify blocks
 	 */
-	public boolean onMobGriefing(EntityMobGriefingEvent event){
+	public boolean onMobGriefing(EntityMobGriefingEvent event) {
 		return true;
 	}
 	
@@ -151,14 +150,15 @@ public abstract class AbstractClaimFeature implements ISerializableNBTData<Abstr
 	
 	/**
 	 * Called when checking claim-ability
+	 *
 	 * @return true if a claim with this feature should conflict with other faction claims. <br>
 	 * i.e. if true, it will prevent any other faction claim from overlapping with itself.
 	 */
-	public boolean conflictWithFactionClaims(){
+	public boolean conflictWithFactionClaims() {
 		return false;
 	}
 	
-	public Component getDisplayName(){
+	public Component getDisplayName() {
 		return Component.empty();
 	}
 	

@@ -34,7 +34,7 @@ public class ClaimPacketGenerator {
 			UUID factionUUID = ((FactionOwnedClaimFeature) data.getFeature(FactionOwnedClaimFeature.class).orElseThrow()).getFactionUUID();
 			name = Component.translatable("caw.gui.label.claim_faction",
 			FactionDataManager.get().getFaction(factionUUID).map(FactionData::getFactionName).map(Component::literal).orElse(Component.translatable("caw.gui.label.claim_unknown")));
-		}else{
+		} else {
 			for (AbstractClaimFeature feature : data.getAllFeatures()) {
 				if (!feature.getDisplayName().getString().isEmpty()) {
 					name = feature.getDisplayName();

@@ -6,11 +6,9 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.util.Tuple;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
-import net.rainfantasy.claims_and_warfares.common.game_objs.screens.ClaimBeaconMenu;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.PTCUpdateClientUUIDPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.*;
 import net.rainfantasy.claims_and_warfares.common.setups.registries.ChannelRegistry;
-import net.rainfantasy.claims_and_warfares.common.utils.CoordUtil;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

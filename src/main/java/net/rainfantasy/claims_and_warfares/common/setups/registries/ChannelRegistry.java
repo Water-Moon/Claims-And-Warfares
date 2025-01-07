@@ -17,6 +17,7 @@ import net.rainfantasy.claims_and_warfares.common.setups.networking.claim.PTCOpe
 import net.rainfantasy.claims_and_warfares.common.setups.networking.claim_beacon.PTSBeaconHackerOnOffPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.claim_beacon.PTSBeaconHackerSelectTargetPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.claim_beacon.PTSBeaconInstructionPacket;
+import net.rainfantasy.claims_and_warfares.common.setups.networking.claim_beacon_upgrade.PTSDiplomaticUpgradeSetPacket;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.*;
 import net.rainfantasy.claims_and_warfares.common.setups.networking.faction.menu.*;
 
@@ -310,6 +311,10 @@ public class ChannelRegistry {
 		CAW_CHANNEL.registerMessage(i++, PTSBeaconHackerSelectTargetPacket.class,
 		PTSBeaconHackerSelectTargetPacket::toBytes, PTSBeaconHackerSelectTargetPacket::fromBytes,
 		PTSBeaconHackerSelectTargetPacket::execute, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		
+		CAW_CHANNEL.registerMessage(i++, PTSDiplomaticUpgradeSetPacket.class,
+		PTSDiplomaticUpgradeSetPacket::toBytes, PTSDiplomaticUpgradeSetPacket::fromBytes,
+		PTSDiplomaticUpgradeSetPacket::execute, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		
 		///Generic
 		

@@ -40,7 +40,7 @@ import java.util.Set;
 public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity {
 	
 	
-	public static final int MAX_PROGRESS = CAWConstants.USE_TEST_TIMES ? 2 : 10;
+	public static final int MAX_PROGRESS = CAWConstants.USE_TEST_TIMES ? 2 : 9;
 	
 	private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 		@Override

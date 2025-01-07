@@ -1,26 +1,15 @@
 package net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.impl;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
-import net.minecraftforge.event.level.BlockEvent.BreakEvent;
-import net.minecraftforge.event.level.BlockEvent.EntityPlaceEvent;
-import net.minecraftforge.event.level.BlockEvent.FarmlandTrampleEvent;
-import net.minecraftforge.event.level.ExplosionEvent.Detonate;
 import net.rainfantasy.claims_and_warfares.CAWConstants;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimData;
-import net.rainfantasy.claims_and_warfares.common.functionalities.claims.data.ClaimDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.features.AbstractClaimFeature;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.DiplomaticRelationshipData;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionClaimDataManager;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.data.FactionDataManager;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -30,7 +19,11 @@ import java.util.UUID;
 public class FactionOwnedClaimFeature extends AbstractClaimFeature {
 	
 	final UUID factionUUID;
-	int minAllowedDiplomaticLevel = DiplomaticRelationshipData.ALLY;
+	int minAllowedDiplomaticLevelInteract = DiplomaticRelationshipData.ALLY;
+	int minAllowedDiplomaticLevelBreakPlace = DiplomaticRelationshipData.ALLY;
+	
+	public static final int BREAK_PLACE = 0;
+	public static final int INTERACT = 1;
 	
 	public FactionOwnedClaimFeature() {
 		this(UUID.randomUUID());
@@ -53,14 +46,16 @@ public class FactionOwnedClaimFeature extends AbstractClaimFeature {
 	@Override
 	protected AbstractClaimFeature readNBT(CompoundTag nbt) {
 		FactionOwnedClaimFeature feature = new FactionOwnedClaimFeature(UUID.fromString(nbt.getString("faction")));
-		feature.minAllowedDiplomaticLevel = nbt.getInt("minAllowedDiplomaticLevel");
+		feature.minAllowedDiplomaticLevelInteract = nbt.getInt("minAllowedDiplomaticLevelInteract");
+		feature.minAllowedDiplomaticLevelBreakPlace = nbt.getInt("minAllowedDiplomaticLevelBreakPlace");
 		return feature;
 	}
 	
 	@Override
 	protected CompoundTag writeNBT(CompoundTag nbt) {
 		nbt.putString("faction", factionUUID.toString());
-		nbt.putInt("minAllowedDiplomaticLevel", minAllowedDiplomaticLevel);
+		nbt.putInt("minAllowedDiplomaticLevelInteract", minAllowedDiplomaticLevelInteract);
+		nbt.putInt("minAllowedDiplomaticLevelBreakPlace", minAllowedDiplomaticLevelBreakPlace);
 		return nbt;
 	}
 	
@@ -68,16 +63,29 @@ public class FactionOwnedClaimFeature extends AbstractClaimFeature {
 		return factionUUID;
 	}
 	
-	public boolean checkAllowed(Entity entity) {
+	public boolean checkAllowed(Entity entity, int type) {
 		//only protect against players
 		
 		if (entity == null) return true;
 		if (!(entity instanceof ServerPlayer player)) return true;
-		return FactionClaimDataManager.isAuthorizedInFactionClaim(player, factionUUID, minAllowedDiplomaticLevel);
+		if (type == BREAK_PLACE) {
+			return FactionClaimDataManager.isAuthorizedInFactionClaim(player, factionUUID, minAllowedDiplomaticLevelBreakPlace);
+		} else if (type == INTERACT) {
+			return FactionClaimDataManager.isAuthorizedInFactionClaim(player, factionUUID, minAllowedDiplomaticLevelInteract);
+		} else {
+			throw new IllegalArgumentException("Unknown interaction type " + type);
+		}
 	}
 	
 	public String getFactionName() {
 		return FactionDataManager.get().getFactionName(factionUUID);
 	}
 	
+	public void setInteractLevel(int interactDiplomaticLevel) {
+		this.minAllowedDiplomaticLevelInteract = interactDiplomaticLevel;
+	}
+	
+	public void setBreakPlaceLevel(int breakPlaceDiplomaticLevel) {
+		this.minAllowedDiplomaticLevelBreakPlace = breakPlaceDiplomaticLevel;
+	}
 }

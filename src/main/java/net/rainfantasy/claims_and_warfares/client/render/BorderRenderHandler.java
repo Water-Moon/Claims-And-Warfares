@@ -19,8 +19,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class BorderRenderHandler {
 	
 	private static final Set<Border> borders = new CopyOnWriteArraySet<>();
-	
-	
+
+
 //	static {
 //		borders.add(new Border(new Vector2d(0, 0), new Vector2d(100, 100), 0xFFFF00));
 //	}

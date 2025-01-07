@@ -85,6 +85,9 @@
   "caw.gui.button.configuring": "配置中...",
   "caw.gui.button.set_faction": "设置势力",
 
+  "caw.gui.label.perm_break_place": "破坏和放置",
+  "caw.gui.label.perm_interact": "交互",
+
   "caw.gui.error.set_faction": "没有与任何势力关联。请先创建或加入一个势力。",
   "caw.gui.error.only_configure_when_off": "信标激活时，无法进行操作。",
   "caw.gui.error.must_be_in_same_faction": "您必须是信标所属势力的成员才能使用取消功能。",
@@ -210,6 +213,8 @@
   "caw.errors.beacon.not_set_properly": "信标未被正确初始化（您是否不在任何派系中？）",
   "caw.errors.beacon.do_not_circumvent_system": "请勿尝试绕过规则。当信标不稳定时，您必须不在信标所属的势力中才能这样做。",
   "caw.errors.beacon.can_not_cancel": "当前模式不支持取消。",
+  "caw.errors.beacon.beacon_not_found": "未找到相连的信标！",
+
   "caw.errors.beacon_hacker.unknown_beacon": "此信标未知。您或许点击太快，或者此信标不存在。",
 
   "item.claims_and_warfares.team_manager": "势力管理器",
@@ -221,5 +226,6 @@
   "block.claims_and_warfares.beacon_upgrade_size": "声明信标升级 - 尺寸",
   "block.claims_and_warfares.beacon_upgrade_interact_protection": "声明信标升级 - 阻止交互",
   "block.claims_and_warfares.beacon_upgrade_mob_grief": "声明信标升级 - 防止生物破坏",
-  "block.claims_and_warfares.beacon_upgrade_explosion_protection": "声明信标升级 - 防爆"
+  "block.claims_and_warfares.beacon_upgrade_explosion_protection": "声明信标升级 - 防爆",
+  "block.claims_and_warfares.beacon_upgrade_diplomatic": "声明信标升级 - 权限配置"
 }

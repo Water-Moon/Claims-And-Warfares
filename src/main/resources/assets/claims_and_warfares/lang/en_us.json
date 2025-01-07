@@ -84,6 +84,9 @@
   "caw.gui.button.configuring": "Configuring",
   "caw.gui.button.set_faction": "Set faction",
 
+  "caw.gui.label.perm_break_place": "Break/Place",
+  "caw.gui.label.perm_interact": "Interact",
+
   "caw.gui.error.set_faction": "Faction unlinked. Join or create a faction first!",
   "caw.gui.error.only_configure_when_off": "Can not configure while the beacon is active.",
   "caw.gui.error.must_be_in_same_faction": "You must be in the current owning faction to cancel that.",
@@ -209,6 +212,7 @@
   "caw.errors.beacon.not_set_properly": "Beacon is not properly setup (You are probably not in a faction)",
   "caw.errors.beacon.do_not_circumvent_system": "Do not circumvent the system. You must not be in the original faction to do this while beacon is unstable.",
   "caw.errors.beacon.can_not_cancel": "The current state is not cancellable.",
+  "caw.errors.beacon.beacon_not_found": "No connected beacon found!",
 
   "caw.errors.beacon_hacker.unknown_beacon": "That beacon is not known to this device. Either you clicked too fast, or the beacon doesn't exist.",
 
@@ -219,6 +223,8 @@
   "block.claims_and_warfares.beacon_hacker": "Beacon Cracker",
 
   "block.claims_and_warfares.beacon_upgrade_size": "Claim Beacon Upgrade - Size",
+  "block.claims_and_warfares.beacon_upgrade_interact_protection": "Claim Beacon Upgrade - No Interact",
   "block.claims_and_warfares.beacon_upgrade_mob_grief": "Claim Beacon Upgrade - No Mob Griefing",
-  "block.claims_and_warfares.beacon_upgrade_explosion_protection": "Claim Beacon Upgrade - No Explosion"
+  "block.claims_and_warfares.beacon_upgrade_explosion_protection": "Claim Beacon Upgrade - No Explosion",
+  "block.claims_and_warfares.beacon_upgrade_diplomatic": "Claim Beacon Upgrade - Permission Override"
 }
