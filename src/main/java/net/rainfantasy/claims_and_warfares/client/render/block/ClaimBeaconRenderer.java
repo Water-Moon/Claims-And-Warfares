@@ -1,6 +1,8 @@
 package net.rainfantasy.claims_and_warfares.client.render.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack.Pose;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Font.DisplayMode;
@@ -16,16 +18,21 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity.BeaconBeamSection;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.ClaimBeaconBlockEntity;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.ClaimBeaconBlockEntity.BeaconHelper;
 import net.rainfantasy.claims_and_warfares.common.utils.ColorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.model.DefaultedBlockGeoModel;
+import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClaimBeaconRenderer implements BlockEntityRenderer<ClaimBeaconBlockEntity> {
+@SuppressWarnings("CommentedOutCode")
+public class ClaimBeaconRenderer extends GeoBlockRenderer<ClaimBeaconBlockEntity> {
 	
 	public static final ResourceLocation BEAM_LOCATION = new ResourceLocation("textures/entity/beacon_beam.png");
 	
@@ -39,19 +46,35 @@ public class ClaimBeaconRenderer implements BlockEntityRenderer<ClaimBeaconBlock
 	Context context;
 	
 	public ClaimBeaconRenderer(BlockEntityRendererProvider.Context context) {
+		super(new DefaultedBlockGeoModel<>(new ResourceLocation(CAWConstants.MODID, "claim_beacon")));
 		this.context = context;
 	}
 	
 	@Override
-	public void render(@NotNull ClaimBeaconBlockEntity block, float delta, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+	public void postRender(PoseStack poseStack, ClaimBeaconBlockEntity block, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float delta, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		poseStack.popPose();
+		poseStack.pushPose();
 		boolean showExtendedInfo = this.shouldShowExtendedInfo(block);
 		if (block.getStatus() != ClaimBeaconBlockEntity.STATUS_OFF) {
-			this.renderBeam(showExtendedInfo ? 2 : 0, block, poseStack, buffer, delta);
+			this.renderBeam(showExtendedInfo ? 2 : 0, block, poseStack, bufferSource, delta);
 		}
 		if (showExtendedInfo) {
-			this.renderExtendedInfo(block, delta, poseStack, buffer, packedLight, packedOverlay);
+			this.renderExtendedInfo(block, delta, poseStack, bufferSource, packedLight, packedOverlay);
 		}
 	}
+	
+	
+	
+	//	@Override
+//	public void render(@NotNull ClaimBeaconBlockEntity block, float delta, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
+//		boolean showExtendedInfo = this.shouldShowExtendedInfo(block);
+//		if (block.getStatus() != ClaimBeaconBlockEntity.STATUS_OFF) {
+//			this.renderBeam(showExtendedInfo ? 2 : 0, block, poseStack, buffer, delta);
+//		}
+//		if (showExtendedInfo) {
+//			this.renderExtendedInfo(block, delta, poseStack, buffer, packedLight, packedOverlay);
+//		}
+//	}
 	
 	private void renderExtendedInfo(@NotNull ClaimBeaconBlockEntity block, float delta, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int packedOverlay) {
 		Component content = Component.translatable("caw.label.beacon.owner", block.getOwnerName());
@@ -103,7 +126,7 @@ public class ClaimBeaconRenderer implements BlockEntityRenderer<ClaimBeaconBlock
 	
 	private void renderExtendedInfoLine(ClaimBeaconBlockEntity block, float delta, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay, Component line, int yOffset) {
 		poseStack.pushPose();
-		poseStack.translate(0.5, 1.25 + yOffset * 0.25, 0.5);
+		poseStack.translate(0.5, 1.5 + yOffset * 0.25, 0.5);
 		poseStack.mulPose(context.getEntityRenderer().cameraOrientation());
 		poseStack.scale(-0.025f, -0.025f, 0.025f);
 		Matrix4f matrix4f = poseStack.last().pose();
@@ -117,7 +140,8 @@ public class ClaimBeaconRenderer implements BlockEntityRenderer<ClaimBeaconBlock
 	
 	private void renderBeam(int initialYOffset, ClaimBeaconBlockEntity block, PoseStack poseStack, MultiBufferSource buffer, float delta) {
 		assert block.getLevel() != null;
-		
+		poseStack.pushPose();
+		poseStack.translate(0, 1.2, 0);
 		long time = block.getLevel().getGameTime();
 		float[] color = ColorUtil.toFloatColor(block.getColor());
 		float[] color1 = color.clone();
@@ -139,6 +163,7 @@ public class ClaimBeaconRenderer implements BlockEntityRenderer<ClaimBeaconBlock
 			BeaconRenderer.renderBeaconBeam(poseStack, buffer, BEAM_LOCATION, delta, 1.0F, time, yPos, (i == sections.size() - 1) ? 1024 : section.getHeight(), section.getColor(), 0.2F, 0.25F);
 			yPos += section.getHeight();
 		}
+		poseStack.popPose();
 	}
 	
 	private List<BeaconBeamSection> generateSections(float[] color1, float[] color2) {

@@ -13,12 +13,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.rainfantasy.claims_and_warfares.CAWConstants;
 import net.rainfantasy.claims_and_warfares.common.game_objs.blocks.block_entities.BeaconHackerBlockEntity;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.model.DefaultedBlockGeoModel;
+import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
-public class BeaconHackerRenderer implements BlockEntityRenderer<BeaconHackerBlockEntity> {
+public class BeaconHackerRenderer extends GeoBlockRenderer<BeaconHackerBlockEntity> {
 	
 	private static final ResourceLocation GUARDIAN_BEAM_LOCATION = new ResourceLocation("textures/entity/guardian_beam.png");
 	private static final RenderType BEAM_RENDER_TYPE = RenderType.entityCutoutNoCull(GUARDIAN_BEAM_LOCATION);
@@ -26,27 +30,23 @@ public class BeaconHackerRenderer implements BlockEntityRenderer<BeaconHackerBlo
 	Context context;
 	
 	public BeaconHackerRenderer(BlockEntityRendererProvider.Context context) {
+		super(new DefaultedBlockGeoModel<>(new ResourceLocation(CAWConstants.MODID, "beacon_hacker")));
 		this.context = context;
 	}
 	
 	@Override
-	public void render(BeaconHackerBlockEntity pBlockEntity, float pPartialTick, @NotNull PoseStack pPoseStack, @NotNull MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-		if (pBlockEntity.isEnabled()) {
-			renderBeam(
-			pBlockEntity,
-			pBlockEntity.getTargetPos(),
-			pPartialTick,
-			pPoseStack,
-			pBuffer,
-			pPackedLight
-			);
+	public void postRender(PoseStack poseStack, BeaconHackerBlockEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		poseStack.popPose();
+		poseStack.pushPose();
+		if(animatable.isEnabled()){
+			renderBeam(animatable, animatable.getTargetPos(), partialTick, poseStack, bufferSource, packedLight);
 		}
 	}
 	
 	@Override
 	public boolean shouldRenderOffScreen(BeaconHackerBlockEntity pBlockEntity) {
 		if (pBlockEntity.isEnabled()) return true;
-		return BlockEntityRenderer.super.shouldRenderOffScreen(pBlockEntity);
+		return super.shouldRenderOffScreen(pBlockEntity);
 	}
 	
 	@Override

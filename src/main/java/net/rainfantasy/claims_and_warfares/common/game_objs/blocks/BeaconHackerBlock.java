@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,6 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.networking.ClaimPacketGenerator;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.networking.FactionPacketGenerator;
 import net.rainfantasy.claims_and_warfares.common.functionalities.mapper.MapPacketGenerator;
@@ -31,7 +34,7 @@ public class BeaconHackerBlock extends BaseEntityBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	
 	public BeaconHackerBlock() {
-		super(Properties.copy(Blocks.SMITHING_TABLE));
+		super(Properties.copy(Blocks.SMITHING_TABLE).lightLevel((s) -> 15).noOcclusion().isRedstoneConductor((s, g, p) -> false));
 		this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
 	}
 	
@@ -94,6 +97,11 @@ public class BeaconHackerBlock extends BaseEntityBlock {
 	
 	@Override
 	public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
-		return RenderShape.MODEL;
+		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+	
+	@Override
+	public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
+		return Shapes.empty();
 	}
 }

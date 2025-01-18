@@ -32,12 +32,18 @@ import net.rainfantasy.claims_and_warfares.common.utils.CoordUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity {
+public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity implements GeoBlockEntity {
 	
 	
 	public static final int MAX_PROGRESS = CAWConstants.USE_TEST_TIMES ? 2 : 9;
@@ -352,5 +358,25 @@ public class BeaconHackerBlockEntity extends AbstractMachineBlockEntity {
 		
 		block.enabled = false;
 		block.sendData();
+	}
+	
+	
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+	protected static final RawAnimation IDLE = RawAnimation.begin();
+	protected static final RawAnimation RUNNING = RawAnimation.begin();
+	@Override
+	public void registerControllers(ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, state -> {
+			if(state.getAnimatable().isEnabled()){
+				return state.setAndContinue(RUNNING);
+			}else{
+				return state.setAndContinue(IDLE);
+			}
+		}));
+	}
+	
+	@Override
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return cache;
 	}
 }

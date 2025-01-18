@@ -418,6 +418,17 @@ public class FactionDataManager extends SavedData {
 	}
 	
 	/**
+	 * Check if two players are in at least one faction together
+	 * @param player1 the first player
+	 * @param player2 the second player
+	 * @return true if the two players are in at least one faction together, false otherwise
+	 */
+	@Contract(pure = true)
+	public boolean isInSameFaction(UUID player1, UUID player2) {
+		return this.playerFactions.get(player1).factions.stream().anyMatch(factionUUID -> this.isPlayerInFaction(player2, factionUUID));
+	}
+	
+	/**
 	 * get all factions
 	 *
 	 * @return all factions

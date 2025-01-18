@@ -39,6 +39,12 @@ import net.rainfantasy.claims_and_warfares.common.utils.CoordUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2i;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.CheckReturnValue;
 import java.util.ArrayList;
@@ -46,7 +52,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
+public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity implements GeoBlockEntity {
 	
 	private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
 		@Override
@@ -876,6 +882,38 @@ public class ClaimBeaconBlockEntity extends AbstractMachineBlockEntity {
 	
 	public int getUpgradeAmount() {
 		return upgradeAmount;
+	}
+	
+	
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+	protected static final RawAnimation IDLE = RawAnimation.begin();
+	protected static final RawAnimation NORMAL_STARTING = RawAnimation.begin();
+	protected static final RawAnimation NORMAL_RUNNING = RawAnimation.begin();
+	protected static final RawAnimation NORMAL_STOPPING = RawAnimation.begin();
+	protected static final RawAnimation UNSTABLE_RUNNING = RawAnimation.begin();
+	protected static final RawAnimation UNSTABLE_STOPPING = RawAnimation.begin();
+	protected static final RawAnimation ERRORED = RawAnimation.begin();
+	protected static final RawAnimation UNSTABLE_STOPPED = RawAnimation.begin();
+	@Override
+	public void registerControllers(ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, state -> {
+			ClaimBeaconBlockEntity beacon = state.getAnimatable();
+			return switch (beacon.getStatus()) {
+				case STATUS_ERRORED_OFF -> state.setAndContinue(ERRORED);
+				case STATUS_STARTING -> state.setAndContinue(NORMAL_STARTING);
+				case STATUS_RUNNING -> state.setAndContinue(NORMAL_RUNNING);
+				case STATUS_STOPPING, STATUS_ERRORED_STOPPING -> state.setAndContinue(NORMAL_STOPPING);
+				case STATUS_UNSTABLE_RUNNING -> state.setAndContinue(UNSTABLE_RUNNING);
+				case STATUS_UNSTABLE_STOPPING -> state.setAndContinue(UNSTABLE_STOPPING);
+				case STATUS_UNSTABLE_REPAIRING -> state.setAndContinue(UNSTABLE_STOPPED);
+				default -> state.setAndContinue(IDLE);
+			};
+		}));
+	}
+	
+	@Override
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return this.cache;
 	}
 	
 	//////

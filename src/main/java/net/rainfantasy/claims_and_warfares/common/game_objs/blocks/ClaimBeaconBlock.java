@@ -19,6 +19,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.rainfantasy.claims_and_warfares.common.functionalities.claims.networking.ClaimPacketGenerator;
 import net.rainfantasy.claims_and_warfares.common.functionalities.factions.networking.FactionPacketGenerator;
 import net.rainfantasy.claims_and_warfares.common.functionalities.mapper.MapPacketGenerator;
@@ -123,7 +125,12 @@ public class ClaimBeaconBlock extends BaseEntityBlock {
 	
 	@Override
 	public @NotNull RenderShape getRenderShape(@NotNull BlockState pState) {
-		return RenderShape.MODEL;
+		return RenderShape.ENTITYBLOCK_ANIMATED;
+	}
+	
+	@Override
+	public @NotNull VoxelShape getOcclusionShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
+		return Shapes.empty();
 	}
 	
 	@Override

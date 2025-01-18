@@ -59,14 +59,18 @@ public class FactionData implements ISerializableNBTData<FactionData, CompoundTa
 	}
 	
 	private void refresh(MinecraftServer server) {
-		this.deduplicateMembers();
-		this.refreshPlayerKnownNames(server);
+		this.refreshData(server);
 		FactionDataManager.get().refresh();
 	}
 	
 	public void refreshData(MinecraftServer server) {
 		this.deduplicateMembers();
 		this.refreshPlayerKnownNames(server);
+		this.removeInvalidDiplomaticRelationships();
+	}
+	
+	private void removeInvalidDiplomaticRelationships() {
+		this.diplomaticRelationships.entrySet().removeIf(e -> FactionDataManager.get().getFaction(e.getKey()).isEmpty());
 	}
 	
 	private void refreshPlayerKnownNames(MinecraftServer server) {
